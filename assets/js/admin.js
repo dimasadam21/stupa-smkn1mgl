@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const LOGS_KEY = 'stupa_audit_logs';
 
     const DEFAULT_ACCOUNTS = [
-        { username: 'superadmin', password: 'stupasuper2026', role: 'superadmin', displayName: 'Pembina / Super Admin STUPA', active: true },
-        { username: 'admin', password: 'stupa2026', role: 'admin', displayName: 'Pengelola Web STUPA', active: true }
+        { username: 'superadmin', password: '0000', role: 'superadmin', displayName: 'Pembina / Super Admin STUPA', active: true },
+        { username: 'admin', password: 'raga', role: 'admin', displayName: 'Pengelola Web STUPA', active: true }
     ];
 
     const SECTIONS_META = [
@@ -34,7 +34,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const getAccounts = () => {
         try {
             const raw = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || 'null');
-            if (Array.isArray(raw) && raw.length > 0) return raw;
+            if (Array.isArray(raw) && raw.length > 0) {
+                let migrated = false;
+                raw.forEach(acc => {
+                    if (acc.username === 'superadmin' && acc.password === 'stupasuper2026') {
+                        acc.password = '0000';
+                        migrated = true;
+                    }
+                    if (acc.username === 'admin' && acc.password === 'stupa2026') {
+                        acc.password = 'raga';
+                        migrated = true;
+                    }
+                });
+                if (migrated) localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(raw));
+                return raw;
+            }
         } catch { /* fallback */ }
         return DEFAULT_ACCOUNTS.map(a => ({ ...a }));
     };
