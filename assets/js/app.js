@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
         heroSlides: (savedCustom && Array.isArray(savedCustom.heroSlides)) ? savedCustom.heroSlides : baseData.heroSlides,
         services: (savedCustom && Array.isArray(savedCustom.services)) ? savedCustom.services : baseData.services,
         videos: (savedCustom && Array.isArray(savedCustom.videos)) ? savedCustom.videos : baseData.videos,
-        publications: (savedCustom && Array.isArray(savedCustom.publications)) ? savedCustom.publications : baseData.publications,
         procedures: (savedCustom && Array.isArray(savedCustom.procedures)) ? savedCustom.procedures : (baseData.procedures || []),
         partners: (savedCustom && Array.isArray(savedCustom.partners)) ? savedCustom.partners : (baseData.partners || []),
         siteMeta: {
@@ -63,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function () {
     setTxt('secTitleLayanan', meta.secTitleLayanan);
     setTxt('secLeadLayanan', meta.secLeadLayanan);
     setTxt('secTitleBerita', meta.secTitleBerita);
-    setTxt('secTitlePublikasi', meta.secTitlePublikasi);
     setTxt('secTitleProsedur', meta.secTitleProsedur);
     setTxt('footerMotto', meta.footerMotto);
     setTxt('footerSecretariatName', meta.secretariatName);
@@ -275,41 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 6. Render Publikasi & Modul Grid (4 visible initially, toggleable to all 8)
-    let showAllPublikasi = false;
-    const publikasiListEl = document.getElementById('publikasi-list');
-    const pubLoadMoreBtn = document.getElementById('publikasi-load-more');
-
-    function renderPublikasi() {
-        if (!publikasiListEl) return;
-        const items = showAllPublikasi ? data.publications : data.publications.slice(0, 4);
-        publikasiListEl.innerHTML = items.map((pub, idx) => `
-            <div class="publikasi-card js-open-pub" role="button" tabindex="0" data-index="${idx}">
-                <div class="publikasi-cover" style="${pub.coverImage ? `background: linear-gradient(to top, rgba(0,38,34,0.92), rgba(0,38,34,0.35)), url('${pub.coverImage}') center/cover;` : `background: ${pub.gradient};`}">
-                    <span class="publikasi-cover-badge">${pub.badge}</span>
-                    <h4 class="publikasi-cover-title">${pub.title}</h4>
-                    <div class="publikasi-cover-foot">
-                        <span>${pub.year}</span>
-                        <span>${pub.pages}</span>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-        if (pubLoadMoreBtn) {
-            const btnText = pubLoadMoreBtn.querySelector('.btn-text');
-            if (btnText) {
-                btnText.textContent = showAllPublikasi ? 'Tampilkan lebih ringkas' : 'Tampilkan lebih banyak';
-            }
-        }
-    }
-    renderPublikasi();
-
-    pubLoadMoreBtn?.addEventListener('click', function () {
-        showAllPublikasi = !showAllPublikasi;
-        renderPublikasi();
-    });
-
-    // 6b. Render Procedures & Partners Dynamically
+    // 6. Render Procedures & Partners Dynamically
     const proceduresContainer = document.getElementById('proceduresContainer');
     if (proceduresContainer && Array.isArray(data.procedures)) {
         proceduresContainer.innerHTML = data.procedures.map(proc => `
@@ -362,39 +326,6 @@ document.addEventListener('DOMContentLoaded', function () {
             <h4 class="fw-bold mb-3" style="color:#005950;">${item.title}</h4>
             <div class="lh-lg" style="color:#2e4240;">
                 ${item.content || `<p>${item.excerpt}</p>`}
-            </div>
-        `;
-        detailModal.show();
-    }
-
-    function openPublicationModal(idx) {
-        const pub = data.publications[idx];
-        if (!pub || !detailModal) return;
-        detailTitle.textContent = 'Arsip & Modul STUPA';
-        detailBody.innerHTML = `
-            <div class="row g-4 align-items-center">
-                <div class="col-md-5">
-                    <div class="publikasi-cover rounded-4 shadow" style="background:${pub.gradient}; min-height:280px;">
-                        <span class="publikasi-cover-badge">${pub.badge}</span>
-                        <h4 class="publikasi-cover-title">${pub.title}</h4>
-                        <div class="publikasi-cover-foot">
-                            <span>${pub.year}</span>
-                            <span>${pub.pages}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <span class="badge rounded-pill mb-2" style="background:#005950;">${pub.badge}</span>
-                    <h4 class="fw-bold mb-2" style="color:#005950;">${pub.title}</h4>
-                    <p class="text-muted small mb-3">${pub.year} • ${pub.pages} • Penerbitan Internal STUPA SMKN 1 Magelang</p>
-                    <p class="lh-lg mb-4">${pub.summary}</p>
-                    <div class="d-flex flex-wrap gap-2">
-                        ${pub.docUrl ? `<a href="${pub.docUrl}" target="_blank" class="btn custom-btn"><i class="fas fa-external-link-alt"></i> Buka Dokumen</a>` : ''}
-                        <button type="button" class="btn custom-btn js-download-pub" data-title="${pub.title}">
-                            <i class="fas fa-file-arrow-down"></i> Unduh Ringkasan (.txt)
-                        </button>
-                    </div>
-                </div>
             </div>
         `;
         detailModal.show();
@@ -528,29 +459,9 @@ document.addEventListener('DOMContentLoaded', function () {
             openServiceModal(Number(serviceEl.dataset.index));
             return;
         }
-        const pubEl = e.target.closest('.js-open-pub');
-        if (pubEl) {
-            openPublicationModal(Number(pubEl.dataset.index));
-            return;
-        }
         const vidEl = e.target.closest('.js-open-video');
         if (vidEl) {
             openVideoModal(Number(vidEl.dataset.index));
-            return;
-        }
-        const dlBtn = e.target.closest('.js-download-pub');
-        if (dlBtn) {
-            const title = dlBtn.dataset.title || 'Modul-STUPA';
-            const pub = data.publications.find(p => p.title === title);
-            const text = `STUPA SMKN 1 MAGELANG\nSiswa Siswi Teknik Satu Pecinta Alam\n========================================\nJudul: ${title}\nKategori: ${pub?.badge || 'Publikasi'}\nEdisi: ${pub?.year || '2026'}\n\nRingkasan:\n${pub?.summary || ''}\n\nSekretariat: Jl. Cawang No. 2, Magelang Selatan`;
-            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Ringkasan modul berhasil diunduh.');
             return;
         }
         const procCard = e.target.closest('.prosedur-step-card');
@@ -592,14 +503,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 8. Live Navbar Search across News, Services & Publications
+    // 8. Live Navbar Search across News & Services
     const searchInput = document.getElementById('navSearchInput');
     const searchResultsEl = document.getElementById('navSearchResults');
     const searchForm = document.getElementById('navSearchForm');
 
     const searchableItems = [
         ...data.services.map((s, idx) => ({ type: 'Layanan', title: s.title, action: () => openServiceModal(idx) })),
-        ...data.publications.map((p, idx) => ({ type: 'Publikasi', title: p.title, action: () => openPublicationModal(idx) })),
         ...data.newsCategories.flatMap(c =>
             (data.news[c.key] || []).map((n, idx) => ({ type: c.label.toUpperCase(), title: n.title, action: () => openArticleModal(c.key, idx) }))
         )

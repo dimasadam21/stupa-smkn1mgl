@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function () {
         { id: 'layanan-stupa', label: 'Layanan & Kanal Digital STUPA' },
         { id: 'video-showcase', label: 'Video Showcase & Dokumenter' },
         { id: 'berita-informasi', label: 'Berita & Informasi' },
-        { id: 'publikasi-stupa', label: 'Publikasi & Modul Ekspedisi' },
         { id: 'prosedur-stupa', label: 'Prosedur Kegiatan & Layanan' },
         { id: 'mitra-stupa', label: 'Mitra & Jejaring Konservasi' }
     ];
@@ -80,10 +79,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const getMergedHero = () => {
         const c = getCustomData().heroSlides;
         return Array.isArray(c) ? c : [...(window.STUPA_DATA?.heroSlides || [])];
-    };
-    const getMergedPubs = () => {
-        const c = getCustomData().publications;
-        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.publications || [])];
     };
     const getMergedServices = () => {
         const c = getCustomData().services;
@@ -308,19 +303,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const newsObj = getMergedNews();
         const totalNews = Object.values(newsObj).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0);
         const submissions = getSubmissions();
-        const servicesAndPubs = getMergedServices().length + getMergedPubs().length;
+        const servicesAndVideos = getMergedServices().length + getMergedVideos().length;
         const visits = Number(localStorage.getItem('stupa_total_visits') || '12840');
 
         document.getElementById('statNewsCount').textContent = String(totalNews);
         document.getElementById('statSubCount').textContent = String(submissions.length);
-        document.getElementById('statPubCount').textContent = String(servicesAndPubs);
+        document.getElementById('statPubCount').textContent = String(servicesAndVideos);
         document.getElementById('statVisitCount').textContent = visits.toLocaleString('id-ID');
 
         renderSubmissions();
         renderNewsCategoriesManager();
         renderNewsList();
         renderSuperHeroList();
-        renderSuperPubList();
         renderSuperServicesList();
         renderSuperVideosList();
         renderSuperPartnersList();
@@ -466,25 +460,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateHeroLivePreview();
     }
 
-    function renderSuperPubList() {
-        const el = document.getElementById('superPubList');
-        if (!el) return;
-        const pubs = getMergedPubs();
-        el.innerHTML = pubs.map((p, idx) => `
-            <div class="d-flex justify-content-between align-items-center gap-2 p-2 rounded-3 border bg-white">
-                <div class="overflow-hidden">
-                    <span class="badge text-bg-secondary" style="font-size:10px;">${p.badge}</span>
-                    <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${p.title}</div>
-                    <div class="text-muted" style="font-size:11px;">${p.year} • ${p.pages}</div>
-                </div>
-                <div class="d-flex gap-1 flex-shrink-0">
-                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-pub" data-idx="${idx}"><i class="fas fa-pen"></i></button>
-                    <button type="button" class="btn btn-outline-danger btn-sm js-del-pub" data-idx="${idx}"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>
-        `).join('');
-    }
-
     function renderSuperServicesList() {
         const el = document.getElementById('superServicesList');
         if (!el) return;
@@ -564,7 +539,6 @@ document.addEventListener('DOMContentLoaded', function () {
         setV('metaBrandSubInput', meta.brandSubtitle);
         setV('metaTitleLayananInput', meta.secTitleLayanan);
         setV('metaTitleBeritaInput', meta.secTitleBerita);
-        setV('metaTitlePubInput', meta.secTitlePublikasi);
         setV('metaTitleProcInput', meta.secTitleProsedur);
         setV('metaMottoInput', meta.footerMotto);
         setV('metaSecInput', meta.secretariatName);
@@ -659,15 +633,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateHeroLivePreview();
     }
     document.getElementById('cancelHeroEditBtn')?.addEventListener('click', resetHeroForm);
-
-    function resetPubForm() {
-        document.getElementById('addPubForm')?.reset();
-        document.getElementById('editPubIdx').value = '';
-        document.getElementById('pubImgPreview').src = 'assets/images/bg-nature-mist.svg';
-        document.getElementById('pubFormHeading').innerHTML = '<i class="fas fa-book-medical me-1"></i> Tambah / Edit Publikasi';
-        document.getElementById('cancelPubEditBtn')?.classList.add('d-none');
-    }
-    document.getElementById('cancelPubEditBtn')?.addEventListener('click', resetPubForm);
 
     function resetSrvForm() {
         document.getElementById('addServiceForm')?.reset();
@@ -806,38 +771,6 @@ document.addEventListener('DOMContentLoaded', function () {
         resetHeroForm();
         renderDashboard();
         alert('Tampilan depan berhasil disimpan dan langsung aktif di beranda!');
-    });
-
-    document.getElementById('addPubForm')?.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (!isManager()) return;
-        const badge = document.getElementById('pubBadgeInput').value.trim();
-        const year = document.getElementById('pubYearInput').value.trim();
-        const pages = document.getElementById('pubPagesInput').value.trim();
-        const title = document.getElementById('pubTitleInput').value.trim();
-        const docUrl = document.getElementById('pubDocUrlInput').value.trim();
-        const coverImage = document.getElementById('pubCoverImageUrl').value.trim();
-        const summary = document.getElementById('pubSummaryInput').value.trim();
-        const editIdx = document.getElementById('editPubIdx').value;
-
-        const custom = getCustomData();
-        const pubs = getMergedPubs();
-        if (editIdx !== '') {
-            pubs[Number(editIdx)] = { ...pubs[Number(editIdx)], badge, year, pages, title, docUrl, coverImage, summary };
-            addAuditLog(`Mengedit Publikasi: "${title}"`);
-        } else {
-            pubs.unshift({
-                id: 'pub-' + Date.now(),
-                badge, title, year, pages, docUrl, coverImage,
-                gradient: 'linear-gradient(145deg, #005950 0%, #00a896 100%)',
-                summary
-            });
-            addAuditLog(`Menambahkan Publikasi: "${title}"`);
-        }
-        custom.publications = pubs;
-        saveCustomData(custom);
-        resetPubForm();
-        renderDashboard();
     });
 
     document.getElementById('addServiceForm')?.addEventListener('submit', function (e) {
@@ -980,7 +913,6 @@ document.addEventListener('DOMContentLoaded', function () {
             brandSubtitle: document.getElementById('metaBrandSubInput').value.trim(),
             secTitleLayanan: document.getElementById('metaTitleLayananInput').value.trim(),
             secTitleBerita: document.getElementById('metaTitleBeritaInput').value.trim(),
-            secTitlePublikasi: document.getElementById('metaTitlePubInput').value.trim(),
             secTitleProsedur: document.getElementById('metaTitleProcInput').value.trim(),
             footerMotto: document.getElementById('metaMottoInput').value.trim(),
             secretariatName: document.getElementById('metaSecInput').value.trim(),
@@ -1122,35 +1054,6 @@ document.addEventListener('DOMContentLoaded', function () {
             custom.heroSlides = slides;
             saveCustomData(custom);
             addAuditLog(`Menghapus Hero Slide: "${removed?.title || '-'}"`);
-            renderDashboard();
-            return;
-        }
-        const editPub = e.target.closest('.js-edit-pub');
-        if (editPub) {
-            const idx = Number(editPub.dataset.idx);
-            const p = getMergedPubs()[idx];
-            if (!p) return;
-            document.getElementById('editPubIdx').value = String(idx);
-            document.getElementById('pubBadgeInput').value = p.badge;
-            document.getElementById('pubYearInput').value = p.year;
-            document.getElementById('pubPagesInput').value = p.pages;
-            document.getElementById('pubTitleInput').value = p.title;
-            document.getElementById('pubDocUrlInput').value = p.docUrl || '';
-            document.getElementById('pubCoverImageUrl').value = p.coverImage || '';
-            document.getElementById('pubImgPreview').src = p.coverImage || 'assets/images/bg-nature-mist.svg';
-            document.getElementById('pubSummaryInput').value = p.summary;
-            document.getElementById('pubFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Publikasi';
-            document.getElementById('cancelPubEditBtn')?.classList.remove('d-none');
-            return;
-        }
-        const delPub = e.target.closest('.js-del-pub');
-        if (delPub) {
-            const pubs = getMergedPubs();
-            const removed = pubs.splice(Number(delPub.dataset.idx), 1)[0];
-            const custom = getCustomData();
-            custom.publications = pubs;
-            saveCustomData(custom);
-            addAuditLog(`Menghapus Publikasi: "${removed?.title || '-'}"`);
             renderDashboard();
             return;
         }
@@ -1358,7 +1261,6 @@ document.addEventListener('DOMContentLoaded', function () {
             services: getMergedServices(),
             videos: getMergedVideos(),
             news: getMergedNews(),
-            publications: getMergedPubs(),
             procedures: getMergedProcedures(),
             partners: getMergedPartners(),
             siteMeta: {

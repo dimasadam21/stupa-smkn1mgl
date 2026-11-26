@@ -250,7 +250,7 @@
                     <div class="stat-card d-flex align-items-center gap-3">
                         <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
                         <div>
-                            <div class="small text-muted">Layanan &amp; Modul</div>
+                            <div class="small text-muted">Layanan &amp; Video</div>
                             <div class="fs-4 fw-bold" id="statPubCount" style="color:#005950;">0</div>
                         </div>
                     </div>
@@ -281,7 +281,7 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pillHeroPub" data-bs-toggle="pill" data-bs-target="#tabHeroPub" type="button">
-                            <i class="fas fa-desktop me-1"></i> Tampilan Depan &amp; Publikasi
+                            <i class="fas fa-desktop me-1"></i> Tampilan Depan
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -428,30 +428,12 @@
                         </div>
                     </div>
 
-                    <!-- Tab 3: Tampilan Depan (Hero Banner) & Publikasi Modul -->
+                    <!-- Tab 3: Tampilan Depan (Hero Banner) -->
                     <div class="tab-pane fade" id="tabHeroPub">
                         <div class="row g-4">
-                            <div class="col-lg-7">
-                                <!-- Live Preview Tampilan Depan -->
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="small fw-bold text-uppercase" style="color:#005950;"><i class="fas fa-eye me-1"></i> Pratinjau Langsung Tampilan Depan</span>
-                                        <span class="badge rounded-pill text-bg-light border">Slide Hero Utama</span>
-                                    </div>
-                                    <div id="heroLivePreviewBox" class="position-relative rounded-4 overflow-hidden shadow-sm" style="height:250px;background:#002622;">
-                                        <img id="heroImgPreview" src="assets/images/hero-merbabu.jpg" alt="Pratinjau Tampilan Depan" style="width:100%;height:100%;object-fit:cover;object-position:center;">
-                                        <div id="heroPreviewOverlay" style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,26,23,0.92) 0%, rgba(0,35,31,0.5) 55%, rgba(0,0,0,0.15) 100%);"></div>
-                                        <div style="position:absolute;bottom:18px;left:22px;right:22px;color:#fff;z-index:2;">
-                                            <span id="heroPrevTag" class="badge rounded-pill mb-2" style="background:rgba(0,168,150,0.35);border:1px solid rgba(255,255,255,0.4);font-size:10px;">EKSPEDISI RISET &amp; KONSERVASI</span>
-                                            <h5 id="heroPrevTitle" class="fw-bold mb-1" style="line-height:1.25;">Meniti Kabut Merbabu: Pemetaan Vegetasi Endemik</h5>
-                                            <p id="heroPrevDesc" class="mb-2" style="font-size:12px;opacity:0.9;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">Ketika langkah kaki para pelajar teknik menyatu dengan denyut nadi pegunungan...</p>
-                                            <span id="heroPrevBtn" class="badge rounded-pill px-3 py-2" style="background:#F97910;font-size:11px;">Lihat detail &rarr;</span>
-                                        </div>
-                                    </div>
-                                </div>
-
+                            <div class="col-lg-6">
                                 <!-- Form Editor Tampilan Depan -->
-                                <div class="p-3 rounded-4 mb-3" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
+                                <div class="p-3 rounded-4" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <h6 class="fw-bold mb-0" id="heroFormHeading" style="color:#c85800;"><i class="fas fa-pen-ruler me-1"></i> Ganti Gambar &amp; Tulisan Tampilan Depan</h6>
                                         <button type="button" id="cancelHeroEditBtn" class="btn btn-link btn-sm p-0 text-danger d-none">Batal Edit</button>
@@ -532,42 +514,29 @@
                                         <button type="submit" id="heroSubmitBtn" class="btn btn-stupa btn-sm w-100">Simpan Tampilan Depan</button>
                                     </form>
                                 </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <!-- Live Preview Tampilan Depan -->
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="small fw-bold text-uppercase" style="color:#005950;"><i class="fas fa-eye me-1"></i> Pratinjau Langsung Tampilan Depan</span>
+                                        <span class="badge rounded-pill text-bg-light border">Slide Hero Utama</span>
+                                    </div>
+                                    <div id="heroLivePreviewBox" class="position-relative rounded-4 overflow-hidden shadow-sm" style="height:260px;background:#002622;">
+                                        <img id="heroImgPreview" src="assets/images/hero-merbabu.jpg" alt="Pratinjau Tampilan Depan" style="width:100%;height:100%;object-fit:cover;object-position:center;">
+                                        <div id="heroPreviewOverlay" style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,26,23,0.92) 0%, rgba(0,35,31,0.5) 55%, rgba(0,0,0,0.15) 100%);"></div>
+                                        <div style="position:absolute;bottom:18px;left:22px;right:22px;color:#fff;z-index:2;">
+                                            <span id="heroPrevTag" class="badge rounded-pill mb-2" style="background:rgba(0,168,150,0.35);border:1px solid rgba(255,255,255,0.4);font-size:10px;">EKSPEDISI RISET &amp; KONSERVASI</span>
+                                            <h5 id="heroPrevTitle" class="fw-bold mb-1" style="line-height:1.25;">Meniti Kabut Merbabu: Pemetaan Vegetasi Endemik</h5>
+                                            <p id="heroPrevDesc" class="mb-2" style="font-size:12px;opacity:0.9;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">Ketika langkah kaki para pelajar teknik menyatu dengan denyut nadi pegunungan...</p>
+                                            <span id="heroPrevBtn" class="badge rounded-pill px-3 py-2" style="background:#F97910;font-size:11px;">Lihat detail &rarr;</span>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <h6 class="fw-bold small text-uppercase text-muted">Urutan Slide Tampilan Depan (Slide #1 tampil paling awal)</h6>
                                 <div id="superHeroList" class="d-flex flex-column gap-2"></div>
-                            </div>
-
-                            <div class="col-lg-5">
-                                <div class="p-3 rounded-4 mb-3" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0" id="pubFormHeading" style="color:#005950;"><i class="fas fa-book-medical me-1"></i> Tambah / Edit Publikasi</h6>
-                                        <button type="button" id="cancelPubEditBtn" class="btn btn-link btn-sm p-0 text-danger d-none">Batal</button>
-                                    </div>
-                                    <form id="addPubForm">
-                                        <input type="hidden" id="editPubIdx">
-                                        <div class="row g-2 mb-2">
-                                            <div class="col-6">
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="pubBadgeInput" placeholder="Kategori (mis. Jurnal Riset)" required>
-                                            </div>
-                                            <div class="col-3">
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="pubYearInput" value="2026" required>
-                                            </div>
-                                            <div class="col-3">
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="pubPagesInput" value="40 Hal" required>
-                                            </div>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="pubTitleInput" placeholder="Judul modul atau publikasi..." required>
-                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="pubDocUrlInput" placeholder="Link PDF / Google Drive (opsional)">
-                                        <label class="form-label small fw-semibold mb-1">Gambar Sampul Buku (Opsional)</label>
-                                        <input type="text" class="form-control form-control-sm rounded-3 mb-1 js-img-url" id="pubCoverImageUrl" data-preview="pubImgPreview" placeholder="URL gambar sampul atau unggah file...">
-                                        <input type="file" accept="image/*" class="form-control form-control-sm rounded-3 mb-2 js-img-upload" data-target="pubCoverImageUrl" data-preview="pubImgPreview">
-                                        <img id="pubImgPreview" src="assets/images/bg-nature-mist.svg" alt="Sampul" class="img-preview-thumb mb-2" style="height:78px;">
-                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="pubSummaryInput" rows="2" placeholder="Ringkasan isi modul..." required></textarea>
-                                        <button type="submit" id="pubSubmitBtn" class="btn btn-teal btn-sm w-100">Simpan Publikasi</button>
-                                    </form>
-                                </div>
-                                <h6 class="fw-bold small text-uppercase text-muted">Katalog Publikasi Aktif</h6>
-                                <div id="superPubList" class="d-flex flex-column gap-2" style="max-height:280px;overflow-y:auto;"></div>
                             </div>
                         </div>
                     </div>
@@ -761,21 +730,15 @@
                                             </div>
                                         </div>
                                         <div class="row g-2 mb-2">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <label class="form-label small fw-semibold mb-1">Judul Seksi Layanan</label>
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleLayananInput">
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <label class="form-label small fw-semibold mb-1">Judul Seksi Berita</label>
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleBeritaInput">
                                             </div>
-                                        </div>
-                                        <div class="row g-2 mb-2">
-                                            <div class="col-6">
-                                                <label class="form-label small fw-semibold mb-1">Judul Seksi Publikasi</label>
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaTitlePubInput">
-                                            </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <label class="form-label small fw-semibold mb-1">Judul Seksi Prosedur</label>
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleProcInput">
                                             </div>
