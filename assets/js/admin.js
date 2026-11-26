@@ -221,13 +221,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Login Helpers
-    document.querySelectorAll('.js-fill-login').forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.getElementById('adminUsername').value = this.dataset.u;
-            pwdInput.value = this.dataset.p;
-        });
-    });
-
     togglePwdBtn?.addEventListener('click', function () {
         if (!pwdInput) return;
         const isPwd = pwdInput.type === 'password';
