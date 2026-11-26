@@ -47,15 +47,37 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Apply Dynamic Site Meta (Footer & Social Links)
+    // Apply Dynamic Site Meta (Header, Section Titles, Footer & Social Links)
     const meta = data.siteMeta || {};
     const setTxt = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+    setTxt('headerBrandSub', meta.brandSubtitle);
+    setTxt('secTitleLayanan', meta.secTitleLayanan);
+    setTxt('secLeadLayanan', meta.secLeadLayanan);
+    setTxt('secTitleBerita', meta.secTitleBerita);
+    setTxt('secTitlePublikasi', meta.secTitlePublikasi);
+    setTxt('secTitleProsedur', meta.secTitleProsedur);
     setTxt('footerMotto', meta.footerMotto);
     setTxt('footerSecretariatName', meta.secretariatName);
     setTxt('footerAddress1', meta.addressLine1);
     setTxt('footerAddress2', meta.addressLine2);
     setTxt('footerPhone', meta.phone);
     setTxt('footerCopyright', meta.copyright);
+    if (meta.brandTitle) {
+        const bt = document.getElementById('headerBrandTitle');
+        if (bt) bt.innerHTML = meta.brandTitle.replace(/\n/g, '<br>');
+    }
+    if (meta.logoSmk) {
+        const l1 = document.getElementById('headerLogoSmk');
+        const l2 = document.getElementById('footerLogoSmk');
+        if (l1) l1.src = meta.logoSmk;
+        if (l2) l2.src = meta.logoSmk;
+    }
+    if (meta.logoStupa) {
+        const s1 = document.getElementById('headerLogoStupa');
+        const s2 = document.getElementById('footerLogoStupa');
+        if (s1) s1.src = meta.logoStupa;
+        if (s2) s2.src = meta.logoStupa;
+    }
     const emailEl = document.getElementById('footerEmail');
     if (emailEl && meta.email) { emailEl.textContent = meta.email; emailEl.href = `mailto:${meta.email}`; }
     const setHref = (id, url) => { const el = document.getElementById(id); if (el && url) { el.href = url; if (url.startsWith('http')) el.target = '_blank'; } };
@@ -211,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const items = showAllPublikasi ? data.publications : data.publications.slice(0, 4);
         publikasiListEl.innerHTML = items.map((pub, idx) => `
             <div class="publikasi-card js-open-pub" role="button" tabindex="0" data-index="${idx}">
-                <div class="publikasi-cover" style="background: ${pub.gradient};">
+                <div class="publikasi-cover" style="${pub.coverImage ? `background: linear-gradient(to top, rgba(0,38,34,0.92), rgba(0,38,34,0.35)), url('${pub.coverImage}') center/cover;` : `background: ${pub.gradient};`}">
                     <span class="publikasi-cover-badge">${pub.badge}</span>
                     <h4 class="publikasi-cover-title">${pub.title}</h4>
                     <div class="publikasi-cover-foot">
@@ -314,9 +336,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     <h4 class="fw-bold mb-2" style="color:#005950;">${pub.title}</h4>
                     <p class="text-muted small mb-3">${pub.year} • ${pub.pages} • Penerbitan Internal STUPA SMKN 1 Magelang</p>
                     <p class="lh-lg mb-4">${pub.summary}</p>
-                    <button type="button" class="btn custom-btn js-download-pub" data-title="${pub.title}">
-                        <i class="fas fa-file-arrow-down"></i> Unduh Ringkasan Modul (.txt)
-                    </button>
+                    <div class="d-flex flex-wrap gap-2">
+                        ${pub.docUrl ? `<a href="${pub.docUrl}" target="_blank" class="btn custom-btn"><i class="fas fa-external-link-alt"></i> Buka Dokumen</a>` : ''}
+                        <button type="button" class="btn custom-btn js-download-pub" data-title="${pub.title}">
+                            <i class="fas fa-file-arrow-down"></i> Unduh Ringkasan (.txt)
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -327,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const vid = data.videos[idx];
         if (!vid || !detailModal) return;
         detailTitle.textContent = 'Dokumentasi Visual STUPA';
-        detailBody.innerHTML = `
+        let playerHtml = `
             <div class="position-relative rounded-4 overflow-hidden mb-3 bg-dark">
                 <img src="${vid.thumb}" alt="${vid.title}" class="img-fluid w-100" style="max-height:360px;object-fit:cover;opacity:0.82;">
                 <div class="position-absolute top-50 start-50 translate-middle text-center text-white px-3">
@@ -338,11 +363,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     <span class="badge bg-dark bg-opacity-75 px-3 py-2 rounded-pill">Pratinjau Dokumenter Lapangan</span>
                 </div>
             </div>
+        `;
+        if (vid.videoUrl) {
+            const ytMatch = vid.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+            if (ytMatch) {
+                playerHtml = `<div class="ratio ratio-16x9 rounded-4 overflow-hidden mb-3"><iframe src="https://www.youtube.com/embed/${ytMatch[1]}" title="${vid.title}" allowfullscreen></iframe></div>`;
+            } else {
+                playerHtml = `<video controls class="w-100 rounded-4 mb-3" style="max-height:380px;" poster="${vid.thumb}"><source src="${vid.videoUrl}"></video>`;
+            }
+        }
+        detailBody.innerHTML = `
+            ${playerHtml}
             <h4 class="fw-bold mb-2" style="color:#005950;">${vid.title}</h4>
             <p class="text-muted small mb-3"><i class="far fa-clock me-1"></i>${vid.date}</p>
             <p class="lh-lg mb-3">${vid.summary}</p>
             <div class="d-flex flex-wrap gap-2">
-                ${vid.highlights.map(h => `<span class="badge rounded-pill text-bg-light border px-3 py-2">${h}</span>`).join('')}
+                ${(vid.highlights || []).map(h => `<span class="badge rounded-pill text-bg-light border px-3 py-2">${h}</span>`).join('')}
             </div>
         `;
         detailModal.show();

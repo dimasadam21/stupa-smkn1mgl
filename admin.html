@@ -140,6 +140,14 @@
             background: rgba(255, 255, 255, 0.25);
             color: #ffffff;
         }
+        .img-preview-thumb {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 89, 82, 0.18);
+            background: #eef6f4;
+        }
     </style>
 </head>
 <body>
@@ -150,7 +158,7 @@
                 <img src="assets/images/logo-smkn1.png" alt="Logo SMKN 1 Magelang">
                 <img src="assets/images/logo-stupa.png" alt="Logo STUPA">
                 <div>
-                    <div class="fw-bold" style="font-size:15px;">Portal Manajemen STUPA</div>
+                    <div class="fw-bold" style="font-size:15px;">Portal Pengelolaan Web STUPA</div>
                     <div style="font-size:11.5px;opacity:0.88;">Siswa Siswi Teknik Satu Pecinta Alam • SMKN 1 Magelang</div>
                 </div>
             </a>
@@ -177,7 +185,7 @@
                             <img src="assets/images/logo-stupa.png" alt="STUPA" style="height:56px;">
                         </div>
                         <h3 class="fw-bold mb-1" style="color:#005950;">Masuk Admin &amp; Super Admin</h3>
-                        <p class="small text-muted mb-0">Kelola seluruh konten web, layanan, modul, pengguna, dan tata letak STUPA.</p>
+                        <p class="small text-muted mb-0">Tambah, ubah, unggah gambar, dan kelola seluruh konten web STUPA SMKN 1 Magelang.</p>
                     </div>
 
                     <div id="loginAlert" class="alert alert-danger py-2 small d-none" role="alert"></div>
@@ -204,11 +212,11 @@
                     <div class="mt-4 p-3 rounded-4 small" style="background:#f3faf8;border:1px dashed rgba(0,89,82,0.28);">
                         <div class="fw-semibold mb-2" style="color:#005950;"><i class="fas fa-key me-1"></i> Akun Bawaan Sistem:</div>
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span><strong>Admin:</strong> <code>admin</code> / <code>stupa2026</code></span>
+                            <span><strong>Admin (Kelola Web):</strong> <code>admin</code> / <code>stupa2026</code></span>
                             <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none js-fill-login" data-u="admin" data-p="stupa2026">Isi</button>
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span><strong>Super Admin:</strong> <code>superadmin</code> / <code>stupasuper2026</code></span>
+                            <span><strong>Super Admin (Web + Sistem):</strong> <code>superadmin</code> / <code>stupasuper2026</code></span>
                             <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none text-warning fw-semibold js-fill-login" data-u="superadmin" data-p="stupasuper2026">Isi</button>
                         </div>
                     </div>
@@ -258,7 +266,7 @@
                 </div>
             </div>
 
-            <!-- Navigation Tabs -->
+            <!-- Navigation Tabs (Semua Pengelolaan Web tersedia untuk Admin & Super Admin) -->
             <div class="admin-card p-3 p-md-4">
                 <ul class="nav nav-pills gap-2 mb-4" id="adminTabs" role="tablist">
                     <li class="nav-item" role="presentation">
@@ -272,27 +280,22 @@
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pillSettings" data-bs-toggle="pill" data-bs-target="#tabSettings" type="button">
-                            <i class="fas fa-bullhorn me-1"></i> Running Text
+                        <button class="nav-link" id="pillHeroPub" data-bs-toggle="pill" data-bs-target="#tabHeroPub" type="button">
+                            <i class="fas fa-images me-1"></i> Hero &amp; Publikasi
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pillLayananVideo" data-bs-toggle="pill" data-bs-target="#tabSuperLayananVideo" type="button">
+                            <i class="fas fa-cubes me-1"></i> Layanan &amp; Video
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pillSuperWeb" data-bs-toggle="pill" data-bs-target="#tabSuperWeb" type="button">
+                            <i class="fas fa-globe me-1"></i> Identitas, Teks &amp; Mitra
                         </button>
                     </li>
 
-                    <!-- Exclusive Super Admin Tabs -->
-                    <li class="nav-item super-only d-none" role="presentation">
-                        <button class="nav-link super-tab" id="pillHeroPub" data-bs-toggle="pill" data-bs-target="#tabHeroPub" type="button">
-                            <i class="fas fa-crown me-1"></i> Hero &amp; Publikasi <span class="super-badge">Super</span>
-                        </button>
-                    </li>
-                    <li class="nav-item super-only d-none" role="presentation">
-                        <button class="nav-link super-tab" id="pillLayananVideo" data-bs-toggle="pill" data-bs-target="#tabSuperLayananVideo" type="button">
-                            <i class="fas fa-cubes me-1"></i> Layanan &amp; Video <span class="super-badge">Super</span>
-                        </button>
-                    </li>
-                    <li class="nav-item super-only d-none" role="presentation">
-                        <button class="nav-link super-tab" id="pillSuperWeb" data-bs-toggle="pill" data-bs-target="#tabSuperWeb" type="button">
-                            <i class="fas fa-globe me-1"></i> Prosedur, Mitra &amp; Web <span class="super-badge">Super</span>
-                        </button>
-                    </li>
+                    <!-- Exclusive Super Admin System Controls -->
                     <li class="nav-item super-only d-none" role="presentation">
                         <button class="nav-link super-tab" id="pillSuperUsers" data-bs-toggle="pill" data-bs-target="#tabSuperUsers" type="button">
                             <i class="fas fa-users-gear me-1"></i> Akun &amp; Seksi <span class="super-badge">Super</span>
@@ -334,7 +337,7 @@
                         </div>
                     </div>
 
-                    <!-- Tab 2: Kelola Berita & Agenda (Tambah / Edit / Hapus) -->
+                    <!-- Tab 2: Kelola Berita & Agenda (Tambah / Edit / Hapus + Upload Gambar) -->
                     <div class="tab-pane fade" id="tabNews">
                         <div class="row g-4">
                             <div class="col-lg-5">
@@ -348,7 +351,7 @@
                                         <input type="hidden" id="editNewsIdx">
                                         <div class="mb-2">
                                             <label class="form-label small fw-semibold">Kategori</label>
-                                            <select class="form-select rounded-3" id="newsCatInput">
+                                            <select class="form-select form-select-sm rounded-3" id="newsCatInput">
                                                 <option value="berita">Berita</option>
                                                 <option value="ekspedisi">Ekspedisi</option>
                                                 <option value="pengumuman">Pengumuman</option>
@@ -358,26 +361,29 @@
                                         </div>
                                         <div class="mb-2">
                                             <label class="form-label small fw-semibold">Judul</label>
-                                            <input type="text" class="form-control rounded-3" id="newsTitleInput" placeholder="Judul berita atau agenda..." required>
+                                            <input type="text" class="form-control form-control-sm rounded-3" id="newsTitleInput" placeholder="Judul berita atau agenda..." required>
                                         </div>
                                         <div class="mb-2">
-                                            <label class="form-label small fw-semibold">Foto Ilustrasi</label>
-                                            <select class="form-select rounded-3" id="newsImageInput">
-                                                <option value="assets/images/hero-merbabu.jpg">Pendakian Lereng Merbabu</option>
-                                                <option value="assets/images/hero-konservasi.jpg">Konservasi &amp; Tanam Pohon</option>
-                                                <option value="assets/images/hero-diklatsar.jpg">Kamp &amp; Navigasi Diklatsar</option>
-                                                <option value="assets/images/news-tebing.jpg">Latihan Vertical Rescue</option>
-                                                <option value="assets/images/news-kampus-hijau.jpg">Eco-Garden &amp; Stasiun Cuaca</option>
-                                                <option value="assets/images/video-bg-danau.jpg">Danau &amp; Lembah Pegunungan</option>
+                                            <label class="form-label small fw-semibold">Gambar (Preset / Upload / URL)</label>
+                                            <select class="form-select form-select-sm rounded-3 mb-2 js-img-preset" data-target="newsImageUrl" data-preview="newsImgPreview">
+                                                <option value="assets/images/hero-merbabu.jpg">Preset: Pendakian Lereng Merbabu</option>
+                                                <option value="assets/images/hero-konservasi.jpg">Preset: Konservasi &amp; Tanam Pohon</option>
+                                                <option value="assets/images/hero-diklatsar.jpg">Preset: Kamp &amp; Navigasi Diklatsar</option>
+                                                <option value="assets/images/news-tebing.jpg">Preset: Latihan Vertical Rescue</option>
+                                                <option value="assets/images/news-kampus-hijau.jpg">Preset: Eco-Garden &amp; Stasiun Cuaca</option>
+                                                <option value="assets/images/video-bg-danau.jpg">Preset: Danau &amp; Lembah Pegunungan</option>
                                             </select>
+                                            <input type="text" class="form-control form-control-sm rounded-3 mb-2 js-img-url" id="newsImageUrl" value="assets/images/hero-merbabu.jpg" data-preview="newsImgPreview" placeholder="Atau tempel URL gambar..." required>
+                                            <input type="file" accept="image/*" class="form-control form-control-sm rounded-3 mb-2 js-img-upload" data-target="newsImageUrl" data-preview="newsImgPreview">
+                                            <img id="newsImgPreview" src="assets/images/hero-merbabu.jpg" alt="Pratinjau gambar" class="img-preview-thumb">
                                         </div>
                                         <div class="mb-2">
                                             <label class="form-label small fw-semibold">Ringkasan Singkat</label>
-                                            <textarea class="form-control rounded-3" id="newsExcerptInput" rows="2" placeholder="Ringkasan 1-2 kalimat..." required></textarea>
+                                            <textarea class="form-control form-control-sm rounded-3" id="newsExcerptInput" rows="2" placeholder="Ringkasan 1-2 kalimat..." required></textarea>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label small fw-semibold">Isi Lengkap</label>
-                                            <textarea class="form-control rounded-3" id="newsContentInput" rows="4" placeholder="Tulis narasi lengkap..." required></textarea>
+                                            <textarea class="form-control form-control-sm rounded-3" id="newsContentInput" rows="4" placeholder="Tulis narasi lengkap..." required></textarea>
                                         </div>
                                         <button type="submit" id="newsSubmitBtn" class="btn btn-teal w-100">
                                             <i class="fas fa-paper-plane me-1"></i> Simpan &amp; Tampilkan di Beranda
@@ -386,46 +392,19 @@
                                 </div>
                             </div>
                             <div class="col-lg-7">
-                                <h6 class="fw-bold mb-3" style="color:#005950;">Daftar Konten Aktif (Klik Edit / Hapus)</h6>
-                                <div id="adminNewsList" class="d-flex flex-column gap-2" style="max-height:500px;overflow-y:auto;"></div>
+                                <h6 class="fw-bold mb-3" style="color:#005950;">Daftar Konten Aktif (Edit / Hapus)</h6>
+                                <div id="adminNewsList" class="d-flex flex-column gap-2" style="max-height:560px;overflow-y:auto;"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tab 3: Running Text & Sandi -->
-                    <div class="tab-pane fade" id="tabSettings">
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.12);">
-                                    <h6 class="fw-bold mb-2" style="color:#005950;">Ubah Teks Berjalan (Running Text)</h6>
-                                    <form id="runningTextForm">
-                                        <textarea class="form-control rounded-3 mb-3" id="runningTextInput" rows="3"></textarea>
-                                        <button type="submit" class="btn btn-stupa">Simpan Teks Berjalan</button>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 rounded-4 mb-3 super-only d-none" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.12);">
-                                    <h6 class="fw-bold mb-2" style="color:#005950;">Ganti Kata Sandi Akun Aktif</h6>
-                                    <form id="changePwdForm" class="d-flex gap-2">
-                                        <input type="password" class="form-control rounded-3" id="newAdminPwd" placeholder="Sandi baru (min. 6 karakter)" minlength="6" required>
-                                        <button type="submit" class="btn btn-teal text-nowrap">Perbarui</button>
-                                    </form>
-                                </div>
-                                <div class="p-3 rounded-4 border border-info-subtle bg-info-subtle bg-opacity-10" id="nonSuperNotice">
-                                    <div class="small"><i class="fas fa-lock me-1 text-warning"></i> Mode <strong>Admin</strong> dibatasi khusus untuk mengelola konten web (Kotak Masuk, Berita/Agenda, dan Running Text). Masuk sebagai <strong>Super Admin</strong> untuk menambah, mengurangi, dan mengelola struktur web, akun, sandi, log, serta ekspor permanen.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tab 4 (SUPER ADMIN): Hero Carousel & Publikasi Modul -->
-                    <div class="tab-pane fade super-only d-none" id="tabHeroPub">
+                    <!-- Tab 3: Hero Carousel & Publikasi Modul -->
+                    <div class="tab-pane fade" id="tabHeroPub">
                         <div class="row g-4">
                             <div class="col-lg-6">
                                 <div class="p-3 rounded-4 mb-3" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0" id="heroFormHeading" style="color:#c85800;"><i class="fas fa-images me-1"></i> Tambah Slide Hero</h6>
+                                        <h6 class="fw-bold mb-0" id="heroFormHeading" style="color:#c85800;"><i class="fas fa-images me-1"></i> Tambah / Edit Slide Hero</h6>
                                         <button type="button" id="cancelHeroEditBtn" class="btn btn-link btn-sm p-0 text-danger d-none">Batal</button>
                                     </div>
                                     <form id="addHeroForm">
@@ -435,16 +414,19 @@
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="heroTagInput" placeholder="Tag (mis. Ekspedisi)" required>
                                             </div>
                                             <div class="col-6">
-                                                <select class="form-select form-select-sm rounded-3" id="heroImageInput">
-                                                    <option value="assets/images/hero-merbabu.jpg">Foto Merbabu</option>
-                                                    <option value="assets/images/hero-diklatsar.jpg">Foto Diklatsar</option>
-                                                    <option value="assets/images/hero-konservasi.jpg">Foto Konservasi</option>
-                                                    <option value="assets/images/video-bg-danau.jpg">Foto Telaga Dawn</option>
-                                                    <option value="assets/images/news-tebing.jpg">Foto Vertical Rescue</option>
-                                                    <option value="assets/images/news-kampus-hijau.jpg">Foto Eco-Garden</option>
+                                                <select class="form-select form-select-sm rounded-3 js-img-preset" data-target="heroImageUrl" data-preview="heroImgPreview">
+                                                    <option value="assets/images/hero-merbabu.jpg">Preset: Merbabu</option>
+                                                    <option value="assets/images/hero-diklatsar.jpg">Preset: Diklatsar</option>
+                                                    <option value="assets/images/hero-konservasi.jpg">Preset: Konservasi</option>
+                                                    <option value="assets/images/video-bg-danau.jpg">Preset: Telaga Dawn</option>
+                                                    <option value="assets/images/news-tebing.jpg">Preset: Tebing</option>
+                                                    <option value="assets/images/news-kampus-hijau.jpg">Preset: Eco-Garden</option>
                                                 </select>
                                             </div>
                                         </div>
+                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2 js-img-url" id="heroImageUrl" value="assets/images/hero-merbabu.jpg" data-preview="heroImgPreview" placeholder="URL gambar atau unggah file di bawah..." required>
+                                        <input type="file" accept="image/*" class="form-control form-control-sm rounded-3 mb-2 js-img-upload" data-target="heroImageUrl" data-preview="heroImgPreview">
+                                        <img id="heroImgPreview" src="assets/images/hero-merbabu.jpg" alt="Pratinjau Hero" class="img-preview-thumb mb-2">
                                         <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="heroTitleInput" placeholder="Judul utama hero..." required>
                                         <textarea class="form-control form-control-sm rounded-3 mb-2" id="heroDescInput" rows="2" placeholder="Subjudul puitis akademis..." required></textarea>
                                         <button type="submit" id="heroSubmitBtn" class="btn btn-stupa btn-sm w-100">Simpan Slide Hero</button>
@@ -457,7 +439,7 @@
                             <div class="col-lg-6">
                                 <div class="p-3 rounded-4 mb-3" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0" id="pubFormHeading" style="color:#005950;"><i class="fas fa-book-medical me-1"></i> Tambah Publikasi &amp; Modul</h6>
+                                        <h6 class="fw-bold mb-0" id="pubFormHeading" style="color:#005950;"><i class="fas fa-book-medical me-1"></i> Tambah / Edit Publikasi</h6>
                                         <button type="button" id="cancelPubEditBtn" class="btn btn-link btn-sm p-0 text-danger d-none">Batal</button>
                                     </div>
                                     <form id="addPubForm">
@@ -474,20 +456,24 @@
                                             </div>
                                         </div>
                                         <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="pubTitleInput" placeholder="Judul modul atau publikasi..." required>
+                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="pubDocUrlInput" placeholder="Link PDF / Google Drive (opsional)">
+                                        <label class="form-label small fw-semibold mb-1">Gambar Sampul Buku (Opsional)</label>
+                                        <input type="text" class="form-control form-control-sm rounded-3 mb-1 js-img-url" id="pubCoverImageUrl" data-preview="pubImgPreview" placeholder="URL gambar sampul atau unggah file...">
+                                        <input type="file" accept="image/*" class="form-control form-control-sm rounded-3 mb-2 js-img-upload" data-target="pubCoverImageUrl" data-preview="pubImgPreview">
+                                        <img id="pubImgPreview" src="assets/images/bg-nature-mist.svg" alt="Sampul" class="img-preview-thumb mb-2" style="height:78px;">
                                         <textarea class="form-control form-control-sm rounded-3 mb-2" id="pubSummaryInput" rows="2" placeholder="Ringkasan isi modul..." required></textarea>
                                         <button type="submit" id="pubSubmitBtn" class="btn btn-teal btn-sm w-100">Simpan Publikasi</button>
                                     </form>
                                 </div>
                                 <h6 class="fw-bold small text-uppercase text-muted">Katalog Publikasi Aktif</h6>
-                                <div id="superPubList" class="d-flex flex-column gap-2" style="max-height:300px;overflow-y:auto;"></div>
+                                <div id="superPubList" class="d-flex flex-column gap-2" style="max-height:280px;overflow-y:auto;"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tab 5 (SUPER ADMIN): Kelola Layanan & Video Dokumenter -->
-                    <div class="tab-pane fade super-only d-none" id="tabSuperLayananVideo">
+                    <!-- Tab 4: Kelola Layanan & Video Dokumenter -->
+                    <div class="tab-pane fade" id="tabSuperLayananVideo">
                         <div class="row g-4">
-                            <!-- Layanan CRUD -->
                             <div class="col-lg-6">
                                 <div class="p-3 rounded-4 mb-3" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -529,7 +515,6 @@
                                 <div id="superServicesList" class="d-flex flex-column gap-2" style="max-height:290px;overflow-y:auto;"></div>
                             </div>
 
-                            <!-- Video CRUD -->
                             <div class="col-lg-6">
                                 <div class="p-3 rounded-4 mb-3" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -544,33 +529,46 @@
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="vidDateInput" placeholder="Tanggal / Keterangan" required>
                                             </div>
                                             <div class="col-6">
-                                                <select class="form-select form-select-sm rounded-3" id="vidThumbInput">
-                                                    <option value="assets/images/video-bg-danau.jpg">Thumbnail Danau</option>
-                                                    <option value="assets/images/news-tebing.jpg">Thumbnail Tebing</option>
-                                                    <option value="assets/images/news-kampus-hijau.jpg">Thumbnail Eco-Garden</option>
-                                                    <option value="assets/images/hero-diklatsar.jpg">Thumbnail Diklatsar</option>
-                                                    <option value="assets/images/hero-merbabu.jpg">Thumbnail Merbabu</option>
-                                                    <option value="assets/images/hero-konservasi.jpg">Thumbnail Konservasi</option>
+                                                <select class="form-select form-select-sm rounded-3 js-img-preset" data-target="vidThumbUrl" data-preview="vidImgPreview">
+                                                    <option value="assets/images/video-bg-danau.jpg">Preset: Danau</option>
+                                                    <option value="assets/images/news-tebing.jpg">Preset: Tebing</option>
+                                                    <option value="assets/images/news-kampus-hijau.jpg">Preset: Eco-Garden</option>
+                                                    <option value="assets/images/hero-diklatsar.jpg">Preset: Diklatsar</option>
+                                                    <option value="assets/images/hero-merbabu.jpg">Preset: Merbabu</option>
+                                                    <option value="assets/images/hero-konservasi.jpg">Preset: Konservasi</option>
                                                 </select>
                                             </div>
                                         </div>
+                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="vidUrlInput" placeholder="Link YouTube atau Video MP4 (opsional)">
+                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2 js-img-url" id="vidThumbUrl" value="assets/images/video-bg-danau.jpg" data-preview="vidImgPreview" placeholder="URL thumbnail atau unggah gambar..." required>
+                                        <input type="file" accept="image/*" class="form-control form-control-sm rounded-3 mb-2 js-img-upload" data-target="vidThumbUrl" data-preview="vidImgPreview">
+                                        <img id="vidImgPreview" src="assets/images/video-bg-danau.jpg" alt="Pratinjau Video" class="img-preview-thumb mb-2" style="height:82px;">
                                         <textarea class="form-control form-control-sm rounded-3 mb-2" id="vidSummaryInput" rows="2" placeholder="Ringkasan cerita dokumenter..." required></textarea>
                                         <button type="submit" id="vidSubmitBtn" class="btn btn-teal btn-sm w-100">Simpan Video</button>
                                     </form>
                                 </div>
-                                <h6 class="fw-bold small text-uppercase text-muted">Daftar Video (Item ke-1 jadi Video Utama)</h6>
-                                <div id="superVideosList" class="d-flex flex-column gap-2" style="max-height:290px;overflow-y:auto;"></div>
+                                <h6 class="fw-bold small text-uppercase text-muted">Daftar Video (Item ke-1 = Video Utama)</h6>
+                                <div id="superVideosList" class="d-flex flex-column gap-2" style="max-height:260px;overflow-y:auto;"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tab 6 (SUPER ADMIN): Prosedur, Mitra & Identitas Web -->
-                    <div class="tab-pane fade super-only d-none" id="tabSuperWeb">
+                    <!-- Tab 5: Identitas, Logo, Teks Berjalan, Judul Seksi, Prosedur & Mitra -->
+                    <div class="tab-pane fade" id="tabSuperWeb">
                         <div class="row g-4">
-                            <!-- Mitra & Prosedur -->
                             <div class="col-lg-6">
+                                <!-- Running Text -->
                                 <div class="p-3 rounded-4 mb-3" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
-                                    <h6 class="fw-bold mb-2" style="color:#c85800;"><i class="fas fa-handshake me-1"></i> Tambah Mitra &amp; Jejaring</h6>
+                                    <h6 class="fw-bold mb-2" style="color:#c85800;"><i class="fas fa-bullhorn me-1"></i> Teks Berjalan (Running Text)</h6>
+                                    <form id="runningTextForm">
+                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="runningTextInput" rows="2"></textarea>
+                                        <button type="submit" class="btn btn-stupa btn-sm">Simpan Running Text</button>
+                                    </form>
+                                </div>
+
+                                <!-- Mitra -->
+                                <div class="p-3 rounded-4 mb-3" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
+                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-handshake me-1"></i> Tambah / Hapus Mitra &amp; Jejaring</h6>
                                     <form id="addPartnerForm" class="row g-2 mb-2">
                                         <div class="col-6">
                                             <input type="text" class="form-control form-control-sm rounded-3" id="partnerLabelInput" placeholder="Nama Mitra (mis. PMI Magelang)" required>
@@ -587,28 +585,71 @@
                                             </select>
                                         </div>
                                         <div class="col-2">
-                                            <button type="submit" class="btn btn-stupa btn-sm w-100">+</button>
+                                            <button type="submit" class="btn btn-teal btn-sm w-100">+</button>
                                         </div>
                                     </form>
                                     <div id="superPartnersList" class="d-flex flex-wrap gap-2 mt-2"></div>
                                 </div>
 
+                                <!-- Prosedur -->
                                 <div class="p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
-                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-list-check me-1"></i> Tambah Kartu Prosedur</h6>
+                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-list-check me-1"></i> Tambah / Hapus Kartu Prosedur</h6>
                                     <form id="addProcedureForm">
-                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="procBadgeInput" placeholder="Judul Kartu Prosedur (mis. Izin Penelitian)" required>
-                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="procStepsInput" rows="3" placeholder="Tulis langkah per baris format: Judul Langkah | Penjelasan singkat" required></textarea>
+                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="procBadgeInput" placeholder="Judul Kartu Prosedur" required>
+                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="procStepsInput" rows="3" placeholder="Format per baris: Judul Langkah | Penjelasan singkat" required></textarea>
                                         <button type="submit" class="btn btn-teal btn-sm w-100">Tambah Kartu Prosedur</button>
                                     </form>
                                     <div id="superProceduresList" class="d-flex flex-column gap-2 mt-3"></div>
                                 </div>
                             </div>
 
-                            <!-- Identitas, Kontak & Sosmed -->
+                            <!-- Identitas, Logo, Judul Seksi, Kontak & Sosmed -->
                             <div class="col-lg-6">
                                 <div class="p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
-                                    <h6 class="fw-bold mb-3" style="color:#005950;"><i class="fas fa-address-card me-1"></i> Edit Identitas, Kontak, Sosmed &amp; Footer</h6>
+                                    <h6 class="fw-bold mb-3" style="color:#005950;"><i class="fas fa-address-card me-1"></i> Identitas, Logo, Judul Seksi &amp; Kontak</h6>
                                     <form id="siteMetaForm">
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Upload Logo Kiri (SMK)</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3 mb-1" id="metaLogoSmkInput" placeholder="assets/images/logo-smkn1.png">
+                                                <input type="file" accept="image/*" class="form-control form-control-sm rounded-3 js-img-upload" data-target="metaLogoSmkInput" data-preview="metaLogoSmkPrev">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Upload Logo Kanan (STUPA)</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3 mb-1" id="metaLogoStupaInput" placeholder="assets/images/logo-stupa.png">
+                                                <input type="file" accept="image/*" class="form-control form-control-sm rounded-3 js-img-upload" data-target="metaLogoStupaInput" data-preview="metaLogoStupaPrev">
+                                            </div>
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Judul Header</label>
+                                                <textarea class="form-control form-control-sm rounded-3" id="metaBrandTitleInput" rows="2"></textarea>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Subjudul Header</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaBrandSubInput">
+                                            </div>
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Judul Seksi Layanan</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleLayananInput">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Judul Seksi Berita</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleBeritaInput">
+                                            </div>
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Judul Seksi Publikasi</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaTitlePubInput">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Judul Seksi Prosedur</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleProcInput">
+                                            </div>
+                                        </div>
                                         <div class="mb-2">
                                             <label class="form-label small fw-semibold mb-1">Motto Footer</label>
                                             <input type="text" class="form-control form-control-sm rounded-3" id="metaMottoInput" required>
@@ -655,14 +696,14 @@
                                             <label class="form-label small fw-semibold mb-1">Teks Copyright</label>
                                             <input type="text" class="form-control form-control-sm rounded-3" id="metaCopyInput" required>
                                         </div>
-                                        <button type="submit" class="btn btn-teal w-100">Simpan Identitas &amp; Kontak Web</button>
+                                        <button type="submit" class="btn btn-teal w-100">Simpan Identitas, Logo &amp; Teks Web</button>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tab 7 (SUPER ADMIN): Manajemen Akun & Visibilitas Seksi -->
+                    <!-- Tab 6 (SUPER ADMIN): Manajemen Akun, Sandi & Visibilitas Seksi -->
                     <div class="tab-pane fade super-only d-none" id="tabSuperUsers">
                         <div class="row g-4">
                             <div class="col-lg-7">
@@ -677,8 +718,8 @@
                                         </div>
                                         <div class="col-md-4">
                                             <select class="form-select form-select-sm rounded-3" id="newUserRole">
-                                                <option value="admin">Admin (Pengurus)</option>
-                                                <option value="superadmin">Super Admin (Pembina)</option>
+                                                <option value="admin">Admin (Kelola Web)</option>
+                                                <option value="superadmin">Super Admin (Web + Sistem)</option>
                                             </select>
                                         </div>
                                         <div class="col-md-8">
@@ -687,6 +728,14 @@
                                         <div class="col-md-4">
                                             <button type="submit" class="btn btn-stupa btn-sm w-100">Buat Akun</button>
                                         </div>
+                                    </form>
+                                </div>
+
+                                <div class="p-3 rounded-4 mb-3" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.15);">
+                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-key me-1"></i> Ganti Sandi Akun Aktif</h6>
+                                    <form id="changePwdForm" class="d-flex gap-2">
+                                        <input type="password" class="form-control form-control-sm rounded-3" id="newAdminPwd" placeholder="Sandi baru (min. 6 karakter)" minlength="6" required>
+                                        <button type="submit" class="btn btn-teal btn-sm text-nowrap">Perbarui</button>
                                     </form>
                                 </div>
 
@@ -717,7 +766,7 @@
                         </div>
                     </div>
 
-                    <!-- Tab 8 (SUPER ADMIN): Audit Log, Backup & Ekspor Permanen -->
+                    <!-- Tab 7 (SUPER ADMIN): Audit Log, Backup & Ekspor Permanen -->
                     <div class="tab-pane fade super-only d-none" id="tabAuditBackup">
                         <div class="row g-4">
                             <div class="col-lg-7">

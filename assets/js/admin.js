@@ -1,5 +1,5 @@
 /* ==========================================================================
-   STUPA SMKN 1 Magelang - Portal Admin & Super Admin Logic
+   STUPA SMKN 1 Magelang - Portal Pengelolaan Web (Admin & Super Admin)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const DEFAULT_ACCOUNTS = [
         { username: 'superadmin', password: 'stupasuper2026', role: 'superadmin', displayName: 'Pembina / Super Admin STUPA', active: true },
-        { username: 'admin', password: 'stupa2026', role: 'admin', displayName: 'Pengurus Harian STUPA', active: true }
+        { username: 'admin', password: 'stupa2026', role: 'admin', displayName: 'Pengelola Web STUPA', active: true }
     ];
 
     const SECTIONS_META = [
@@ -45,6 +45,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const saveCustomData = obj => localStorage.setItem(CUSTOM_KEY, JSON.stringify(obj));
     const getSubmissions = () => { try { return JSON.parse(localStorage.getItem(SUB_KEY) || '[]'); } catch { return []; } };
     const getAuditLogs = () => { try { return JSON.parse(localStorage.getItem(LOGS_KEY) || '[]'); } catch { return []; } };
+
+    function isManager() {
+        const role = getSession()?.role;
+        return role === 'admin' || role === 'superadmin';
+    }
+
+    function isSuperAdmin() {
+        return getSession()?.role === 'superadmin';
+    }
 
     function addAuditLog(action) {
         const sess = getSession();
@@ -84,6 +93,83 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     const getMergedSiteMeta = () => ({ ...(window.STUPA_DATA?.siteMeta || {}), ...(getCustomData().siteMeta || {}) });
 
+    // Image Compression & Preview Helpers (Preset + URL + File Upload)
+    function compressImageToDataUrl(file, maxWidth = 1280, quality = 0.82) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const img = new Image();
+                img.onload = function () {
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxWidth) {
+                        h = Math.round((h * maxWidth) / w);
+                        w = maxWidth;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const isPng = file.type === 'image/png';
+                    resolve(canvas.toDataURL(isPng ? 'image/png' : 'image/jpeg', quality));
+                };
+                img.onerror = reject;
+                img.src = String(reader.result);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    document.addEventListener('change', async function (e) {
+        if (e.target.classList.contains('js-img-preset')) {
+            const targetEl = document.getElementById(e.target.dataset.target);
+            const prevEl = document.getElementById(e.target.dataset.preview);
+            if (targetEl) targetEl.value = e.target.value;
+            if (prevEl) prevEl.src = e.target.value;
+        }
+        if (e.target.classList.contains('js-img-upload')) {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            try {
+                const isLogo = e.target.dataset.target?.startsWith('metaLogo');
+                const dataUrl = await compressImageToDataUrl(file, isLogo ? 400 : 1280, 0.84);
+                const targetEl = document.getElementById(e.target.dataset.target);
+                const prevEl = document.getElementById(e.target.dataset.preview);
+                if (targetEl) targetEl.value = dataUrl;
+                if (prevEl) prevEl.src = dataUrl;
+            } catch {
+                alert('Gagal memproses file gambar.');
+            }
+        }
+        if (e.target.classList.contains('js-sub-status')) {
+            const list = getSubmissions();
+            const idx = Number(e.target.dataset.idx);
+            if (list[idx]) {
+                list[idx].status = e.target.value;
+                localStorage.setItem(SUB_KEY, JSON.stringify(list));
+                addAuditLog(`Mengubah status "${list[idx].applicant}" menjadi ${e.target.value}`);
+                if (isSuperAdmin()) renderAuditLogs();
+            }
+        }
+        if (e.target.classList.contains('js-sec-toggle') && isSuperAdmin()) {
+            const secId = e.target.dataset.sec;
+            const custom = getCustomData();
+            custom.sectionVisibility = { ...(custom.sectionVisibility || {}), [secId]: e.target.checked };
+            saveCustomData(custom);
+            addAuditLog(`${e.target.checked ? 'Menampilkan' : 'Menyembunyikan'} seksi "${secId}"`);
+            renderAuditLogs();
+        }
+    });
+
+    document.addEventListener('input', function (e) {
+        if (e.target.classList.contains('js-img-url')) {
+            const prevEl = document.getElementById(e.target.dataset.preview);
+            if (prevEl && e.target.value.trim()) prevEl.src = e.target.value.trim();
+        }
+    });
+
     // Login Helpers
     document.querySelectorAll('.js-fill-login').forEach(btn => {
         btn.addEventListener('click', function () {
@@ -102,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function applyRoleUI(session) {
         const isSuper = session.role === 'superadmin';
         document.querySelectorAll('.super-only').forEach(el => el.classList.toggle('d-none', !isSuper));
-        document.getElementById('nonSuperNotice')?.classList.toggle('d-none', isSuper);
         if (activeRoleBadge) {
             activeRoleBadge.className = `role-pill ${isSuper ? 'superadmin' : 'admin'}`;
             activeRoleBadge.innerHTML = `<i class="fas ${isSuper ? 'fa-crown' : 'fa-user-shield'}"></i> ${isSuper ? 'SUPER ADMIN' : 'ADMIN'} • ${session.username}`;
@@ -174,19 +259,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
         renderSubmissions();
         renderNewsList();
+        renderSuperHeroList();
+        renderSuperPubList();
+        renderSuperServicesList();
+        renderSuperVideosList();
+        renderSuperPartnersList();
+        renderSuperProceduresList();
 
         const meta = getMergedSiteMeta();
         const rtInput = document.getElementById('runningTextInput');
         if (rtInput) rtInput.value = getCustomData().runningText || meta.runningText || '';
+        fillSiteMetaForm(meta);
 
-        if (getSession()?.role === 'superadmin') {
-            renderSuperHeroList();
-            renderSuperPubList();
-            renderSuperServicesList();
-            renderSuperVideosList();
-            renderSuperPartnersList();
-            renderSuperProceduresList();
-            fillSiteMetaForm(meta);
+        if (isSuperAdmin()) {
             renderSuperUsersTable();
             renderSectionToggles();
             renderAuditLogs();
@@ -217,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </select>
                     </td>
                     <td>
-                        ${getSession()?.role === 'superadmin'
+                        ${isSuperAdmin()
                             ? `<button type="button" class="btn btn-outline-danger btn-sm js-del-sub" data-idx="${idx}" title="Hapus"><i class="fas fa-trash"></i></button>`
                             : `<span class="text-muted small">-</span>`}
                     </td>
@@ -362,6 +447,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function fillSiteMetaForm(meta) {
         const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+        setV('metaLogoSmkInput', meta.logoSmk || 'assets/images/logo-smkn1.png');
+        setV('metaLogoStupaInput', meta.logoStupa || 'assets/images/logo-stupa.png');
+        setV('metaBrandTitleInput', meta.brandTitle);
+        setV('metaBrandSubInput', meta.brandSubtitle);
+        setV('metaTitleLayananInput', meta.secTitleLayanan);
+        setV('metaTitleBeritaInput', meta.secTitleBerita);
+        setV('metaTitlePubInput', meta.secTitlePublikasi);
+        setV('metaTitleProcInput', meta.secTitleProsedur);
         setV('metaMottoInput', meta.footerMotto);
         setV('metaSecInput', meta.secretariatName);
         setV('metaAddr1Input', meta.addressLine1);
@@ -422,11 +515,13 @@ document.addEventListener('DOMContentLoaded', function () {
             `).join('');
     }
 
-    // Reset form helpers
+    // Reset Form Helpers
     function resetNewsForm() {
         document.getElementById('addNewsForm')?.reset();
         document.getElementById('editNewsCat').value = '';
         document.getElementById('editNewsIdx').value = '';
+        document.getElementById('newsImageUrl').value = 'assets/images/hero-merbabu.jpg';
+        document.getElementById('newsImgPreview').src = 'assets/images/hero-merbabu.jpg';
         document.getElementById('newsFormHeading').innerHTML = '<i class="fas fa-plus-circle me-1"></i> Terbitkan Kabar Baru';
         document.getElementById('cancelNewsEditBtn')?.classList.add('d-none');
     }
@@ -435,7 +530,9 @@ document.addEventListener('DOMContentLoaded', function () {
     function resetHeroForm() {
         document.getElementById('addHeroForm')?.reset();
         document.getElementById('editHeroIdx').value = '';
-        document.getElementById('heroFormHeading').innerHTML = '<i class="fas fa-images me-1"></i> Tambah Slide Hero';
+        document.getElementById('heroImageUrl').value = 'assets/images/hero-merbabu.jpg';
+        document.getElementById('heroImgPreview').src = 'assets/images/hero-merbabu.jpg';
+        document.getElementById('heroFormHeading').innerHTML = '<i class="fas fa-images me-1"></i> Tambah / Edit Slide Hero';
         document.getElementById('cancelHeroEditBtn')?.classList.add('d-none');
     }
     document.getElementById('cancelHeroEditBtn')?.addEventListener('click', resetHeroForm);
@@ -443,7 +540,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function resetPubForm() {
         document.getElementById('addPubForm')?.reset();
         document.getElementById('editPubIdx').value = '';
-        document.getElementById('pubFormHeading').innerHTML = '<i class="fas fa-book-medical me-1"></i> Tambah Publikasi &amp; Modul';
+        document.getElementById('pubImgPreview').src = 'assets/images/bg-nature-mist.svg';
+        document.getElementById('pubFormHeading').innerHTML = '<i class="fas fa-book-medical me-1"></i> Tambah / Edit Publikasi';
         document.getElementById('cancelPubEditBtn')?.classList.add('d-none');
     }
     document.getElementById('cancelPubEditBtn')?.addEventListener('click', resetPubForm);
@@ -459,17 +557,20 @@ document.addEventListener('DOMContentLoaded', function () {
     function resetVidForm() {
         document.getElementById('addVideoForm')?.reset();
         document.getElementById('editVidIdx').value = '';
+        document.getElementById('vidThumbUrl').value = 'assets/images/video-bg-danau.jpg';
+        document.getElementById('vidImgPreview').src = 'assets/images/video-bg-danau.jpg';
         document.getElementById('vidFormHeading').innerHTML = '<i class="fas fa-film me-1"></i> Tambah / Edit Video Dokumenter';
         document.getElementById('cancelVidEditBtn')?.classList.add('d-none');
     }
     document.getElementById('cancelVidEditBtn')?.addEventListener('click', resetVidForm);
 
-    // Form Submissions (Create + Update)
+    // Web Content Submissions (Available to BOTH Admin & Super Admin)
     document.getElementById('addNewsForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
+        if (!isManager()) return;
         const cat = document.getElementById('newsCatInput').value;
         const title = document.getElementById('newsTitleInput').value.trim();
-        const image = document.getElementById('newsImageInput').value;
+        const image = document.getElementById('newsImageUrl').value.trim();
         const excerpt = document.getElementById('newsExcerptInput').value.trim();
         const content = document.getElementById('newsContentInput').value.trim();
         const editCat = document.getElementById('editNewsCat').value;
@@ -483,12 +584,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const oldArr = [...(merged[editCat] || [])];
             const existing = oldArr.splice(Number(editIdx), 1)[0] || {};
             merged[editCat] = oldArr;
-            merged[cat] = [{ ...existing, title, image, excerpt, content }, ...(merged[cat] || [])];
             if (editCat === cat) {
-                // Keep order if same category
                 const reordered = [...oldArr];
                 reordered.splice(Number(editIdx), 0, { ...existing, title, image, excerpt, content });
                 merged[cat] = reordered;
+            } else {
+                merged[cat] = [{ ...existing, title, image, excerpt, content }, ...(merged[cat] || [])];
             }
             addAuditLog(`Mengedit ${cat}: "${title}"`);
         } else {
@@ -503,27 +604,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('addHeroForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isManager()) return;
         const tag = document.getElementById('heroTagInput').value.trim();
-        const image = document.getElementById('heroImageInput').value;
+        const image = document.getElementById('heroImageUrl').value.trim();
         const title = document.getElementById('heroTitleInput').value.trim();
         const description = document.getElementById('heroDescInput').value.trim();
         const editIdx = document.getElementById('editHeroIdx').value;
 
         const custom = getCustomData();
         const slides = getMergedHero();
-        const entry = {
-            id: 'hero-' + Date.now(),
-            tag, title, description, image,
-            date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }),
-            author: 'Super Admin STUPA SMKN 1 Magelang',
-            content: `<p class="lead fw-semibold text-teal">${description}</p><p>Dipublikasikan melalui kendali Super Admin STUPA SMKN 1 Magelang.</p>`
-        };
         if (editIdx !== '') {
             slides[Number(editIdx)] = { ...slides[Number(editIdx)], tag, title, description, image };
             addAuditLog(`Mengedit Hero Slide: "${title}"`);
         } else {
-            slides.unshift(entry);
+            slides.unshift({
+                id: 'hero-' + Date.now(),
+                tag, title, description, image,
+                date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }),
+                author: 'Pengelola Web STUPA SMKN 1 Magelang',
+                content: `<p class="lead fw-semibold text-teal">${description}</p><p>Dipublikasikan melalui Portal Pengelolaan Web STUPA SMKN 1 Magelang.</p>`
+            });
             addAuditLog(`Menambahkan Hero Slide: "${title}"`);
         }
         custom.heroSlides = slides;
@@ -534,23 +634,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('addPubForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isManager()) return;
         const badge = document.getElementById('pubBadgeInput').value.trim();
         const year = document.getElementById('pubYearInput').value.trim();
         const pages = document.getElementById('pubPagesInput').value.trim();
         const title = document.getElementById('pubTitleInput').value.trim();
+        const docUrl = document.getElementById('pubDocUrlInput').value.trim();
+        const coverImage = document.getElementById('pubCoverImageUrl').value.trim();
         const summary = document.getElementById('pubSummaryInput').value.trim();
         const editIdx = document.getElementById('editPubIdx').value;
 
         const custom = getCustomData();
         const pubs = getMergedPubs();
         if (editIdx !== '') {
-            pubs[Number(editIdx)] = { ...pubs[Number(editIdx)], badge, year, pages, title, summary };
+            pubs[Number(editIdx)] = { ...pubs[Number(editIdx)], badge, year, pages, title, docUrl, coverImage, summary };
             addAuditLog(`Mengedit Publikasi: "${title}"`);
         } else {
             pubs.unshift({
                 id: 'pub-' + Date.now(),
-                badge, title, year, pages,
+                badge, title, year, pages, docUrl, coverImage,
                 gradient: 'linear-gradient(145deg, #005950 0%, #00a896 100%)',
                 summary
             });
@@ -564,7 +666,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('addServiceForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isManager()) return;
         const title = document.getElementById('srvTitleInput').value.trim();
         const badge = document.getElementById('srvBadgeInput').value.trim();
         const subtitle = document.getElementById('srvSubtitleInput').value.trim();
@@ -594,22 +696,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('addVideoForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isManager()) return;
         const title = document.getElementById('vidTitleInput').value.trim();
         const date = document.getElementById('vidDateInput').value.trim();
-        const thumb = document.getElementById('vidThumbInput').value;
+        const videoUrl = document.getElementById('vidUrlInput').value.trim();
+        const thumb = document.getElementById('vidThumbUrl').value.trim();
         const summary = document.getElementById('vidSummaryInput').value.trim();
         const editIdx = document.getElementById('editVidIdx').value;
 
         const custom = getCustomData();
         const list = getMergedVideos();
         if (editIdx !== '') {
-            list[Number(editIdx)] = { ...list[Number(editIdx)], title, date, thumb, summary };
+            list[Number(editIdx)] = { ...list[Number(editIdx)], title, date, videoUrl, thumb, summary };
             addAuditLog(`Mengedit Video: "${title}"`);
         } else {
             list.push({
                 id: 'vid-' + Date.now(),
-                title, date, thumb, summary,
+                title, date, videoUrl, thumb, summary,
                 highlights: ['Dokumentasi STUPA SMKN 1 Magelang']
             });
             addAuditLog(`Menambahkan Video: "${title}"`);
@@ -622,7 +725,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('addPartnerForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isManager()) return;
         const label = document.getElementById('partnerLabelInput').value.trim();
         const icon = document.getElementById('partnerIconInput').value;
         const custom = getCustomData();
@@ -637,7 +740,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('addProcedureForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isManager()) return;
         const badge = document.getElementById('procBadgeInput').value.trim();
         const lines = document.getElementById('procStepsInput').value.split('\n').map(l => l.trim()).filter(Boolean);
         const steps = lines.map((line, i) => {
@@ -654,12 +757,31 @@ document.addEventListener('DOMContentLoaded', function () {
         renderDashboard();
     });
 
+    document.getElementById('runningTextForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!isManager()) return;
+        const custom = getCustomData();
+        custom.runningText = document.getElementById('runningTextInput').value.trim();
+        saveCustomData(custom);
+        addAuditLog('Memperbarui Running Text beranda');
+        if (isSuperAdmin()) renderAuditLogs();
+        alert('Running text berhasil diperbarui!');
+    });
+
     document.getElementById('siteMetaForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isManager()) return;
         const custom = getCustomData();
         custom.siteMeta = {
             ...getMergedSiteMeta(),
+            logoSmk: document.getElementById('metaLogoSmkInput').value.trim() || 'assets/images/logo-smkn1.png',
+            logoStupa: document.getElementById('metaLogoStupaInput').value.trim() || 'assets/images/logo-stupa.png',
+            brandTitle: document.getElementById('metaBrandTitleInput').value.trim(),
+            brandSubtitle: document.getElementById('metaBrandSubInput').value.trim(),
+            secTitleLayanan: document.getElementById('metaTitleLayananInput').value.trim(),
+            secTitleBerita: document.getElementById('metaTitleBeritaInput').value.trim(),
+            secTitlePublikasi: document.getElementById('metaTitlePubInput').value.trim(),
+            secTitleProsedur: document.getElementById('metaTitleProcInput').value.trim(),
             footerMotto: document.getElementById('metaMottoInput').value.trim(),
             secretariatName: document.getElementById('metaSecInput').value.trim(),
             addressLine1: document.getElementById('metaAddr1Input').value.trim(),
@@ -672,34 +794,15 @@ document.addEventListener('DOMContentLoaded', function () {
             copyright: document.getElementById('metaCopyInput').value.trim()
         };
         saveCustomData(custom);
-        addAuditLog('Memperbarui Identitas, Kontak & Sosmed Web');
-        renderAuditLogs();
-        alert('Identitas & kontak web berhasil diperbarui!');
+        addAuditLog('Memperbarui Identitas, Logo & Judul Web');
+        if (isSuperAdmin()) renderAuditLogs();
+        alert('Identitas, logo & teks web berhasil diperbarui!');
     });
 
-    document.getElementById('addUserForm')?.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (getSession()?.role !== 'superadmin') return;
-        const username = document.getElementById('newUserUsername').value.trim().toLowerCase();
-        const password = document.getElementById('newUserPassword').value;
-        const role = document.getElementById('newUserRole').value;
-        const displayName = document.getElementById('newUserDisplay').value.trim();
-
-        const accounts = getAccounts();
-        if (accounts.some(a => a.username === username)) {
-            alert('Username sudah terdaftar.');
-            return;
-        }
-        accounts.push({ username, password, role, displayName, active: true });
-        saveAccounts(accounts);
-        addAuditLog(`Membuat akun ${role} baru: "${username}"`);
-        this.reset();
-        renderSuperUsersTable();
-        renderAuditLogs();
-    });
-
-    // Delegated Click Actions (Edit + Delete)
+    // Delegated Click Actions
     document.addEventListener('click', function (e) {
+        if (!isManager()) return;
+
         const editNews = e.target.closest('.js-edit-news');
         if (editNews) {
             const cat = editNews.dataset.cat;
@@ -710,7 +813,8 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('editNewsIdx').value = String(idx);
             document.getElementById('newsCatInput').value = cat;
             document.getElementById('newsTitleInput').value = item.title;
-            document.getElementById('newsImageInput').value = item.image;
+            document.getElementById('newsImageUrl').value = item.image;
+            document.getElementById('newsImgPreview').src = item.image;
             document.getElementById('newsExcerptInput').value = item.excerpt;
             document.getElementById('newsContentInput').value = item.content;
             document.getElementById('newsFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Konten Berita';
@@ -731,18 +835,6 @@ document.addEventListener('DOMContentLoaded', function () {
             renderDashboard();
             return;
         }
-        const delSub = e.target.closest('.js-del-sub');
-        if (delSub) {
-            if (getSession()?.role !== 'superadmin') return;
-            const list = getSubmissions();
-            const removed = list.splice(Number(delSub.dataset.idx), 1)[0];
-            localStorage.setItem(SUB_KEY, JSON.stringify(list));
-            addAuditLog(`Menghapus permohonan dari "${removed?.applicant || '-'}"`);
-            renderDashboard();
-            return;
-        }
-        if (getSession()?.role !== 'superadmin') return;
-
         const editHero = e.target.closest('.js-edit-hero');
         if (editHero) {
             const idx = Number(editHero.dataset.idx);
@@ -750,7 +842,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!s) return;
             document.getElementById('editHeroIdx').value = String(idx);
             document.getElementById('heroTagInput').value = s.tag;
-            document.getElementById('heroImageInput').value = s.image;
+            document.getElementById('heroImageUrl').value = s.image;
+            document.getElementById('heroImgPreview').src = s.image;
             document.getElementById('heroTitleInput').value = s.title;
             document.getElementById('heroDescInput').value = s.description;
             document.getElementById('heroFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Slide Hero';
@@ -779,6 +872,9 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('pubYearInput').value = p.year;
             document.getElementById('pubPagesInput').value = p.pages;
             document.getElementById('pubTitleInput').value = p.title;
+            document.getElementById('pubDocUrlInput').value = p.docUrl || '';
+            document.getElementById('pubCoverImageUrl').value = p.coverImage || '';
+            document.getElementById('pubImgPreview').src = p.coverImage || 'assets/images/bg-nature-mist.svg';
             document.getElementById('pubSummaryInput').value = p.summary;
             document.getElementById('pubFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Publikasi';
             document.getElementById('cancelPubEditBtn')?.classList.remove('d-none');
@@ -830,7 +926,9 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('editVidIdx').value = String(idx);
             document.getElementById('vidTitleInput').value = v.title;
             document.getElementById('vidDateInput').value = v.date;
-            document.getElementById('vidThumbInput').value = v.thumb;
+            document.getElementById('vidUrlInput').value = v.videoUrl || '';
+            document.getElementById('vidThumbUrl').value = v.thumb;
+            document.getElementById('vidImgPreview').src = v.thumb;
             document.getElementById('vidSummaryInput').value = v.summary;
             document.getElementById('vidFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Video';
             document.getElementById('cancelVidEditBtn')?.classList.remove('d-none');
@@ -870,6 +968,19 @@ document.addEventListener('DOMContentLoaded', function () {
             renderDashboard();
             return;
         }
+
+        // SUPER ADMIN ONLY ACTIONS
+        if (!isSuperAdmin()) return;
+
+        const delSub = e.target.closest('.js-del-sub');
+        if (delSub) {
+            const list = getSubmissions();
+            const removed = list.splice(Number(delSub.dataset.idx), 1)[0];
+            localStorage.setItem(SUB_KEY, JSON.stringify(list));
+            addAuditLog(`Menghapus permohonan dari "${removed?.applicant || '-'}"`);
+            renderDashboard();
+            return;
+        }
         const toggleUser = e.target.closest('.js-toggle-user');
         if (toggleUser) {
             const accounts = getAccounts();
@@ -894,56 +1005,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Delegated Change Events
-    document.addEventListener('change', function (e) {
-        if (e.target && e.target.classList.contains('js-sub-status')) {
-            const list = getSubmissions();
-            const idx = Number(e.target.dataset.idx);
-            if (list[idx]) {
-                list[idx].status = e.target.value;
-                localStorage.setItem(SUB_KEY, JSON.stringify(list));
-                addAuditLog(`Mengubah status "${list[idx].applicant}" menjadi ${e.target.value}`);
-                if (getSession()?.role === 'superadmin') renderAuditLogs();
-            }
-        }
-        if (e.target && e.target.classList.contains('js-sec-toggle') && getSession()?.role === 'superadmin') {
-            const secId = e.target.dataset.sec;
-            const custom = getCustomData();
-            custom.sectionVisibility = { ...(custom.sectionVisibility || {}), [secId]: e.target.checked };
-            saveCustomData(custom);
-            addAuditLog(`${e.target.checked ? 'Menampilkan' : 'Menyembunyikan'} seksi "${secId}"`);
-            renderAuditLogs();
-        }
-    });
-
-    // Export Submissions
-    document.getElementById('exportSubmissionsBtn')?.addEventListener('click', function () {
-        const blob = new Blob([JSON.stringify(getSubmissions(), null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'permohonan-layanan-stupa.json';
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-
-    // Running Text Form
-    document.getElementById('runningTextForm')?.addEventListener('submit', function (e) {
+    // Super Admin Only Forms & System Controls
+    document.getElementById('addUserForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
-        const custom = getCustomData();
-        custom.runningText = document.getElementById('runningTextInput').value.trim();
-        saveCustomData(custom);
-        addAuditLog('Memperbarui Running Text beranda');
-        if (getSession()?.role === 'superadmin') renderAuditLogs();
-        alert('Running text berhasil diperbarui!');
+        if (!isSuperAdmin()) return;
+        const username = document.getElementById('newUserUsername').value.trim().toLowerCase();
+        const password = document.getElementById('newUserPassword').value;
+        const role = document.getElementById('newUserRole').value;
+        const displayName = document.getElementById('newUserDisplay').value.trim();
+
+        const accounts = getAccounts();
+        if (accounts.some(a => a.username === username)) {
+            alert('Username sudah terdaftar.');
+            return;
+        }
+        accounts.push({ username, password, role, displayName, active: true });
+        saveAccounts(accounts);
+        addAuditLog(`Membuat akun ${role} baru: "${username}"`);
+        this.reset();
+        renderSuperUsersTable();
+        renderAuditLogs();
     });
 
-    // Change Own Password (Super Admin only)
     document.getElementById('changePwdForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
         const val = document.getElementById('newAdminPwd').value;
         const sess = getSession();
-        if (!sess || sess.role !== 'superadmin' || val.length < 6) return;
+        if (!isSuperAdmin() || !sess || val.length < 6) return;
         const accounts = getAccounts();
         const target = accounts.find(a => a.username === sess.username);
         if (target) {
@@ -956,16 +1044,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Super Admin: Clear Logs
+    document.getElementById('exportSubmissionsBtn')?.addEventListener('click', function () {
+        if (!isSuperAdmin()) return;
+        const blob = new Blob([JSON.stringify(getSubmissions(), null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'permohonan-layanan-stupa.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
     document.getElementById('clearLogsBtn')?.addEventListener('click', function () {
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isSuperAdmin()) return;
         localStorage.removeItem(LOGS_KEY);
         renderAuditLogs();
     });
 
-    // Super Admin: Export Permanent data.js
     document.getElementById('exportDataJsBtn')?.addEventListener('click', function () {
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isSuperAdmin()) return;
         const mergedData = {
             heroSlides: getMergedHero(),
             services: getMergedServices(),
@@ -979,7 +1076,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 runningText: getCustomData().runningText || getMergedSiteMeta().runningText
             }
         };
-        const content = `/* Generated by Super Admin STUPA SMKN 1 Magelang (${new Date().toLocaleString('id-ID')}) */\nwindow.STUPA_DATA = ${JSON.stringify(mergedData, null, 4)};\n`;
+        const content = `/* Generated by STUPA SMKN 1 Magelang (${new Date().toLocaleString('id-ID')}) */\nwindow.STUPA_DATA = ${JSON.stringify(mergedData, null, 4)};\n`;
         const blob = new Blob([content], { type: 'application/javascript;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -991,9 +1088,8 @@ document.addEventListener('DOMContentLoaded', function () {
         renderAuditLogs();
     });
 
-    // Super Admin: Full Backup & Restore
     document.getElementById('fullBackupBtn')?.addEventListener('click', function () {
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isSuperAdmin()) return;
         const backup = {
             exportedAt: new Date().toISOString(),
             customData: getCustomData(),
@@ -1013,7 +1109,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('restoreBackupInput')?.addEventListener('change', function (e) {
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isSuperAdmin()) return;
         const file = e.target.files?.[0];
         if (!file) return;
         const reader = new FileReader();
@@ -1033,9 +1129,8 @@ document.addEventListener('DOMContentLoaded', function () {
         reader.readAsText(file);
     });
 
-    // Super Admin: Reset Default Data
     document.getElementById('resetDefaultBtn')?.addEventListener('click', function () {
-        if (getSession()?.role !== 'superadmin') return;
+        if (!isSuperAdmin()) return;
         if (confirm('Kembalikan seluruh konten web ke pengaturan bawaan?')) {
             localStorage.removeItem(CUSTOM_KEY);
             addAuditLog('Mereset seluruh konten web ke bawaan pabrik');

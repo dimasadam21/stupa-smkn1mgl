@@ -426,6 +426,13 @@ window.STUPA_DATA = {
     ],
 
     siteMeta: {
+        brandTitle: 'STUPA — Siswa Siswi Teknik\nSatu Pecinta Alam',
+        brandSubtitle: 'SMKN 1 Magelang • Lestari & Berilmu',
+        secTitleLayanan: 'Layanan & Kanal Digital STUPA',
+        secLeadLayanan: 'Ruang layanan terpadu Siswa Siswi Teknik Satu Pecinta Alam SMKN 1 Magelang—dirancang praktis, transparan, dan mudah diakses bagi siswa, pembina, maupun mitra lingkungan.',
+        secTitleBerita: 'BERITA & INFORMASI',
+        secTitlePublikasi: 'PUBLIKASI & MODUL EKSPEDISI',
+        secTitleProsedur: 'PROSEDUR KEGIATAN & LAYANAN STUPA',
         runningText: 'Menapak Rimba dengan Nalar Ilmu, Menjaga Semesta dengan Keteguhan Hati — STUPA SMKN 1 Magelang: Tangguh di Puncak, Santun di Bumi, Unggul dalam Karya Teknik Berkelanjutan!',
         footerMotto: '“Berakar pada ilmu teknik, tumbuh dalam persaudaraan, berbuah pada kelestarian semesta.”',
         secretariatName: 'Sanggar STUPA — SMKN 1 Magelang',
