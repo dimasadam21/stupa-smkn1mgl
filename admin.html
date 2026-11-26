@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Admin — STUPA SMKN 1 Magelang</title>
+    <title>Portal Admin &amp; Super Admin — STUPA SMKN 1 Magelang</title>
     <link rel="icon" href="assets/images/logo-stupa.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -39,6 +39,26 @@
             height: 44px;
             width: auto;
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+        }
+        .role-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 13px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .role-pill.superadmin {
+            background: linear-gradient(135deg, #F97910 0%, #ffb03b 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(249, 121, 16, 0.35);
+        }
+        .role-pill.admin {
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
         }
         .admin-card {
             background: #ffffff;
@@ -95,12 +115,29 @@
         .nav-pills .nav-link {
             color: var(--teal-deep);
             font-weight: 600;
-            font-size: 13.5px;
+            font-size: 13px;
             border-radius: 9999px;
-            padding: 8px 18px;
+            padding: 8px 16px;
         }
         .nav-pills .nav-link.active {
             background: linear-gradient(135deg, #005952 0%, #00a896 100%);
+            color: #ffffff;
+        }
+        .nav-pills .nav-link.super-tab.active {
+            background: linear-gradient(135deg, #d96406 0%, #F97910 100%);
+        }
+        .super-badge {
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 9999px;
+            background: rgba(249, 121, 16, 0.16);
+            color: #c85800;
+            margin-left: 4px;
+            text-transform: uppercase;
+        }
+        .nav-link.active .super-badge {
+            background: rgba(255, 255, 255, 0.25);
             color: #ffffff;
         }
     </style>
@@ -113,13 +150,14 @@
                 <img src="assets/images/logo-smkn1.png" alt="Logo SMKN 1 Magelang">
                 <img src="assets/images/logo-stupa.png" alt="Logo STUPA">
                 <div>
-                    <div class="fw-bold" style="font-size:15px;">Portal Admin STUPA</div>
+                    <div class="fw-bold" style="font-size:15px;">Portal Manajemen STUPA</div>
                     <div style="font-size:11.5px;opacity:0.88;">Siswa Siswi Teknik Satu Pecinta Alam • SMKN 1 Magelang</div>
                 </div>
             </a>
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span id="activeRoleBadge" class="role-pill d-none"></span>
                 <a href="index.html" class="btn btn-light btn-sm rounded-pill px-3 fw-semibold" style="color:#005950;">
-                    <i class="fas fa-arrow-left me-1"></i> Kembali ke Beranda
+                    <i class="fas fa-arrow-left me-1"></i> Beranda
                 </a>
                 <button type="button" id="logoutBtn" class="btn btn-outline-light btn-sm rounded-pill px-3 d-none">
                     <i class="fas fa-right-from-bracket me-1"></i> Keluar
@@ -131,15 +169,15 @@
     <main class="container py-5">
         <!-- Login View -->
         <section id="loginView" class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
+            <div class="col-md-7 col-lg-5">
                 <div class="admin-card p-4 p-md-5">
                     <div class="text-center mb-4">
                         <div class="d-inline-flex align-items-center justify-content-center gap-3 mb-3">
                             <img src="assets/images/logo-smkn1.png" alt="SMKN 1" style="height:56px;">
                             <img src="assets/images/logo-stupa.png" alt="STUPA" style="height:56px;">
                         </div>
-                        <h3 class="fw-bold mb-1" style="color:#005950;">Masuk Pengurus &amp; Pembina</h3>
-                        <p class="small text-muted mb-0">Kelola berita ekspedisi, semboyan berjalan, serta kotak masuk Diklatsar dan logistik.</p>
+                        <h3 class="fw-bold mb-1" style="color:#005950;">Masuk Admin &amp; Super Admin</h3>
+                        <p class="small text-muted mb-0">Portal kendali konten, kaderisasi Diklatsar, dan tata kelola web STUPA.</p>
                     </div>
 
                     <div id="loginAlert" class="alert alert-danger py-2 small d-none" role="alert"></div>
@@ -147,7 +185,7 @@
                     <form id="adminLoginForm">
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Nama Pengguna</label>
-                            <input type="text" class="form-control rounded-3" id="adminUsername" placeholder="admin" required>
+                            <input type="text" class="form-control rounded-3" id="adminUsername" placeholder="admin atau superadmin" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Kata Sandi</label>
@@ -159,14 +197,20 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-stupa w-100 py-2 mt-2">
-                            <i class="fas fa-shield-halved me-1"></i> Masuk ke Dashboard Admin
+                            <i class="fas fa-shield-halved me-1"></i> Masuk ke Portal
                         </button>
                     </form>
 
                     <div class="mt-4 p-3 rounded-4 small" style="background:#f3faf8;border:1px dashed rgba(0,89,82,0.28);">
-                        <div class="fw-semibold mb-1" style="color:#005950;"><i class="fas fa-circle-info me-1"></i> Akses Bawaan Pengurus:</div>
-                        <div>Username: <code>admin</code> &nbsp;|&nbsp; Password: <code>stupa2026</code></div>
-                        <div class="text-muted mt-1" style="font-size:11.5px;">Sandi dapat diubah langsung di tab <strong>Pengaturan</strong> setelah masuk.</div>
+                        <div class="fw-semibold mb-2" style="color:#005950;"><i class="fas fa-key me-1"></i> Akun Bawaan Sistem:</div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span><strong>Admin (Pengurus):</strong> <code>admin</code> / <code>stupa2026</code></span>
+                            <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none js-fill-login" data-u="admin" data-p="stupa2026">Isi</button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><strong>Super Admin (Pembina):</strong> <code>superadmin</code> / <code>stupasuper2026</code></span>
+                            <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none text-warning fw-semibold js-fill-login" data-u="superadmin" data-p="stupasuper2026">Isi</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -218,18 +262,35 @@
             <div class="admin-card p-4">
                 <ul class="nav nav-pills gap-2 mb-4" id="adminTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tabInbox" type="button">
-                            <i class="fas fa-inbox me-1"></i> Kotak Masuk Layanan
+                        <button class="nav-link active" id="pillInbox" data-bs-toggle="pill" data-bs-target="#tabInbox" type="button">
+                            <i class="fas fa-inbox me-1"></i> Kotak Masuk
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabNews" type="button">
-                            <i class="fas fa-pen-to-square me-1"></i> Kelola Berita &amp; Agenda
+                        <button class="nav-link" id="pillNews" data-bs-toggle="pill" data-bs-target="#tabNews" type="button">
+                            <i class="fas fa-pen-to-square me-1"></i> Berita &amp; Agenda
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabSettings" type="button">
-                            <i class="fas fa-sliders me-1"></i> Running Text &amp; Pengaturan
+                        <button class="nav-link" id="pillSettings" data-bs-toggle="pill" data-bs-target="#tabSettings" type="button">
+                            <i class="fas fa-sliders me-1"></i> Running Text &amp; Akun
+                        </button>
+                    </li>
+
+                    <!-- Exclusive Super Admin Tabs -->
+                    <li class="nav-item super-only d-none" role="presentation">
+                        <button class="nav-link super-tab" id="pillHeroPub" data-bs-toggle="pill" data-bs-target="#tabHeroPub" type="button">
+                            <i class="fas fa-crown me-1"></i> Hero &amp; Publikasi <span class="super-badge">Super</span>
+                        </button>
+                    </li>
+                    <li class="nav-item super-only d-none" role="presentation">
+                        <button class="nav-link super-tab" id="pillSuperUsers" data-bs-toggle="pill" data-bs-target="#tabSuperUsers" type="button">
+                            <i class="fas fa-users-gear me-1"></i> Akses &amp; Seksi <span class="super-badge">Super</span>
+                        </button>
+                    </li>
+                    <li class="nav-item super-only d-none" role="presentation">
+                        <button class="nav-link super-tab" id="pillAuditBackup" data-bs-toggle="pill" data-bs-target="#tabAuditBackup" type="button">
+                            <i class="fas fa-database me-1"></i> Log &amp; Backup <span class="super-badge">Super</span>
                         </button>
                     </li>
                 </ul>
@@ -316,7 +377,7 @@
                         </div>
                     </div>
 
-                    <!-- Tab 3: Running Text & Pengaturan -->
+                    <!-- Tab 3: Running Text & Pengaturan Akun Sendiri -->
                     <div class="tab-pane fade" id="tabSettings">
                         <div class="row g-4">
                             <div class="col-md-6">
@@ -330,15 +391,156 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="p-3 rounded-4 mb-3" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.12);">
-                                    <h6 class="fw-bold mb-2" style="color:#005950;">Ganti Kata Sandi Admin</h6>
+                                    <h6 class="fw-bold mb-2" style="color:#005950;">Ganti Kata Sandi Akun Aktif</h6>
                                     <form id="changePwdForm" class="d-flex gap-2">
                                         <input type="password" class="form-control rounded-3" id="newAdminPwd" placeholder="Sandi baru (min. 6 karakter)" minlength="6" required>
                                         <button type="submit" class="btn btn-teal text-nowrap">Perbarui</button>
                                     </form>
                                 </div>
+                                <div class="p-3 rounded-4 border border-info-subtle bg-info-subtle bg-opacity-10 super-only-hint" id="nonSuperNotice">
+                                    <div class="small"><i class="fas fa-lock me-1 text-warning"></i> Masuk sebagai <strong>Super Admin</strong> untuk mengelola Hero Carousel, Publikasi Modul, Hak Akses Pengguna, Visibilitas Seksi, serta Log &amp; Backup Penuh.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4 (SUPER ADMIN): Hero Carousel & Publikasi Modul -->
+                    <div class="tab-pane fade super-only d-none" id="tabHeroPub">
+                        <div class="row g-4">
+                            <!-- Hero Slides Manager -->
+                            <div class="col-lg-6">
+                                <div class="p-3 rounded-4 mb-3" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
+                                    <h6 class="fw-bold mb-3" style="color:#c85800;"><i class="fas fa-images me-1"></i> Tambah Slide Hero Carousel</h6>
+                                    <form id="addHeroForm">
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="heroTagInput" placeholder="Label Tag (mis. Ekspedisi)" required>
+                                            </div>
+                                            <div class="col-6">
+                                                <select class="form-select form-select-sm rounded-3" id="heroImageInput">
+                                                    <option value="assets/images/hero-merbabu.jpg">Foto Merbabu</option>
+                                                    <option value="assets/images/hero-diklatsar.jpg">Foto Diklatsar</option>
+                                                    <option value="assets/images/hero-konservasi.jpg">Foto Konservasi</option>
+                                                    <option value="assets/images/video-bg-danau.jpg">Foto Telaga Dawn</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="heroTitleInput" placeholder="Judul utama hero..." required>
+                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="heroDescInput" rows="2" placeholder="Subjudul puitis akademis..." required></textarea>
+                                        <button type="submit" class="btn btn-stupa btn-sm w-100">Tambah ke Hero Carousel</button>
+                                    </form>
+                                </div>
+                                <h6 class="fw-bold small text-uppercase text-muted">Daftar Slide Hero Aktif</h6>
+                                <div id="superHeroList" class="d-flex flex-column gap-2"></div>
+                            </div>
+
+                            <!-- Publications Manager -->
+                            <div class="col-lg-6">
+                                <div class="p-3 rounded-4 mb-3" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
+                                    <h6 class="fw-bold mb-3" style="color:#005950;"><i class="fas fa-book-medical me-1"></i> Tambah Publikasi &amp; Modul</h6>
+                                    <form id="addPubForm">
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="pubBadgeInput" placeholder="Kategori (mis. Jurnal Riset)" required>
+                                            </div>
+                                            <div class="col-3">
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="pubYearInput" value="2026" required>
+                                            </div>
+                                            <div class="col-3">
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="pubPagesInput" value="40 Hal" required>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="pubTitleInput" placeholder="Judul modul atau publikasi..." required>
+                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="pubSummaryInput" rows="2" placeholder="Ringkasan isi modul..." required></textarea>
+                                        <button type="submit" class="btn btn-teal btn-sm w-100">Tambah ke Katalog Publikasi</button>
+                                    </form>
+                                </div>
+                                <h6 class="fw-bold small text-uppercase text-muted">Katalog Publikasi Aktif</h6>
+                                <div id="superPubList" class="d-flex flex-column gap-2" style="max-height:300px;overflow-y:auto;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 5 (SUPER ADMIN): Manajemen Akun & Visibilitas Seksi -->
+                    <div class="tab-pane fade super-only d-none" id="tabSuperUsers">
+                        <div class="row g-4">
+                            <div class="col-lg-7">
+                                <div class="p-3 rounded-4 mb-3" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
+                                    <h6 class="fw-bold mb-3" style="color:#c85800;"><i class="fas fa-user-plus me-1"></i> Tambah Akun Pengurus / Pembina</h6>
+                                    <form id="addUserForm" class="row g-2">
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control form-control-sm rounded-3" id="newUserUsername" placeholder="Username (mis. humas)" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="password" class="form-control form-control-sm rounded-3" id="newUserPassword" placeholder="Sandi (min. 6)" minlength="6" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select class="form-select form-select-sm rounded-3" id="newUserRole">
+                                                <option value="admin">Admin (Pengurus)</option>
+                                                <option value="superadmin">Super Admin (Pembina)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control form-control-sm rounded-3" id="newUserDisplay" placeholder="Nama Tampilan / Jabatan (mis. Divisi Humas STUPA)" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button type="submit" class="btn btn-stupa btn-sm w-100">Buat Akun</button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <h6 class="fw-bold mb-2" style="color:#005950;">Daftar Akun Pengelola</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Username</th>
+                                                <th>Nama / Jabatan</th>
+                                                <th>Peran</th>
+                                                <th>Status</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="superUsersTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-5">
+                                <div class="p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
+                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-eye me-1"></i> Kontrol Visibilitas Seksi Beranda</h6>
+                                    <p class="small text-muted mb-3">Aktifkan atau sembunyikan bagian tertentu di halaman utama secara instan.</p>
+                                    <div id="sectionVisibilityToggles" class="d-flex flex-column gap-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 6 (SUPER ADMIN): Audit Log, Backup & Reset Total -->
+                    <div class="tab-pane fade super-only d-none" id="tabAuditBackup">
+                        <div class="row g-4">
+                            <div class="col-lg-7">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold mb-0" style="color:#005950;"><i class="fas fa-clock-rotate-left me-1"></i> Riwayat Aktivitas Sistem (Audit Trail)</h6>
+                                    <button type="button" id="clearLogsBtn" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Bersihkan Log</button>
+                                </div>
+                                <div id="auditLogsList" class="d-flex flex-column gap-2" style="max-height:360px;overflow-y:auto;"></div>
+                            </div>
+
+                            <div class="col-lg-5">
+                                <div class="p-3 rounded-4 mb-3" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
+                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-file-export me-1"></i> Backup &amp; Restore Penuh</h6>
+                                    <p class="small text-muted mb-3">Unduh seluruh konfigurasi situs, akun pengelola, dan kotak masuk ke berkas JSON.</p>
+                                    <button type="button" id="fullBackupBtn" class="btn btn-teal btn-sm w-100 mb-3">
+                                        <i class="fas fa-download me-1"></i> Unduh Backup Lengkap (.json)
+                                    </button>
+                                    <label class="form-label small fw-semibold">Pulihkan dari File Backup (.json)</label>
+                                    <input type="file" id="restoreBackupInput" accept=".json" class="form-control form-control-sm rounded-3">
+                                </div>
+
                                 <div class="p-3 rounded-4 border border-danger-subtle bg-danger-subtle bg-opacity-10">
-                                    <h6 class="fw-bold text-danger mb-2">Reset Data Lokal ke Bawaan</h6>
-                                    <p class="small text-muted mb-2">Menghapus perubahan konten lokal di browser ini dan mengembalikan data asli situs.</p>
+                                    <h6 class="fw-bold text-danger mb-2"><i class="fas fa-triangle-exclamation me-1"></i> Reset Konten ke Bawaan Pabrik</h6>
+                                    <p class="small text-muted mb-2">Mengembalikan seluruh berita, hero, publikasi, dan visibilitas seksi ke isi awal.</p>
                                     <button type="button" id="resetDefaultBtn" class="btn btn-outline-danger btn-sm rounded-pill px-3">
                                         Reset Konten Bawaan
                                     </button>

@@ -17,11 +17,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const data = {
         ...baseData,
         heroSlides: (savedCustom && Array.isArray(savedCustom.heroSlides)) ? savedCustom.heroSlides : baseData.heroSlides,
+        publications: (savedCustom && Array.isArray(savedCustom.publications)) ? savedCustom.publications : baseData.publications,
         news: {
             ...baseData.news,
             ...(savedCustom && savedCustom.news ? savedCustom.news : {})
         }
     };
+
+    if (savedCustom && savedCustom.sectionVisibility) {
+        Object.entries(savedCustom.sectionVisibility).forEach(([secId, isVisible]) => {
+            const secEl = document.getElementById(secId);
+            if (secEl) secEl.classList.toggle('d-none', isVisible === false);
+        });
+    }
 
     if (savedCustom && savedCustom.runningText) {
         document.querySelectorAll('.running-text-track p').forEach((p, idx) => {
