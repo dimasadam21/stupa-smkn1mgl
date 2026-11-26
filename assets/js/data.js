@@ -462,15 +462,23 @@ window.STUPA_DATA = {
         secTitleProsedur: 'LAYANAN STUPA',
         secLeadProsedur: 'Unit layanan mandiri STUPA SMKN 1 Magelang: Rental Perkap Outdoor STUPA Adventure, Tanaman Agriculture, serta Kompos & Media Tanam Organik.',
         runningText: 'Menapak Rimba dengan Nalar Ilmu, Menjaga Semesta dengan Keteguhan Hati — STUPA SMKN 1 Magelang: Tangguh di Puncak, Santun di Bumi, Unggul dalam Karya Teknik Berkelanjutan!',
+        footerOrgName: 'STUPA — Siswa Siswi Teknik\nSatu Pecinta Alam\nSMK Negeri 1 Magelang',
         footerMotto: '“Berakar pada ilmu teknik, tumbuh dalam persaudaraan, berbuah pada kelestarian semesta.”',
+        footerContactHeading: 'Kontak & Sekretariat',
         secretariatName: 'Sanggar STUPA — SMKN 1 Magelang',
         addressLine1: 'Jl. Cawang No. 2, Jurangombo Utara',
         addressLine2: 'Kec. Magelang Selatan, Kota Magelang 56123',
         phone: '(0293) 362172 • Posko: +62 812-3456-7890',
         email: 'stupa@smkn1magelang.sch.id',
         copyright: '© 2026 Hak Cipta STUPA (Siswa Siswi Teknik Satu Pecinta Alam) — SMK Negeri 1 Magelang',
+        footerSocialHeading: 'Ikuti Kami',
         instagramUrl: '#kontak-footer',
         youtubeUrl: '#kontak-footer',
-        tiktokUrl: '#kontak-footer'
+        tiktokUrl: '#kontak-footer',
+        whatsappUrl: '#layanan-stupa',
+        showVisitorStats: true,
+        visitorOnlineText: '12 Online',
+        visitorTodayBase: 142,
+        visitorTotalBase: 12840
     }
 };

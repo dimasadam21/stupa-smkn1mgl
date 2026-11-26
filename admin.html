@@ -296,7 +296,7 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pillSuperWeb" data-bs-toggle="pill" data-bs-target="#tabSuperWeb" type="button">
-                            <i class="fas fa-globe me-1"></i> Identitas &amp; Teks Web
+                            <i class="fas fa-sliders me-1"></i> Header, Footer &amp; Statistik
                         </button>
                     </li>
 
@@ -745,19 +745,22 @@
                                     </form>
                                 </div>
 
-                                <div class="p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
-                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-store me-1"></i> Subjudul Seksi Layanan STUPA</h6>
+                                <div class="p-3 rounded-4 mb-3" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
+                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-store me-1"></i> Subjudul Seksi Beranda</h6>
                                     <form id="leadLayananForm">
-                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="metaLeadProcInput" rows="3" placeholder="Deskripsi singkat di bawah judul LAYANAN STUPA..."></textarea>
-                                        <button type="submit" class="btn btn-teal btn-sm">Simpan Subjudul Layanan</button>
+                                        <label class="form-label small fw-semibold mb-1">Subjudul Layanan &amp; Kanal Digital (Atas)</label>
+                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="metaLeadLayananInput" rows="2" placeholder="Deskripsi singkat di bawah Layanan &amp; Kanal Digital..."></textarea>
+                                        <label class="form-label small fw-semibold mb-1">Subjudul Layanan Usaha (Adventure, Tani, Kompos)</label>
+                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="metaLeadProcInput" rows="2" placeholder="Deskripsi singkat di bawah judul LAYANAN STUPA..."></textarea>
+                                        <button type="submit" class="btn btn-teal btn-sm">Simpan Subjudul Seksi</button>
                                     </form>
                                 </div>
                             </div>
 
-                            <!-- Identitas, Logo, Judul Seksi, Kontak & Sosmed -->
+                            <!-- Identitas, Header, Footer, Kontak, Sosmed & Statistik -->
                             <div class="col-lg-6">
                                 <div class="p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
-                                    <h6 class="fw-bold mb-3" style="color:#005950;"><i class="fas fa-address-card me-1"></i> Identitas, Logo, Judul Seksi &amp; Kontak</h6>
+                                    <h6 class="fw-bold mb-3" style="color:#005950;"><i class="fas fa-address-card me-1"></i> Header, Footer, Kontak, Sosmed &amp; Statistik</h6>
                                     <form id="siteMetaForm">
                                         <div class="row g-2 mb-2">
                                             <div class="col-6">
@@ -781,9 +784,9 @@
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="metaBrandSubInput">
                                             </div>
                                         </div>
-                                        <div class="row g-2 mb-2">
+                                        <div class="row g-2 mb-3">
                                             <div class="col-4">
-                                                <label class="form-label small fw-semibold mb-1">Judul Seksi Layanan</label>
+                                                <label class="form-label small fw-semibold mb-1">Judul Kanal Digital</label>
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleLayananInput">
                                             </div>
                                             <div class="col-4">
@@ -791,57 +794,106 @@
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleBeritaInput">
                                             </div>
                                             <div class="col-4">
-                                                <label class="form-label small fw-semibold mb-1">Judul Seksi Layanan STUPA</label>
+                                                <label class="form-label small fw-semibold mb-1">Judul Layanan STUPA</label>
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleProcInput">
                                             </div>
                                         </div>
-                                        <div class="mb-2">
-                                            <label class="form-label small fw-semibold mb-1">Motto Footer</label>
-                                            <input type="text" class="form-control form-control-sm rounded-3" id="metaMottoInput" required>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label small fw-semibold mb-1">Nama Sekretariat</label>
-                                            <input type="text" class="form-control form-control-sm rounded-3" id="metaSecInput" required>
-                                        </div>
-                                        <div class="row g-2 mb-2">
-                                            <div class="col-6">
-                                                <label class="form-label small fw-semibold mb-1">Alamat Baris 1</label>
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaAddr1Input" required>
+
+                                        <div class="border-top pt-2 mt-2 mb-2">
+                                            <div class="small fw-bold text-uppercase mb-2" style="color:#c85800;"><i class="fas fa-shoe-prints me-1"></i> Footer Kiri &amp; Identitas Organisasi</div>
+                                            <div class="mb-2">
+                                                <label class="form-label small fw-semibold mb-1">Nama Organisasi di Footer (Baris baru = Enter)</label>
+                                                <textarea class="form-control form-control-sm rounded-3" id="metaFooterOrgInput" rows="2" placeholder="STUPA — Siswa Siswi Teknik&#10;Satu Pecinta Alam&#10;SMK Negeri 1 Magelang" required></textarea>
                                             </div>
-                                            <div class="col-6">
-                                                <label class="form-label small fw-semibold mb-1">Alamat Baris 2</label>
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaAddr2Input" required>
+                                            <div class="mb-2">
+                                                <label class="form-label small fw-semibold mb-1">Motto Footer</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaMottoInput" required>
                                             </div>
                                         </div>
-                                        <div class="row g-2 mb-2">
-                                            <div class="col-6">
-                                                <label class="form-label small fw-semibold mb-1">Telepon &amp; Posko</label>
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaPhoneInput" required>
+
+                                        <div class="border-top pt-2 mt-2 mb-2">
+                                            <div class="small fw-bold text-uppercase mb-2" style="color:#c85800;"><i class="fas fa-location-dot me-1"></i> Footer Tengah: Kontak &amp; Sekretariat</div>
+                                            <div class="row g-2 mb-2">
+                                                <div class="col-5">
+                                                    <label class="form-label small fw-semibold mb-1">Judul Kolom Kontak</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaFooterContactHeading" required>
+                                                </div>
+                                                <div class="col-7">
+                                                    <label class="form-label small fw-semibold mb-1">Nama Sekretariat</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaSecInput" required>
+                                                </div>
                                             </div>
-                                            <div class="col-6">
-                                                <label class="form-label small fw-semibold mb-1">Email Resmi</label>
-                                                <input type="email" class="form-control form-control-sm rounded-3" id="metaEmailInput" required>
+                                            <div class="row g-2 mb-2">
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold mb-1">Alamat Baris 1</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaAddr1Input" required>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold mb-1">Alamat Baris 2</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaAddr2Input" required>
+                                                </div>
+                                            </div>
+                                            <div class="row g-2 mb-2">
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold mb-1">Telepon &amp; Posko</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaPhoneInput" required>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold mb-1">Email Resmi</label>
+                                                    <input type="email" class="form-control form-control-sm rounded-3" id="metaEmailInput" required>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="row g-2 mb-2">
-                                            <div class="col-4">
-                                                <label class="form-label small fw-semibold mb-1">Link Instagram</label>
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaIgInput">
+
+                                        <div class="border-top pt-2 mt-2 mb-2">
+                                            <div class="small fw-bold text-uppercase mb-2" style="color:#c85800;"><i class="fas fa-share-nodes me-1"></i> Footer Kanan: Ikuti Kami &amp; Statistik Pengunjung</div>
+                                            <div class="mb-2">
+                                                <label class="form-label small fw-semibold mb-1">Judul Kolom Sosial Media</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaFooterSocialHeading" required>
                                             </div>
-                                            <div class="col-4">
-                                                <label class="form-label small fw-semibold mb-1">Link YouTube</label>
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaYtInput">
+                                            <div class="row g-2 mb-2">
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold mb-1">Link Instagram</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaIgInput">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold mb-1">Link YouTube</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaYtInput">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold mb-1">Link TikTok</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaTtInput">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold mb-1">Link WhatsApp Posko</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaWaInput" placeholder="https://wa.me/62812... atau #layanan-stupa">
+                                                </div>
                                             </div>
-                                            <div class="col-4">
-                                                <label class="form-label small fw-semibold mb-1">Link TikTok</label>
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="metaTtInput">
+                                            <div class="form-check form-switch mb-2">
+                                                <input class="form-check-input" type="checkbox" id="metaShowVisitorInput" checked>
+                                                <label class="form-check-label small fw-semibold" for="metaShowVisitorInput">Tampilkan Kartu Statistik Pengunjung di Footer</label>
+                                            </div>
+                                            <div class="row g-2 mb-2">
+                                                <div class="col-4">
+                                                    <label class="form-label small fw-semibold mb-1">Saat Ini (Online)</label>
+                                                    <input type="text" class="form-control form-control-sm rounded-3" id="metaVisitorOnlineInput" placeholder="12 Online">
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="form-label small fw-semibold mb-1">Dasar Hari Ini</label>
+                                                    <input type="number" class="form-control form-control-sm rounded-3" id="metaVisitorTodayInput" min="0">
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="form-label small fw-semibold mb-1">Total Kunjungan</label>
+                                                    <input type="number" class="form-control form-control-sm rounded-3" id="metaVisitorTotalInput" min="0">
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div class="mb-3">
-                                            <label class="form-label small fw-semibold mb-1">Teks Copyright</label>
+                                            <label class="form-label small fw-semibold mb-1">Teks Copyright Bawah Footer</label>
                                             <input type="text" class="form-control form-control-sm rounded-3" id="metaCopyInput" required>
                                         </div>
-                                        <button type="submit" class="btn btn-teal w-100">Simpan Identitas, Logo &amp; Teks Web</button>
+                                        <button type="submit" class="btn btn-teal w-100">Simpan Pengaturan Header, Footer &amp; Statistik</button>
                                     </form>
                                 </div>
                             </div>

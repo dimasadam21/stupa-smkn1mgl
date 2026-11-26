@@ -63,6 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
     setTxt('secTitleBerita', meta.secTitleBerita);
     setTxt('secTitleProsedur', meta.secTitleProsedur);
     setTxt('secLeadProsedur', meta.secLeadProsedur);
+    setTxt('footerContactHeading', meta.footerContactHeading);
+    setTxt('footerSocialHeading', meta.footerSocialHeading);
     setTxt('footerMotto', meta.footerMotto);
     setTxt('footerSecretariatName', meta.secretariatName);
     setTxt('footerAddress1', meta.addressLine1);
@@ -72,6 +74,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (meta.brandTitle) {
         const bt = document.getElementById('headerBrandTitle');
         if (bt) bt.innerHTML = meta.brandTitle.replace(/\n/g, '<br>');
+    }
+    if (meta.footerOrgName) {
+        const fo = document.getElementById('footerOrgName');
+        if (fo) fo.innerHTML = meta.footerOrgName.replace(/\n/g, '<br>');
     }
     if (meta.logoSmk) {
         const l1 = document.getElementById('headerLogoSmk');
@@ -91,6 +97,14 @@ document.addEventListener('DOMContentLoaded', function () {
     setHref('socialIgLink', meta.instagramUrl);
     setHref('socialYtLink', meta.youtubeUrl);
     setHref('socialTtLink', meta.tiktokUrl);
+    const waEl = document.getElementById('socialWaLink');
+    if (waEl && meta.whatsappUrl) {
+        waEl.href = meta.whatsappUrl;
+        if (meta.whatsappUrl !== '#layanan-stupa') {
+            waEl.removeAttribute('data-open-service');
+            if (meta.whatsappUrl.startsWith('http')) waEl.target = '_blank';
+        }
+    }
 
     // 1. Navbar scroll state & Back-to-top visibility
     const mainNav = document.getElementById('mainNavbar');
@@ -607,16 +621,29 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // 9. Persistent Local Visitor Counter
+    const visitorBoxEl = document.getElementById('footerVisitorBox');
+    const onlineEl = document.getElementById('visitorOnline');
     const todayEl = document.getElementById('visitorToday');
     const totalEl = document.getElementById('visitorTotal');
-    try {
-        const storedTotal = Number(localStorage.getItem('stupa_total_visits') || '12840') + 1;
-        localStorage.setItem('stupa_total_visits', String(storedTotal));
-        if (todayEl) todayEl.textContent = String(142 + (storedTotal % 35));
-        if (totalEl) totalEl.textContent = storedTotal.toLocaleString('id-ID');
-    } catch (_) {
-        if (todayEl) todayEl.textContent = '148';
-        if (totalEl) totalEl.textContent = '12.841';
+    if (visitorBoxEl && meta.showVisitorStats === false) {
+        visitorBoxEl.classList.add('d-none');
+    } else {
+        if (onlineEl && meta.visitorOnlineText) onlineEl.textContent = meta.visitorOnlineText;
+        try {
+            const visitKey = 'stupa_total_visits';
+            const baseTotal = Number(meta.visitorTotalBase) || 12840;
+            const baseToday = Number(meta.visitorTodayBase) || 142;
+            const rawStored = localStorage.getItem(visitKey);
+            let storedTotal = rawStored ? Number(rawStored) : baseTotal;
+            if (storedTotal < baseTotal) storedTotal = baseTotal;
+            storedTotal += 1;
+            localStorage.setItem(visitKey, String(storedTotal));
+            if (todayEl) todayEl.textContent = String(baseToday + (storedTotal % 35));
+            if (totalEl) totalEl.textContent = storedTotal.toLocaleString('id-ID');
+        } catch (_) {
+            if (todayEl) todayEl.textContent = String(Number(meta.visitorTodayBase) || 148);
+            if (totalEl) totalEl.textContent = (Number(meta.visitorTotalBase) || 12841).toLocaleString('id-ID');
+        }
     }
 
     // 10. Toast Notification Helper

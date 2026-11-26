@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
         { id: 'layanan-stupa', label: 'Layanan & Kanal Digital STUPA' },
         { id: 'video-showcase', label: 'Video Showcase & Dokumenter' },
         { id: 'berita-informasi', label: 'Berita & Informasi' },
-        { id: 'prosedur-stupa', label: 'Layanan STUPA (Adventure, Agriculture & Kompos)' }
+        { id: 'prosedur-stupa', label: 'Layanan STUPA (Adventure, Agriculture & Kompos)' },
+        { id: 'kontak-footer', label: 'Footer, Kontak & Statistik' }
     ];
 
     const loginView = document.getElementById('loginView');
@@ -317,6 +318,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const meta = getMergedSiteMeta();
         const rtInput = document.getElementById('runningTextInput');
         if (rtInput) rtInput.value = getCustomData().runningText || meta.runningText || '';
+        const leadLayEl = document.getElementById('metaLeadLayananInput');
+        if (leadLayEl) leadLayEl.value = meta.secLeadLayanan || '';
         const leadProcEl = document.getElementById('metaLeadProcInput');
         if (leadProcEl) leadProcEl.value = meta.secLeadProsedur || '';
         fillSiteMetaForm(meta);
@@ -546,15 +549,24 @@ document.addEventListener('DOMContentLoaded', function () {
         setV('metaTitleLayananInput', meta.secTitleLayanan);
         setV('metaTitleBeritaInput', meta.secTitleBerita);
         setV('metaTitleProcInput', meta.secTitleProsedur);
+        setV('metaFooterOrgInput', meta.footerOrgName || 'STUPA — Siswa Siswi Teknik\nSatu Pecinta Alam\nSMK Negeri 1 Magelang');
         setV('metaMottoInput', meta.footerMotto);
+        setV('metaFooterContactHeading', meta.footerContactHeading || 'Kontak & Sekretariat');
         setV('metaSecInput', meta.secretariatName);
         setV('metaAddr1Input', meta.addressLine1);
         setV('metaAddr2Input', meta.addressLine2);
         setV('metaPhoneInput', meta.phone);
         setV('metaEmailInput', meta.email);
+        setV('metaFooterSocialHeading', meta.footerSocialHeading || 'Ikuti Kami');
         setV('metaIgInput', meta.instagramUrl);
         setV('metaYtInput', meta.youtubeUrl);
         setV('metaTtInput', meta.tiktokUrl);
+        setV('metaWaInput', meta.whatsappUrl || '#layanan-stupa');
+        const showVisEl = document.getElementById('metaShowVisitorInput');
+        if (showVisEl) showVisEl.checked = meta.showVisitorStats !== false;
+        setV('metaVisitorOnlineInput', meta.visitorOnlineText || '12 Online');
+        setV('metaVisitorTodayInput', meta.visitorTodayBase ?? 142);
+        setV('metaVisitorTotalInput', Number(localStorage.getItem('stupa_total_visits') || meta.visitorTotalBase || 12840));
         setV('metaCopyInput', meta.copyright);
     }
 
@@ -918,11 +930,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const custom = getCustomData();
         custom.siteMeta = {
             ...getMergedSiteMeta(),
+            secLeadLayanan: document.getElementById('metaLeadLayananInput').value.trim(),
             secLeadProsedur: document.getElementById('metaLeadProcInput').value.trim()
         };
         saveCustomData(custom);
-        addAuditLog('Memperbarui subjudul seksi Layanan STUPA');
-        alert('Subjudul seksi Layanan STUPA berhasil disimpan!');
+        addAuditLog('Memperbarui subjudul seksi beranda');
+        alert('Subjudul seksi beranda berhasil disimpan!');
     });
 
     document.getElementById('runningTextForm')?.addEventListener('submit', function (e) {
@@ -949,21 +962,32 @@ document.addEventListener('DOMContentLoaded', function () {
             secTitleLayanan: document.getElementById('metaTitleLayananInput').value.trim(),
             secTitleBerita: document.getElementById('metaTitleBeritaInput').value.trim(),
             secTitleProsedur: document.getElementById('metaTitleProcInput').value.trim(),
+            footerOrgName: document.getElementById('metaFooterOrgInput').value.trim(),
             footerMotto: document.getElementById('metaMottoInput').value.trim(),
+            footerContactHeading: document.getElementById('metaFooterContactHeading').value.trim(),
             secretariatName: document.getElementById('metaSecInput').value.trim(),
             addressLine1: document.getElementById('metaAddr1Input').value.trim(),
             addressLine2: document.getElementById('metaAddr2Input').value.trim(),
             phone: document.getElementById('metaPhoneInput').value.trim(),
             email: document.getElementById('metaEmailInput').value.trim(),
+            footerSocialHeading: document.getElementById('metaFooterSocialHeading').value.trim(),
             instagramUrl: document.getElementById('metaIgInput').value.trim() || '#kontak-footer',
             youtubeUrl: document.getElementById('metaYtInput').value.trim() || '#kontak-footer',
             tiktokUrl: document.getElementById('metaTtInput').value.trim() || '#kontak-footer',
+            whatsappUrl: document.getElementById('metaWaInput').value.trim() || '#layanan-stupa',
+            showVisitorStats: document.getElementById('metaShowVisitorInput')?.checked !== false,
+            visitorOnlineText: document.getElementById('metaVisitorOnlineInput').value.trim() || '12 Online',
+            visitorTodayBase: Number(document.getElementById('metaVisitorTodayInput').value || 142),
+            visitorTotalBase: Number(document.getElementById('metaVisitorTotalInput').value || 12840),
             copyright: document.getElementById('metaCopyInput').value.trim()
         };
+        if (custom.siteMeta.visitorTotalBase >= 0) {
+            localStorage.setItem('stupa_total_visits', String(custom.siteMeta.visitorTotalBase));
+        }
         saveCustomData(custom);
-        addAuditLog('Memperbarui Identitas, Logo & Judul Web');
-        if (isSuperAdmin()) renderAuditLogs();
-        alert('Identitas, logo & teks web berhasil diperbarui!');
+        addAuditLog('Memperbarui Header, Footer, Kontak, Sosmed & Statistik');
+        renderDashboard();
+        alert('Pengaturan Header, Footer, Kontak, Sosmed & Statistik berhasil diperbarui!');
     });
 
     // Delegated Click Actions
