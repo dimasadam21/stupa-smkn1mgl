@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const CUSTOM_KEY = 'stupa_custom_data';
     const SUB_KEY = 'stupa_submissions';
     const LOGS_KEY = 'stupa_audit_logs';
+    const SEK_KEY = 'stupa_sekretariat_docs_v1';
+    const FIN_KEY = 'stupa_finance_tx_v1';
 
     const DEFAULT_ACCOUNTS = [
         { username: 'superadmin', password: '0000', role: 'superadmin', displayName: 'Pembina / Super Admin STUPA', active: true },
@@ -58,6 +60,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const saveCustomData = obj => localStorage.setItem(CUSTOM_KEY, JSON.stringify(obj));
     const getSubmissions = () => { try { return JSON.parse(localStorage.getItem(SUB_KEY) || '[]'); } catch { return []; } };
     const getAuditLogs = () => { try { return JSON.parse(localStorage.getItem(LOGS_KEY) || '[]'); } catch { return []; } };
+    const getSekretariatDocs = () => { try { return JSON.parse(localStorage.getItem(SEK_KEY) || '[]'); } catch { return []; } };
+    const saveSekretariatDocs = list => localStorage.setItem(SEK_KEY, JSON.stringify(list));
+    const getFinanceTx = () => { try { return JSON.parse(localStorage.getItem(FIN_KEY) || '[]'); } catch { return []; } };
+    const saveFinanceTx = list => localStorage.setItem(FIN_KEY, JSON.stringify(list));
+
+    const escapeHtml = str => String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    const formatRupiah = num => 'Rp ' + Number(num || 0).toLocaleString('id-ID');
 
     function isManager() {
         const role = getSession()?.role;
@@ -321,6 +335,8 @@ document.addEventListener('DOMContentLoaded', function () {
         renderSuperServicesList();
         renderSuperVideosList();
         renderSuperCatalogList();
+        renderSekretariatList();
+        renderBendahara();
 
         const meta = getMergedSiteMeta();
         const rtInput = document.getElementById('runningTextInput');
@@ -1257,6 +1273,76 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // SEKRETARIAT ACTIONS (Admin & Super Admin)
+        const dlSek = e.target.closest('.js-dl-sek');
+        if (dlSek) {
+            const doc = getSekretariatDocs().find(d => d.id === dlSek.dataset.id);
+            if (!doc || !doc.dataUrl) return;
+            const a = document.createElement('a');
+            a.href = doc.dataUrl;
+            a.download = doc.fileName || (doc.title + '.dat');
+            a.click();
+            addAuditLog(`Mengunduh berkas Sekretariat: "${doc.title}"`);
+            return;
+        }
+        const editSek = e.target.closest('.js-edit-sek');
+        if (editSek) {
+            const doc = getSekretariatDocs().find(d => d.id === editSek.dataset.id);
+            if (!doc) return;
+            document.getElementById('editSekId').value = doc.id;
+            document.getElementById('sekCategoryInput').value = doc.category;
+            document.getElementById('sekTitleInput').value = doc.title;
+            document.getElementById('sekNoteInput').value = doc.note || '';
+            document.getElementById('sekFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Info Berkas Sekretariat';
+            document.getElementById('cancelSekEditBtn')?.classList.remove('d-none');
+            return;
+        }
+        const delSek = e.target.closest('.js-del-sek');
+        if (delSek) {
+            if (!confirm('Hapus berkas ini dari arsip Sekretariat?')) return;
+            const list = getSekretariatDocs();
+            const idx = list.findIndex(d => d.id === delSek.dataset.id);
+            if (idx !== -1) {
+                const removed = list.splice(idx, 1)[0];
+                saveSekretariatDocs(list);
+                addAuditLog(`Menghapus berkas Sekretariat: "${removed?.title || '-'}"`);
+                renderDashboard();
+            }
+            return;
+        }
+
+        // BENDAHARA ACTIONS (Admin & Super Admin)
+        const editFin = e.target.closest('.js-edit-fin');
+        if (editFin) {
+            const tx = getFinanceTx().find(t => t.id === editFin.dataset.id);
+            if (!tx) return;
+            document.getElementById('editFinId').value = tx.id;
+            if (tx.type === 'keluar') document.getElementById('finTypeKeluar').checked = true;
+            else document.getElementById('finTypeMasuk').checked = true;
+            populateFinanceCategories(tx.type);
+            document.getElementById('finDateInput').value = tx.date;
+            document.getElementById('finCategoryInput').value = tx.category;
+            document.getElementById('finAmountInput').value = String(tx.amount);
+            document.getElementById('finDescInput').value = tx.description;
+            document.getElementById('finPicInput').value = tx.pic || '';
+            document.getElementById('finFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Transaksi Kas';
+            document.getElementById('cancelFinEditBtn')?.classList.remove('d-none');
+            return;
+        }
+        const delFin = e.target.closest('.js-del-fin');
+        if (delFin) {
+            if (!confirm('Hapus catatan transaksi kas ini? Saldo akhir akan otomatis dihitung ulang.')) return;
+            const list = getFinanceTx();
+            const idx = list.findIndex(t => t.id === delFin.dataset.id);
+            if (idx !== -1) {
+                const removed = list.splice(idx, 1)[0];
+                saveFinanceTx(list);
+                addAuditLog(`Menghapus transaksi kas: "${removed?.description || '-'}" (${formatRupiah(removed?.amount)})`);
+                renderDashboard();
+            }
+            return;
+        }
+
         // SUPER ADMIN ONLY ACTIONS
         if (!isSuperAdmin()) return;
 
@@ -1382,7 +1468,9 @@ document.addEventListener('DOMContentLoaded', function () {
             customData: getCustomData(),
             submissions: getSubmissions(),
             accounts: getAccounts(),
-            logs: getAuditLogs()
+            logs: getAuditLogs(),
+            sekretariatDocs: getSekretariatDocs(),
+            financeTx: getFinanceTx()
         };
         const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -1406,6 +1494,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (parsed.customData) localStorage.setItem(CUSTOM_KEY, JSON.stringify(parsed.customData));
                 if (Array.isArray(parsed.submissions)) localStorage.setItem(SUB_KEY, JSON.stringify(parsed.submissions));
                 if (Array.isArray(parsed.accounts)) localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(parsed.accounts));
+                if (Array.isArray(parsed.sekretariatDocs)) localStorage.setItem(SEK_KEY, JSON.stringify(parsed.sekretariatDocs));
+                if (Array.isArray(parsed.financeTx)) localStorage.setItem(FIN_KEY, JSON.stringify(parsed.financeTx));
                 addAuditLog(`Memulihkan data sistem dari file "${file.name}"`);
                 renderDashboard();
                 alert('Backup berhasil dipulihkan!');
@@ -1423,5 +1513,390 @@ document.addEventListener('DOMContentLoaded', function () {
             addAuditLog('Mereset seluruh konten web ke bawaan pabrik');
             renderDashboard();
         }
+    });
+
+    // =========================================================================
+    // MODUL SEKRETARIAT (Internal Admin & Super Admin)
+    // =========================================================================
+    function formatBytes(bytes) {
+        const b = Number(bytes || 0);
+        if (b < 1024) return `${b} B`;
+        if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
+        return `${(b / (1024 * 1024)).toFixed(2)} MB`;
+    }
+
+    function getFileBadge(fileName) {
+        const ext = (fileName || '').split('.').pop().toLowerCase();
+        if (ext === 'doc' || ext === 'docx') return { ext: ext.toUpperCase(), cls: 'text-bg-primary', icon: 'fa-file-word' };
+        if (ext === 'xls' || ext === 'xlsx' || ext === 'csv') return { ext: ext.toUpperCase(), cls: 'text-bg-success', icon: 'fa-file-excel' };
+        if (ext === 'pdf') return { ext: 'PDF', cls: 'text-bg-danger', icon: 'fa-file-pdf' };
+        if (ext === 'ppt' || ext === 'pptx') return { ext: ext.toUpperCase(), cls: 'text-bg-warning', icon: 'fa-file-powerpoint' };
+        return { ext: (ext || 'FILE').toUpperCase(), cls: 'text-bg-secondary', icon: 'fa-file-lines' };
+    }
+
+    function renderSekretariatList() {
+        const tbody = document.getElementById('sekretariatTableBody');
+        const totalBadge = document.getElementById('sekTotalBadge');
+        if (!tbody) return;
+        const allDocs = getSekretariatDocs();
+        if (totalBadge) totalBadge.textContent = String(allDocs.length);
+
+        const q = (document.getElementById('sekSearchInput')?.value || '').trim().toLowerCase();
+        const catFilter = document.getElementById('sekFilterCat')?.value || '';
+        const filtered = allDocs.filter(d => {
+            const matchCat = !catFilter || d.category === catFilter;
+            const matchQ = !q || `${d.title} ${d.note || ''} ${d.fileName || ''}`.toLowerCase().includes(q);
+            return matchCat && matchQ;
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4 small">Belum ada dokumen kesekretariatan yang cocok / diunggah.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = filtered.map(d => {
+            const b = getFileBadge(d.fileName);
+            return `
+                <tr>
+                    <td>
+                        <div class="fw-semibold small" style="color:#005950;">${escapeHtml(d.title)}</div>
+                        ${d.note ? `<div class="text-muted" style="font-size:11px;">${escapeHtml(d.note)}</div>` : ''}
+                        <div class="text-muted" style="font-size:10.5px;">${escapeHtml(d.uploadedAt)} • ${escapeHtml(d.uploadedBy || 'Admin')}</div>
+                    </td>
+                    <td><span class="badge text-bg-light border text-dark" style="font-size:11px;">${escapeHtml(d.category)}</span></td>
+                    <td>
+                        <span class="badge ${b.cls}" style="font-size:10.5px;"><i class="fas ${b.icon} me-1"></i>${b.ext}</span>
+                        <div class="text-muted text-truncate" style="font-size:11px;max-width:140px;" title="${escapeHtml(d.fileName)}">${escapeHtml(d.fileName)}</div>
+                        <div class="text-muted" style="font-size:10px;">${formatBytes(d.fileSize)}</div>
+                    </td>
+                    <td class="text-end text-nowrap">
+                        <button type="button" class="btn btn-outline-success btn-sm js-dl-sek" data-id="${d.id}" title="Unduh Berkas"><i class="fas fa-download"></i></button>
+                        <button type="button" class="btn btn-outline-primary btn-sm js-edit-sek" data-id="${d.id}" title="Edit Info"><i class="fas fa-pen"></i></button>
+                        <button type="button" class="btn btn-outline-danger btn-sm js-del-sek" data-id="${d.id}" title="Hapus"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function resetSekForm() {
+        document.getElementById('sekretariatForm')?.reset();
+        const idEl = document.getElementById('editSekId');
+        if (idEl) idEl.value = '';
+        const h = document.getElementById('sekFormHeading');
+        if (h) h.innerHTML = '<i class="fas fa-file-arrow-up me-1"></i> Upload Berkas Kesekretariatan';
+        document.getElementById('cancelSekEditBtn')?.classList.add('d-none');
+    }
+    document.getElementById('cancelSekEditBtn')?.addEventListener('click', resetSekForm);
+    document.getElementById('sekSearchInput')?.addEventListener('input', renderSekretariatList);
+    document.getElementById('sekFilterCat')?.addEventListener('change', renderSekretariatList);
+
+    document.getElementById('sekretariatForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!isManager()) return;
+        const editId = document.getElementById('editSekId').value;
+        const category = document.getElementById('sekCategoryInput').value;
+        const title = document.getElementById('sekTitleInput').value.trim();
+        const note = document.getElementById('sekNoteInput').value.trim();
+        const file = document.getElementById('sekFileInput')?.files?.[0];
+        const sess = getSession();
+
+        if (!editId && !file) {
+            alert('Silakan pilih file Word, Excel, PDF, atau dokumen lainnya untuk diunggah.');
+            return;
+        }
+        if (file && file.size > 2.5 * 1024 * 1024) {
+            alert('Ukuran file melebihi batas 2,5 MB. Silakan kompres dokumen terlebih dahulu.');
+            return;
+        }
+
+        const commitDoc = (filePayload) => {
+            const list = getSekretariatDocs();
+            const now = new Date().toLocaleString('id-ID');
+            if (editId) {
+                const idx = list.findIndex(d => d.id === editId);
+                if (idx !== -1) {
+                    list[idx] = {
+                        ...list[idx],
+                        category, title, note,
+                        ...(filePayload || {}),
+                        uploadedAt: now,
+                        uploadedBy: sess?.username || 'Admin'
+                    };
+                    addAuditLog(`Memperbarui berkas Sekretariat: "${title}"`);
+                }
+            } else {
+                list.unshift({
+                    id: 'SEK-' + Date.now(),
+                    category, title, note,
+                    ...filePayload,
+                    uploadedAt: now,
+                    uploadedBy: sess?.username || 'Admin'
+                });
+                addAuditLog(`Mengunggah berkas Sekretariat: "${title}" (${filePayload.fileName})`);
+            }
+            try {
+                saveSekretariatDocs(list);
+                resetSekForm();
+                renderDashboard();
+            } catch {
+                alert('Penyimpanan penuh. Hapus beberapa berkas lama atau gunakan file berukuran lebih kecil.');
+            }
+        };
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => commitDoc({
+                fileName: file.name,
+                fileSize: file.size,
+                fileType: file.type || '',
+                dataUrl: String(reader.result)
+            });
+            reader.readAsDataURL(file);
+        } else {
+            commitDoc(null);
+        }
+    });
+
+    document.getElementById('exportSekCsvBtn')?.addEventListener('click', function () {
+        if (!isManager()) return;
+        const docs = getSekretariatDocs();
+        const rows = [['Waktu Unggah', 'Pengunggah', 'Kategori', 'Judul Dokumen', 'Nomor/Keterangan', 'Nama File', 'Ukuran (Byte)']];
+        docs.forEach(d => rows.push([d.uploadedAt, d.uploadedBy, d.category, d.title, d.note || '', d.fileName, String(d.fileSize || 0)]));
+        const csv = '\uFEFF' + rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `rekap-sekretariat-stupa-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    // =========================================================================
+    // MODUL BENDAHARA / BUKU KAS UMUM (Internal Admin & Super Admin)
+    // =========================================================================
+    const FIN_CATEGORIES = {
+        masuk: [
+            'Kas Awal / Saldo Periode Lalu',
+            'Iuran Kas Anggota',
+            'Dana Sekolah / BOS / Kesiswaan',
+            'Hasil STUPA Adventure (Rental)',
+            'Hasil Agriculture & Kompos',
+            'Donasi / Sponsorship',
+            'Pemasukan Lainnya'
+        ],
+        keluar: [
+            'Pembelian Perlengkapan Outdoor',
+            'Operasional Ekspedisi & Diklatsar',
+            'Pembelian Bibit & Bahan Kompos',
+            'Kesekretariatan & ATK',
+            'Konsumsi & Transportasi',
+            'P3K & Kesehatan',
+            'Pembelanjaan Lainnya'
+        ]
+    };
+
+    function populateFinanceCategories(type) {
+        const sel = document.getElementById('finCategoryInput');
+        if (!sel) return;
+        const opts = FIN_CATEGORIES[type === 'keluar' ? 'keluar' : 'masuk'];
+        sel.innerHTML = opts.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    }
+    populateFinanceCategories('masuk');
+    const finDateEl = document.getElementById('finDateInput');
+    if (finDateEl && !finDateEl.value) finDateEl.value = new Date().toISOString().slice(0, 10);
+
+    document.getElementById('finTypeMasuk')?.addEventListener('change', () => populateFinanceCategories('masuk'));
+    document.getElementById('finTypeKeluar')?.addEventListener('change', () => populateFinanceCategories('keluar'));
+
+    function computeFinanceLedger() {
+        const raw = getFinanceTx();
+        const ordered = [...raw].sort((a, b) => {
+            const da = `${a.date || ''} ${a.createdAt || ''}`;
+            const db = `${b.date || ''} ${b.createdAt || ''}`;
+            return da.localeCompare(db);
+        });
+        let runningBalance = 0;
+        let totalMasuk = 0;
+        let totalKeluar = 0;
+        const ledger = ordered.map(tx => {
+            const amt = Number(tx.amount || 0);
+            if (tx.type === 'keluar') {
+                totalKeluar += amt;
+                runningBalance -= amt;
+            } else {
+                totalMasuk += amt;
+                runningBalance += amt;
+            }
+            return { ...tx, amount: amt, balanceAfter: runningBalance };
+        });
+        return { totalMasuk, totalKeluar, saldoAkhir: runningBalance, ledger };
+    }
+
+    function renderBendahara() {
+        const tbody = document.getElementById('financeTableBody');
+        const masukEl = document.getElementById('finTotalMasuk');
+        const keluarEl = document.getElementById('finTotalKeluar');
+        const saldoEl = document.getElementById('finSaldoAkhir');
+        if (!tbody) return;
+
+        const { totalMasuk, totalKeluar, saldoAkhir, ledger } = computeFinanceLedger();
+        if (masukEl) masukEl.textContent = formatRupiah(totalMasuk);
+        if (keluarEl) keluarEl.textContent = formatRupiah(totalKeluar);
+        if (saldoEl) saldoEl.textContent = formatRupiah(saldoAkhir);
+
+        const q = (document.getElementById('finSearchInput')?.value || '').trim().toLowerCase();
+        const fType = document.getElementById('finFilterType')?.value || '';
+        const visibleRows = [...ledger].reverse().filter(tx => {
+            const matchType = !fType || tx.type === fType;
+            const matchQ = !q || `${tx.description} ${tx.category} ${tx.pic || ''}`.toLowerCase().includes(q);
+            return matchType && matchQ;
+        });
+
+        if (visibleRows.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4 small">Belum ada transaksi keuangan tercatat. Gunakan formulir di kiri untuk Tambah Saldo atau mencatat Pembelanjaan.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = visibleRows.map(tx => {
+            const isKeluar = tx.type === 'keluar';
+            return `
+                <tr>
+                    <td class="small text-nowrap text-muted">${escapeHtml(tx.date)}</td>
+                    <td>
+                        <div class="fw-semibold small text-dark">${escapeHtml(tx.description)}</div>
+                        <div class="text-muted" style="font-size:11px;">
+                            <span class="badge text-bg-light border text-dark">${escapeHtml(tx.category)}</span>
+                            ${tx.pic ? ` • ${escapeHtml(tx.pic)}` : ''}
+                        </div>
+                    </td>
+                    <td class="text-end text-nowrap small fw-semibold text-success">${!isKeluar ? formatRupiah(tx.amount) : '-'}</td>
+                    <td class="text-end text-nowrap small fw-semibold text-danger">${isKeluar ? formatRupiah(tx.amount) : '-'}</td>
+                    <td class="text-end text-nowrap small fw-bold" style="color:${tx.balanceAfter < 0 ? '#dc3545' : '#005950'};">${formatRupiah(tx.balanceAfter)}</td>
+                    <td class="text-end text-nowrap">
+                        <button type="button" class="btn btn-outline-primary btn-sm js-edit-fin" data-id="${tx.id}" title="Edit"><i class="fas fa-pen"></i></button>
+                        <button type="button" class="btn btn-outline-danger btn-sm js-del-fin" data-id="${tx.id}" title="Hapus"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function resetFinForm() {
+        document.getElementById('financeTxForm')?.reset();
+        const idEl = document.getElementById('editFinId');
+        if (idEl) idEl.value = '';
+        document.getElementById('finTypeMasuk').checked = true;
+        populateFinanceCategories('masuk');
+        const dateEl = document.getElementById('finDateInput');
+        if (dateEl) dateEl.value = new Date().toISOString().slice(0, 10);
+        const h = document.getElementById('finFormHeading');
+        if (h) h.innerHTML = '<i class="fas fa-receipt me-1"></i> Catat Transaksi Kas';
+        document.getElementById('cancelFinEditBtn')?.classList.add('d-none');
+    }
+    document.getElementById('cancelFinEditBtn')?.addEventListener('click', resetFinForm);
+    document.getElementById('finSearchInput')?.addEventListener('input', renderBendahara);
+    document.getElementById('finFilterType')?.addEventListener('change', renderBendahara);
+
+    document.getElementById('financeTxForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!isManager()) return;
+        const editId = document.getElementById('editFinId').value;
+        const type = document.getElementById('finTypeKeluar')?.checked ? 'keluar' : 'masuk';
+        const date = document.getElementById('finDateInput').value || new Date().toISOString().slice(0, 10);
+        const category = document.getElementById('finCategoryInput').value;
+        const amount = Math.round(Number(document.getElementById('finAmountInput').value || 0));
+        const description = document.getElementById('finDescInput').value.trim();
+        const pic = document.getElementById('finPicInput').value.trim();
+
+        if (!amount || amount <= 0) {
+            alert('Nominal transaksi harus lebih dari 0.');
+            return;
+        }
+        const list = getFinanceTx();
+        const sess = getSession();
+        if (editId) {
+            const idx = list.findIndex(t => t.id === editId);
+            if (idx !== -1) {
+                list[idx] = { ...list[idx], type, date, category, amount, description, pic, updatedBy: sess?.username || 'Admin' };
+                addAuditLog(`Mengedit transaksi kas (${type === 'masuk' ? 'Tambah Saldo' : 'Pembelanjaan'}): "${description}" ${formatRupiah(amount)}`);
+            }
+        } else {
+            list.push({
+                id: 'FIN-' + Date.now(),
+                type, date, category, amount, description, pic,
+                createdAt: new Date().toISOString(),
+                createdBy: sess?.username || 'Admin'
+            });
+            addAuditLog(`Mencatat ${type === 'masuk' ? 'Tambah Saldo' : 'Pembelanjaan'}: "${description}" ${formatRupiah(amount)}`);
+        }
+        saveFinanceTx(list);
+        resetFinForm();
+        renderDashboard();
+    });
+
+    document.getElementById('exportFinanceCsvBtn')?.addEventListener('click', function () {
+        if (!isManager()) return;
+        const { totalMasuk, totalKeluar, saldoAkhir, ledger } = computeFinanceLedger();
+        const rows = [['No', 'Tanggal', 'Jenis', 'Kategori Pos', 'Uraian', 'Nota / PJ', 'Pemasukan (Rp)', 'Pembelanjaan (Rp)', 'Saldo Berjalan (Rp)']];
+        ledger.forEach((tx, idx) => {
+            rows.push([
+                String(idx + 1),
+                tx.date,
+                tx.type === 'keluar' ? 'Pembelanjaan' : 'Tambah Saldo',
+                tx.category,
+                tx.description,
+                tx.pic || '',
+                tx.type === 'masuk' ? String(tx.amount) : '0',
+                tx.type === 'keluar' ? String(tx.amount) : '0',
+                String(tx.balanceAfter)
+            ]);
+        });
+        rows.push(['', '', 'TOTAL', '', '', '', String(totalMasuk), String(totalKeluar), String(saldoAkhir)]);
+        const csv = '\uFEFF' + rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `buku-kas-bendahara-stupa-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog('Mengekspor Buku Kas Bendahara ke Excel (.csv)');
+    });
+
+    document.getElementById('printFinanceBtn')?.addEventListener('click', function () {
+        if (!isManager()) return;
+        const { totalMasuk, totalKeluar, saldoAkhir, ledger } = computeFinanceLedger();
+        const rowsHtml = ledger.map((tx, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${escapeHtml(tx.date)}</td>
+                <td>${escapeHtml(tx.category)}</td>
+                <td>${escapeHtml(tx.description)}${tx.pic ? ` (${escapeHtml(tx.pic)})` : ''}</td>
+                <td style="text-align:right;color:#0a6847;">${tx.type === 'masuk' ? formatRupiah(tx.amount) : '-'}</td>
+                <td style="text-align:right;color:#b42318;">${tx.type === 'keluar' ? formatRupiah(tx.amount) : '-'}</td>
+                <td style="text-align:right;font-weight:700;">${formatRupiah(tx.balanceAfter)}</td>
+            </tr>
+        `).join('');
+        const win = window.open('', '_blank', 'width=900,height=650');
+        if (!win) return;
+        win.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Laporan Buku Kas STUPA SMKN 1 Magelang</title>
+            <style>body{font-family:Arial,sans-serif;padding:28px;color:#111}h2,p{margin:0 0 6px}table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12.5px}th,td{border:1px solid #cbd5e1;padding:7px 9px}th{background:#005950;color:#fff;text-align:left}.sum{display:flex;gap:24px;margin:14px 0;font-size:13.5px}.sign{display:flex;justify-content:space-between;margin-top:44px;font-size:13px;text-align:center}</style>
+            </head><body>
+            <h2>LAPORAN BUKU KAS UMUM (BKU)</h2>
+            <p><strong>STUPA (Siswa Siswi Teknik Satu Pecinta Alam) — SMK Negeri 1 Magelang</strong></p>
+            <p style="font-size:12px;color:#555;">Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
+            <div class="sum">
+                <div>Total Pemasukan: <strong>${formatRupiah(totalMasuk)}</strong></div>
+                <div>Total Pembelanjaan: <strong>${formatRupiah(totalKeluar)}</strong></div>
+                <div>Saldo Akhir Kas: <strong>${formatRupiah(saldoAkhir)}</strong></div>
+            </div>
+            <table><thead><tr><th>No</th><th>Tanggal</th><th>Kategori</th><th>Uraian</th><th style="text-align:right;">Masuk</th><th style="text-align:right;">Keluar</th><th style="text-align:right;">Saldo</th></tr></thead>
+            <tbody>${rowsHtml || '<tr><td colspan="7" style="text-align:center;">Belum ada transaksi.</td></tr>'}</tbody></table>
+            <div class="sign">
+                <div>Mengetahui,<br>Pembina STUPA SMKN 1 Magelang<br><br><br>__________________________</div>
+                <div>Magelang, ${new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}<br>Bendahara STUPA<br><br><br>__________________________</div>
+            </div>
+            <script>window.onload=function(){window.print();}</script></body></html>`);
+        win.document.close();
     });
 });
