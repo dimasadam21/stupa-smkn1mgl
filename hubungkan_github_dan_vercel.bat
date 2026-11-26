@@ -6,7 +6,8 @@ echo ===========================================================================
 echo.
 set "DEFAULT_REPO=https://github.com/dimasadam21/stupa-smkn1mgl.git"
 echo Default repositori: %DEFAULT_REPO%
-set /p "CUSTOM_REPO=Tekan ENTER untuk pakai default, atau tempel URL repo GitHub lain: "
+set /p "CUSTOM_REPO=https://github.com/dimasadam21/stupa-smkn1mgl.git
+"
 
 if not "%CUSTOM_REPO%"=="" (
     git remote set-url origin "%CUSTOM_REPO%" 2>nul || git remote add origin "%CUSTOM_REPO%"

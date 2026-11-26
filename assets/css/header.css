@@ -211,6 +211,34 @@ nav.navbar.scrolled {
     color: #F97910;
 }
 
+/* Admin Portal Button next to Search */
+.btn-admin-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px 15px;
+    border-radius: 20px;
+    background-color: #F97910;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+    transition: all 0.25s ease;
+}
+
+.btn-admin-nav:hover,
+.btn-admin-nav:focus {
+    background-color: #e87e0d;
+    border-color: #ffffff;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(249, 121, 16, 0.38);
+}
+
 /* Live Search Dropdown */
 .nav-search-results {
     position: absolute;

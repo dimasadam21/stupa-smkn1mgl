@@ -3,8 +3,32 @@
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
-    const data = window.STUPA_DATA;
-    if (!data) return;
+    const baseData = window.STUPA_DATA;
+    if (!baseData) return;
+
+    // Merge optional CMS overrides saved by Admin Portal
+    let savedCustom = null;
+    try {
+        savedCustom = JSON.parse(localStorage.getItem('stupa_custom_data') || 'null');
+    } catch (_) {
+        savedCustom = null;
+    }
+
+    const data = {
+        ...baseData,
+        heroSlides: (savedCustom && Array.isArray(savedCustom.heroSlides)) ? savedCustom.heroSlides : baseData.heroSlides,
+        news: {
+            ...baseData.news,
+            ...(savedCustom && savedCustom.news ? savedCustom.news : {})
+        }
+    };
+
+    if (savedCustom && savedCustom.runningText) {
+        document.querySelectorAll('.running-text-track p').forEach((p, idx) => {
+            const iconClass = idx === 0 ? 'fa-mountain' : 'fa-leaf';
+            p.innerHTML = `<i class="fas ${iconClass} me-2"></i> ${savedCustom.runningText}`;
+        });
+    }
 
     // 1. Navbar scroll state & Back-to-top visibility
     const mainNav = document.getElementById('mainNavbar');
@@ -298,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }).join('');
 
             extraHtml = `
-                <form id="stupaServiceForm" class="mt-3 p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.12);">
+                <form id="stupaServiceForm" data-service-title="${srv.title}" class="mt-3 p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.12);">
                     ${fieldsHtml}
                     <button type="submit" class="btn custom-btn w-100 justify-content-center py-2">
                         <i class="fas fa-paper-plane"></i> ${srv.submitLabel}
@@ -387,12 +411,31 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Handle service form submission cleanly
+    // Handle service form submission cleanly & persist to Admin Inbox
     document.addEventListener('submit', function (e) {
         if (e.target && e.target.id === 'stupaServiceForm') {
             e.preventDefault();
             const formData = new FormData(e.target);
+            const payload = {};
+            formData.forEach((val, key) => { payload[key] = String(val); });
             const firstVal = formData.values().next().value || 'Sahabat Alam';
+            const serviceTitle = e.target.dataset.serviceTitle || 'Layanan STUPA';
+
+            try {
+                const existing = JSON.parse(localStorage.getItem('stupa_submissions') || '[]');
+                existing.unshift({
+                    id: 'SUB-' + Date.now(),
+                    service: serviceTitle,
+                    applicant: String(firstVal),
+                    fields: payload,
+                    status: 'Menunggu',
+                    createdAt: new Date().toLocaleString('id-ID')
+                });
+                localStorage.setItem('stupa_submissions', JSON.stringify(existing));
+            } catch (_) {
+                // Ignore storage quota errors
+            }
+
             detailModal?.hide();
             showToast(`Terima kasih, ${firstVal}! Permohonan Anda telah tercatat di sistem layanan STUPA.`);
         }
