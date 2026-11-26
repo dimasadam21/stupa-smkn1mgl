@@ -122,12 +122,51 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function updateHeroLivePreview() {
+        const imgEl = document.getElementById('heroImgPreview');
+        const overlayEl = document.getElementById('heroPreviewOverlay');
+        const tagEl = document.getElementById('heroPrevTag');
+        const titleEl = document.getElementById('heroPrevTitle');
+        const descEl = document.getElementById('heroPrevDesc');
+        const btnEl = document.getElementById('heroPrevBtn');
+        const overlayVal = document.getElementById('heroOverlayVal');
+
+        const urlVal = document.getElementById('heroImageUrl')?.value.trim() || 'assets/images/hero-merbabu.jpg';
+        const posVal = document.getElementById('heroPosInput')?.value || 'center';
+        const alphaVal = Number(document.getElementById('heroOverlayInput')?.value || 0.92);
+        const tagVal = document.getElementById('heroTagInput')?.value.trim() || '';
+        const titleVal = document.getElementById('heroTitleInput')?.value.trim() || 'Judul Utama Tampilan Depan';
+        const descVal = document.getElementById('heroDescInput')?.value.trim() || 'Tulisan atau deskripsi singkat akan tampil di sini...';
+        const btnText = document.getElementById('heroBtnTextInput')?.value.trim() || 'Lihat detail';
+        const btnColor = document.getElementById('heroBtnColorInput')?.value || '#F97910';
+
+        if (imgEl) {
+            imgEl.src = urlVal;
+            imgEl.style.objectPosition = posVal;
+        }
+        if (overlayEl) {
+            overlayEl.style.background = `linear-gradient(to top, rgba(0,26,23,${alphaVal}) 0%, rgba(0,35,31,${(alphaVal * 0.58).toFixed(2)}) 55%, rgba(0,0,0,0.12) 100%)`;
+        }
+        if (overlayVal) overlayVal.textContent = `${Math.round(alphaVal * 100)}%`;
+        if (tagEl) {
+            tagEl.textContent = tagVal;
+            tagEl.classList.toggle('d-none', !tagVal);
+        }
+        if (titleEl) titleEl.textContent = titleVal;
+        if (descEl) descEl.textContent = descVal;
+        if (btnEl) {
+            btnEl.innerHTML = `${btnText} &rarr;`;
+            btnEl.style.background = btnColor;
+        }
+    }
+
     document.addEventListener('change', async function (e) {
         if (e.target.classList.contains('js-img-preset')) {
             const targetEl = document.getElementById(e.target.dataset.target);
             const prevEl = document.getElementById(e.target.dataset.preview);
             if (targetEl) targetEl.value = e.target.value;
             if (prevEl) prevEl.src = e.target.value;
+            if (e.target.dataset.target === 'heroImageUrl') updateHeroLivePreview();
         }
         if (e.target.classList.contains('js-img-upload')) {
             const file = e.target.files?.[0];
@@ -139,9 +178,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 const prevEl = document.getElementById(e.target.dataset.preview);
                 if (targetEl) targetEl.value = dataUrl;
                 if (prevEl) prevEl.src = dataUrl;
+                if (e.target.dataset.target === 'heroImageUrl') updateHeroLivePreview();
             } catch {
                 alert('Gagal memproses file gambar.');
             }
+        }
+        if (e.target.classList.contains('js-hero-live')) {
+            updateHeroLivePreview();
         }
         if (e.target.classList.contains('js-sub-status')) {
             const list = getSubmissions();
@@ -167,6 +210,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target.classList.contains('js-img-url')) {
             const prevEl = document.getElementById(e.target.dataset.preview);
             if (prevEl && e.target.value.trim()) prevEl.src = e.target.value.trim();
+        }
+        if (e.target.classList.contains('js-hero-live')) {
+            updateHeroLivePreview();
         }
     });
 
@@ -342,18 +388,21 @@ document.addEventListener('DOMContentLoaded', function () {
         el.innerHTML = slides.map((s, idx) => `
             <div class="d-flex justify-content-between align-items-center gap-2 p-2 rounded-3 border bg-white">
                 <div class="d-flex align-items-center gap-2 overflow-hidden">
-                    <img src="${s.image}" alt="" class="rounded-2 flex-shrink-0" style="width:50px;height:36px;object-fit:cover;">
+                    <img src="${s.image}" alt="" class="rounded-2 flex-shrink-0" style="width:56px;height:40px;object-fit:cover;object-position:${s.imagePosition || 'center'};">
                     <div class="overflow-hidden">
-                        <span class="badge text-bg-warning" style="font-size:10px;">${s.tag}</span>
+                        ${idx === 0 ? '<span class="badge text-bg-success me-1" style="font-size:9px;">#1 Utama</span>' : `<span class="badge text-bg-light border me-1" style="font-size:9px;">#${idx + 1}</span>`}
+                        ${s.tag ? `<span class="badge text-bg-warning" style="font-size:10px;">${s.tag}</span>` : ''}
                         <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${s.title}</div>
                     </div>
                 </div>
                 <div class="d-flex gap-1 flex-shrink-0">
-                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-hero" data-idx="${idx}"><i class="fas fa-pen"></i></button>
-                    <button type="button" class="btn btn-outline-danger btn-sm js-del-hero" data-idx="${idx}" ${slides.length <= 1 ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                    ${idx > 0 ? `<button type="button" class="btn btn-outline-success btn-sm js-make-first-hero" data-idx="${idx}" title="Jadikan Tampilan Pertama (#1)"><i class="fas fa-arrow-up"></i></button>` : ''}
+                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-hero" data-idx="${idx}" title="Edit Gambar &amp; Tulisan"><i class="fas fa-pen"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-sm js-del-hero" data-idx="${idx}" ${slides.length <= 1 ? 'disabled' : ''} title="Hapus"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         `).join('');
+        updateHeroLivePreview();
     }
 
     function renderSuperPubList() {
@@ -531,9 +580,13 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('addHeroForm')?.reset();
         document.getElementById('editHeroIdx').value = '';
         document.getElementById('heroImageUrl').value = 'assets/images/hero-merbabu.jpg';
-        document.getElementById('heroImgPreview').src = 'assets/images/hero-merbabu.jpg';
-        document.getElementById('heroFormHeading').innerHTML = '<i class="fas fa-images me-1"></i> Tambah / Edit Slide Hero';
+        document.getElementById('heroPosInput').value = 'center';
+        document.getElementById('heroOverlayInput').value = '0.92';
+        document.getElementById('heroBtnTextInput').value = 'Lihat detail';
+        document.getElementById('heroBtnColorInput').value = '#F97910';
+        document.getElementById('heroFormHeading').innerHTML = '<i class="fas fa-pen-ruler me-1"></i> Ganti Gambar &amp; Tulisan Tampilan Depan';
         document.getElementById('cancelHeroEditBtn')?.classList.add('d-none');
+        updateHeroLivePreview();
     }
     document.getElementById('cancelHeroEditBtn')?.addEventListener('click', resetHeroForm);
 
@@ -607,29 +660,47 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!isManager()) return;
         const tag = document.getElementById('heroTagInput').value.trim();
         const image = document.getElementById('heroImageUrl').value.trim();
+        const imagePosition = document.getElementById('heroPosInput').value || 'center';
+        const overlayOpacity = Number(document.getElementById('heroOverlayInput').value || 0.92);
         const title = document.getElementById('heroTitleInput').value.trim();
         const description = document.getElementById('heroDescInput').value.trim();
+        const buttonText = document.getElementById('heroBtnTextInput').value.trim() || 'Lihat detail';
+        const buttonColor = document.getElementById('heroBtnColorInput').value || '#F97910';
+        const buttonUrl = document.getElementById('heroBtnUrlInput').value.trim();
+        const rawContent = document.getElementById('heroContentInput').value.trim();
         const editIdx = document.getElementById('editHeroIdx').value;
 
         const custom = getCustomData();
         const slides = getMergedHero();
+        const formattedContent = rawContent
+            ? `<p class="lead fw-semibold text-teal">${description}</p><p>${rawContent.replace(/\n/g, '</p><p>')}</p>`
+            : `<p class="lead fw-semibold text-teal">${description}</p><p>Dipublikasikan melalui Portal Pengelolaan Web STUPA SMKN 1 Magelang.</p>`;
+
         if (editIdx !== '') {
-            slides[Number(editIdx)] = { ...slides[Number(editIdx)], tag, title, description, image };
-            addAuditLog(`Mengedit Hero Slide: "${title}"`);
+            const old = slides[Number(editIdx)] || {};
+            slides[Number(editIdx)] = {
+                ...old,
+                tag, title, description, image, imagePosition, overlayOpacity,
+                buttonText, buttonColor, buttonUrl,
+                content: rawContent ? formattedContent : (old.content || formattedContent)
+            };
+            addAuditLog(`Mengedit Tampilan Depan: "${title}"`);
         } else {
             slides.unshift({
                 id: 'hero-' + Date.now(),
-                tag, title, description, image,
+                tag, title, description, image, imagePosition, overlayOpacity,
+                buttonText, buttonColor, buttonUrl,
                 date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }),
                 author: 'Pengelola Web STUPA SMKN 1 Magelang',
-                content: `<p class="lead fw-semibold text-teal">${description}</p><p>Dipublikasikan melalui Portal Pengelolaan Web STUPA SMKN 1 Magelang.</p>`
+                content: formattedContent
             });
-            addAuditLog(`Menambahkan Hero Slide: "${title}"`);
+            addAuditLog(`Menambahkan Slide Tampilan Depan: "${title}"`);
         }
         custom.heroSlides = slides;
         saveCustomData(custom);
         resetHeroForm();
         renderDashboard();
+        alert('Tampilan depan berhasil disimpan dan langsung aktif di beranda!');
     });
 
     document.getElementById('addPubForm')?.addEventListener('submit', function (e) {
@@ -835,19 +906,40 @@ document.addEventListener('DOMContentLoaded', function () {
             renderDashboard();
             return;
         }
+        const makeFirstHero = e.target.closest('.js-make-first-hero');
+        if (makeFirstHero) {
+            const idx = Number(makeFirstHero.dataset.idx);
+            const slides = getMergedHero();
+            if (idx > 0 && idx < slides.length) {
+                const [picked] = slides.splice(idx, 1);
+                slides.unshift(picked);
+                const custom = getCustomData();
+                custom.heroSlides = slides;
+                saveCustomData(custom);
+                addAuditLog(`Menjadikan "${picked.title}" sebagai Slide Utama #1`);
+                renderDashboard();
+            }
+            return;
+        }
         const editHero = e.target.closest('.js-edit-hero');
         if (editHero) {
             const idx = Number(editHero.dataset.idx);
             const s = getMergedHero()[idx];
             if (!s) return;
             document.getElementById('editHeroIdx').value = String(idx);
-            document.getElementById('heroTagInput').value = s.tag;
-            document.getElementById('heroImageUrl').value = s.image;
-            document.getElementById('heroImgPreview').src = s.image;
-            document.getElementById('heroTitleInput').value = s.title;
-            document.getElementById('heroDescInput').value = s.description;
-            document.getElementById('heroFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Slide Hero';
+            document.getElementById('heroTagInput').value = s.tag || '';
+            document.getElementById('heroImageUrl').value = s.image || '';
+            document.getElementById('heroPosInput').value = s.imagePosition || 'center';
+            document.getElementById('heroOverlayInput').value = String(s.overlayOpacity !== undefined ? s.overlayOpacity : 0.92);
+            document.getElementById('heroTitleInput').value = s.title || '';
+            document.getElementById('heroDescInput').value = s.description || '';
+            document.getElementById('heroBtnTextInput').value = s.buttonText || 'Lihat detail';
+            document.getElementById('heroBtnColorInput').value = s.buttonColor || '#F97910';
+            document.getElementById('heroBtnUrlInput').value = s.buttonUrl || '';
+            document.getElementById('heroContentInput').value = (s.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+            document.getElementById('heroFormHeading').innerHTML = `<i class="fas fa-pen me-1"></i> Edit Slide Tampilan Depan (#${idx + 1})`;
             document.getElementById('cancelHeroEditBtn')?.classList.remove('d-none');
+            updateHeroLivePreview();
             return;
         }
         const delHero = e.target.closest('.js-del-hero');

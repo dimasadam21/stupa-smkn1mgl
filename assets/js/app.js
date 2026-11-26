@@ -112,25 +112,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const heroContainer = document.getElementById('carouselItemsContainer');
     const heroIndicators = document.getElementById('heroIndicators');
     if (heroContainer && heroIndicators) {
-        heroContainer.innerHTML = data.heroSlides.map((slide, idx) => `
-            <div class="carousel-item ${idx === 0 ? 'active' : ''}">
-                <img src="${slide.image}" alt="${slide.title}">
-                <div class="carousel-caption custom-caption">
-                    <span class="hero-tag"><i class="fas fa-leaf"></i> ${slide.tag}</span>
-                    <h1 class="slide-title">${slide.title}</h1>
-                    <p class="slide-description">${slide.description}</p>
-                    <button type="button" class="btn custom-btn js-open-article" data-source="hero" data-index="${idx}">
-                        <span>Lihat detail</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
+        heroContainer.innerHTML = data.heroSlides.map((slide, idx) => {
+            const btnLabel = slide.buttonText || 'Lihat detail';
+            const btnBg = slide.buttonColor || '#F97910';
+            const imgPos = slide.imagePosition || 'center';
+            const overlayAlpha = slide.overlayOpacity !== undefined ? slide.overlayOpacity : 0.92;
+            const actionBtn = slide.buttonUrl
+                ? `<a href="${slide.buttonUrl}" ${slide.buttonUrl.startsWith('http') ? 'target="_blank"' : ''} class="btn custom-btn" style="background-color:${btnBg};"><span>${btnLabel}</span><i class="fas fa-arrow-right"></i></a>`
+                : `<button type="button" class="btn custom-btn js-open-article" style="background-color:${btnBg};" data-source="hero" data-index="${idx}"><span>${btnLabel}</span><i class="fas fa-arrow-right"></i></button>`;
+            return `
+                <div class="carousel-item ${idx === 0 ? 'active' : ''}" style="--hero-overlay-alpha:${overlayAlpha};">
+                    <img src="${slide.image}" alt="${slide.title}" style="object-position:${imgPos};">
+                    <div class="carousel-caption custom-caption">
+                        ${slide.tag ? `<span class="hero-tag"><i class="fas fa-leaf"></i> ${slide.tag}</span>` : ''}
+                        <h1 class="slide-title">${slide.title}</h1>
+                        <p class="slide-description">${slide.description}</p>
+                        ${actionBtn}
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         heroIndicators.innerHTML = data.heroSlides.map((slide, idx) => `
             <button type="button" data-bs-target="#carouselBackground" data-bs-slide-to="${idx}"
                 class="${idx === 0 ? 'active' : ''}" aria-current="${idx === 0 ? 'true' : 'false'}"
-                aria-label="Slide ${idx + 1}: ${slide.tag}"></button>
+                aria-label="Slide ${idx + 1}: ${slide.tag || slide.title}"></button>
         `).join('');
     }
 
