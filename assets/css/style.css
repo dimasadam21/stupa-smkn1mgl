@@ -14,7 +14,9 @@
     --stupa-mint-soft: #eef8f6;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -22,7 +24,8 @@ html {
     scroll-behavior: smooth;
 }
 
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -96,8 +99,13 @@ body, html {
 }
 
 @keyframes scrollText {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 /* ==========================================================================
@@ -119,12 +127,10 @@ body, html {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.9) 0%,
-        rgba(245, 250, 249, 0.88) 50%,
-        rgba(255, 255, 255, 0.92) 100%
-    );
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(245, 250, 249, 0.88) 50%,
+            rgba(255, 255, 255, 0.92) 100%);
     z-index: 0;
 }
 
@@ -275,10 +281,12 @@ body, html {
         padding: 64px 0;
         background-attachment: scroll;
     }
+
     .services-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 14px;
     }
+
     .custom-card {
         min-height: 185px;
         padding: 22px 12px;
@@ -303,12 +311,10 @@ body, html {
 .video-section .gradient-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        to top,
-        rgba(0, 22, 19, 0.96) 0%,
-        rgba(0, 38, 34, 0.68) 55%,
-        rgba(0, 26, 23, 0.52) 100%
-    );
+    background: linear-gradient(to top,
+            rgba(0, 22, 19, 0.96) 0%,
+            rgba(0, 38, 34, 0.68) 55%,
+            rgba(0, 26, 23, 0.52) 100%);
     z-index: 0;
 }
 
@@ -1011,4 +1017,57 @@ body, html {
 .toast-stupa.show {
     display: flex;
     animation: fadeInFromBottom 0.3s ease;
+}
+
+/* ==========================================================================
+   Fixed Sticky Mascot (Transparent Background, Semi Top-Left Position)
+   ========================================================================== */
+.stupa-floating-mascot {
+    position: fixed;
+    top: 92px;
+    left: 48px;
+    z-index: 1020;
+    background: transparent;
+    pointer-events: none;
+    user-select: none;
+    animation: stupaMascotFloat 3.8s ease-in-out infinite;
+}
+
+.stupa-mascot-img {
+    width: 112px;
+    height: auto;
+    display: block;
+    background: transparent;
+    filter: drop-shadow(0 8px 18px rgba(0, 26, 23, 0.38));
+}
+
+@keyframes stupaMascotFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@media (max-width: 991.98px) {
+    .stupa-floating-mascot {
+        top: 88px;
+        left: 22px;
+    }
+
+    .stupa-mascot-img {
+        width: 84px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .stupa-floating-mascot {
+        top: 86px;
+        left: 12px;
+    }
+
+    .stupa-mascot-img {
+        width: 66px;
+    }
 }

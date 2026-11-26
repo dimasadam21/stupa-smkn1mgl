@@ -350,14 +350,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>
                         <select class="form-select form-select-sm js-sub-status" data-idx="${idx}" style="min-width:120px;">
                             ${['Menunggu', 'Diproses', 'Disetujui', 'Selesai'].map(st =>
-                                `<option value="${st}" ${item.status === st ? 'selected' : ''}>${st}</option>`
-                            ).join('')}
+                `<option value="${st}" ${item.status === st ? 'selected' : ''}>${st}</option>`
+            ).join('')}
                         </select>
                     </td>
                     <td>
                         ${isSuperAdmin()
-                            ? `<button type="button" class="btn btn-outline-danger btn-sm js-del-sub" data-idx="${idx}" title="Hapus"><i class="fas fa-trash"></i></button>`
-                            : `<span class="text-muted small">-</span>`}
+                    ? `<button type="button" class="btn btn-outline-danger btn-sm js-del-sub" data-idx="${idx}" title="Hapus"><i class="fas fa-trash"></i></button>`
+                    : `<span class="text-muted small">-</span>`}
                     </td>
                 </tr>
             `;
