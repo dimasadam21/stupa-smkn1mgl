@@ -767,9 +767,9 @@ body, html {
 
 .prosedur-steps {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.75rem;
-    max-width: 1120px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -781,11 +781,18 @@ body, html {
     border: 1px solid rgba(0, 89, 82, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
 .prosedur-step-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 32px rgba(0, 89, 82, 0.14);
+}
+
+.layanan-usaha-head {
+    padding: 1.15rem 1.25rem 0.65rem;
+    border-bottom: 1px dashed rgba(0, 89, 82, 0.12);
 }
 
 .prosedur-step-card .step-badge {
@@ -794,24 +801,40 @@ body, html {
     background: linear-gradient(135deg, #005950, #007a6e);
     color: #ffffff;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     border-radius: 20px;
-    margin: 1.15rem 1.15rem 0.75rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.layanan-usaha-sub {
+    margin: 0;
+    font-size: 0.83rem;
+    font-weight: 500;
+    color: #466662;
+}
+
+.layanan-usaha-cover {
+    width: 100%;
+    height: 138px;
+    object-fit: cover;
+    display: block;
 }
 
 .prosedur-diagram-box {
-    padding: 0.75rem 1.25rem 1.5rem;
+    padding: 0.85rem 1.15rem 1rem;
+    flex: 1;
 }
 
 .flow-step {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    padding: 10px 12px;
+    gap: 10px;
+    padding: 9px 11px;
     border-radius: 12px;
     background: #f6fbfa;
     border: 1px solid rgba(0, 89, 82, 0.08);
-    margin-bottom: 10px;
+    margin-bottom: 9px;
 }
 
 .flow-step:last-child {
@@ -819,34 +842,83 @@ body, html {
 }
 
 .flow-num {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background: linear-gradient(135deg, #005950, #00a896);
     color: #ffffff;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.flow-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.flow-text-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
 }
 
 .flow-text h6 {
-    margin: 0 0 2px 0;
-    font-size: 13.5px;
+    margin: 0;
+    font-size: 13px;
     font-weight: 700;
     color: #005950;
 }
 
+.flow-price {
+    font-size: 11px;
+    font-weight: 700;
+    color: #c85800;
+    background: rgba(249, 121, 16, 0.14);
+    padding: 2px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
 .flow-text p {
     margin: 0;
-    font-size: 12px;
+    font-size: 11.8px;
     color: #546a68;
     line-height: 1.45;
 }
 
-@media (max-width: 991.98px) {
+.layanan-card-cta {
+    padding: 0.75rem 1.25rem;
+    background: #f1f8f6;
+    border-top: 1px solid rgba(0, 89, 82, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #005950;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.prosedur-step-card:hover .layanan-card-cta {
+    background: #005950;
+    color: #ffffff;
+}
+
+@media (max-width: 1199.98px) {
+    .prosedur-steps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767.98px) {
     .prosedur-steps {
         grid-template-columns: 1fr;
     }

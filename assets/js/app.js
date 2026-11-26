@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         heroSlides: (savedCustom && Array.isArray(savedCustom.heroSlides)) ? savedCustom.heroSlides : baseData.heroSlides,
         services: (savedCustom && Array.isArray(savedCustom.services)) ? savedCustom.services : baseData.services,
         videos: (savedCustom && Array.isArray(savedCustom.videos)) ? savedCustom.videos : baseData.videos,
-        procedures: (savedCustom && Array.isArray(savedCustom.procedures)) ? savedCustom.procedures : (baseData.procedures || []),
+        layananCatalog: (savedCustom && Array.isArray(savedCustom.layananCatalog)) ? savedCustom.layananCatalog : (baseData.layananCatalog || []),
         siteMeta: {
             ...(baseData.siteMeta || {}),
             ...(savedCustom && savedCustom.siteMeta ? savedCustom.siteMeta : {})
@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setTxt('secLeadLayanan', meta.secLeadLayanan);
     setTxt('secTitleBerita', meta.secTitleBerita);
     setTxt('secTitleProsedur', meta.secTitleProsedur);
+    setTxt('secLeadProsedur', meta.secLeadProsedur);
     setTxt('footerMotto', meta.footerMotto);
     setTxt('footerSecretariatName', meta.secretariatName);
     setTxt('footerAddress1', meta.addressLine1);
@@ -272,22 +273,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 6. Render Procedures Dynamically
+    // 6. Render Layanan Usaha STUPA (Adventure, Agriculture & Kompos)
     const proceduresContainer = document.getElementById('proceduresContainer');
-    if (proceduresContainer && Array.isArray(data.procedures)) {
-        proceduresContainer.innerHTML = data.procedures.map(proc => `
-            <div class="prosedur-step-card" role="button" tabindex="0" title="Klik untuk memperbesar alur">
-                <span class="step-badge"><i class="fas ${proc.icon || 'fa-list-check'} me-1"></i> ${proc.badge}</span>
+    if (proceduresContainer && Array.isArray(data.layananCatalog)) {
+        proceduresContainer.innerHTML = data.layananCatalog.map((unit, uIdx) => `
+            <div class="prosedur-step-card js-open-catalog" data-index="${uIdx}" role="button" tabindex="0" title="Klik untuk melihat katalog & pemesanan ${unit.badge}">
+                <div class="layanan-usaha-head">
+                    <span class="step-badge"><i class="fas ${unit.icon || 'fa-store'} me-1"></i> ${unit.badge}</span>
+                    ${unit.subtitle ? `<p class="layanan-usaha-sub">${unit.subtitle}</p>` : ''}
+                </div>
+                ${unit.image ? `<img src="${unit.image}" alt="${unit.badge}" class="layanan-usaha-cover">` : ''}
                 <div class="prosedur-diagram-box">
-                    ${(proc.steps || []).map((st, idx) => `
+                    ${(unit.items || []).map((st, idx) => `
                         <div class="flow-step">
                             <span class="flow-num">${idx + 1}</span>
                             <div class="flow-text">
-                                <h6>${st.title}</h6>
-                                <p>${st.desc}</p>
+                                <div class="flow-text-top">
+                                    <h6>${st.title}</h6>
+                                    ${st.price ? `<span class="flow-price">${st.price}</span>` : ''}
+                                </div>
+                                ${st.desc ? `<p>${st.desc}</p>` : ''}
                             </div>
                         </div>
                     `).join('')}
+                </div>
+                <div class="layanan-card-cta">
+                    <span><i class="fas fa-bag-shopping me-1"></i> ${unit.actionText || 'Lihat Katalog & Pesan'}</span>
+                    <i class="fas fa-arrow-right"></i>
                 </div>
             </div>
         `).join('');
@@ -440,6 +452,52 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    function openCatalogModal(idx) {
+        const unit = (data.layananCatalog || [])[idx];
+        if (!unit || !detailModal) return;
+        detailTitle.textContent = unit.badge;
+        const itemsHtml = (unit.items || []).map((it, i) => `
+            <div class="d-flex justify-content-between align-items-start gap-2 p-2 rounded-3 mb-2" style="background:#f6fbfa;border:1px solid rgba(0,89,82,0.1);">
+                <div>
+                    <div class="fw-bold" style="color:#005950;font-size:13.5px;">${i + 1}. ${it.title}</div>
+                    ${it.desc ? `<div class="text-muted" style="font-size:12px;">${it.desc}</div>` : ''}
+                </div>
+                ${it.price ? `<span class="badge rounded-pill flex-shrink-0" style="background:#F97910;font-size:11.5px;">${it.price}</span>` : ''}
+            </div>
+        `).join('');
+        detailBody.innerHTML = `
+            ${unit.image ? `<img src="${unit.image}" alt="${unit.badge}" class="img-fluid rounded-4 mb-3 w-100" style="max-height:220px;object-fit:cover;">` : ''}
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="d-flex align-items-center justify-content-center rounded-4 flex-shrink-0" style="width:52px;height:52px;background:rgba(0,89,82,0.12);color:#005950;">
+                    <i class="fas ${unit.icon || 'fa-store'} fs-4"></i>
+                </div>
+                <div>
+                    <span class="badge rounded-pill mb-1" style="background:#005950;">LAYANAN STUPA</span>
+                    <h4 class="fw-bold mb-0" style="color:#005950;">${unit.badge}</h4>
+                    ${unit.subtitle ? `<div class="small text-muted">${unit.subtitle}</div>` : ''}
+                </div>
+            </div>
+            ${unit.description ? `<p class="mb-3">${unit.description}</p>` : ''}
+            <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-list-ul me-1"></i> Daftar Pilihan &amp; Harga</h6>
+            <div class="mb-3">${itemsHtml || '<p class="text-muted small">Belum ada daftar item.</p>'}</div>
+            ${unit.contact ? `<div class="alert py-2 px-3 small mb-3" style="background:#eef7f5;color:#005950;border:1px solid rgba(0,89,82,0.15);"><i class="fas fa-phone-volume me-1"></i> ${unit.contact}</div>` : ''}
+            <form id="stupaServiceForm" class="p-3 rounded-4 border" style="background:#fffaf4;" data-service-title="${unit.badge}">
+                <h6 class="fw-bold mb-2" style="color:#c85800;"><i class="fas fa-cart-plus me-1"></i> Formulir Pemesanan / Sewa</h6>
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control form-control-sm rounded-3" name="Nama Pemesan / Kelas" placeholder="Nama lengkap / Kelas / Instansi" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control form-control-sm rounded-3" name="Kontak WhatsApp" placeholder="Nomor WhatsApp aktif" required>
+                    </div>
+                </div>
+                <textarea class="form-control form-control-sm rounded-3 mb-2" name="Detail Pesanan / Sewa" rows="2" placeholder="Tulis barang/tanaman/media tanam yang dipesan, jumlah, dan tanggal..." required></textarea>
+                <button type="submit" class="btn custom-btn btn-sm"><i class="fas fa-paper-plane"></i> Kirim Permintaan ke Admin</button>
+            </form>
+        `;
+        detailModal.show();
+    }
+
     document.addEventListener('click', function (e) {
         const articleEl = e.target.closest('.js-open-article');
         if (articleEl) {
@@ -456,12 +514,9 @@ document.addEventListener('DOMContentLoaded', function () {
             openVideoModal(Number(vidEl.dataset.index));
             return;
         }
-        const procCard = e.target.closest('.prosedur-step-card');
-        if (procCard) {
-            const titleText = procCard.querySelector('.step-badge')?.textContent || 'Prosedur STUPA';
-            detailTitle.textContent = titleText;
-            detailBody.innerHTML = procCard.querySelector('.prosedur-diagram-box')?.innerHTML || '';
-            detailModal?.show();
+        const catalogCard = e.target.closest('.js-open-catalog');
+        if (catalogCard) {
+            openCatalogModal(Number(catalogCard.dataset.index));
         }
     });
 
@@ -501,7 +556,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchForm = document.getElementById('navSearchForm');
 
     const searchableItems = [
-        ...data.services.map((s, idx) => ({ type: 'Layanan', title: s.title, action: () => openServiceModal(idx) })),
+        ...data.services.map((s, idx) => ({ type: 'Kanal', title: s.title, action: () => openServiceModal(idx) })),
+        ...(data.layananCatalog || []).map((c, idx) => ({ type: 'Layanan', title: `${c.badge} — ${c.subtitle || ''}`, action: () => openCatalogModal(idx) })),
         ...data.newsCategories.flatMap(c =>
             (data.news[c.key] || []).map((n, idx) => ({ type: c.label.toUpperCase(), title: n.title, action: () => openArticleModal(c.key, idx) }))
         )

@@ -399,38 +399,58 @@ window.STUPA_DATA = {
         }
     ],
 
-    procedures: [
+    layananCatalog: [
         {
-            id: 'proc-1',
-            badge: 'Alur Seleksi & Diklatsar Anggota',
-            icon: 'fa-user-check',
-            steps: [
-                { title: 'Registrasi Daring & Izin Orang Tua', desc: 'Mengisi formulir portal layanan dan menyerahkan surat persetujuan wali murid serta keterangan sehat.' },
-                { title: 'Kelas Akademik & Pembinaan Fisik', desc: 'Mengikuti 3 pekan materi navigasi darat, etika rimba, PPGD, dan pembinaan ketahanan jasmani.' },
-                { title: 'Pengembaraan Lapangan (Diklatsar)', desc: 'Praktik lapangan terpadu bersama pembina dan tim medis di lereng pegunungan Jawa Tengah.' },
-                { title: 'Pengukuhan & Nomor Registrasi Anggota', desc: 'Penyerahan slayer kebanggaan STUPA dan penetapan penugasan di divisi pilihan.' }
+            id: 'srv-adventure',
+            badge: 'STUPA ADVENTURE',
+            subtitle: 'Rental Perlengkapan Outdoor & Pendakian',
+            icon: 'fa-campground',
+            image: '',
+            description: 'Penyewaan perlengkapan pendakian dan kegiatan alam bebas terawat, bersih, dan siap pakai untuk pelajar SMKN 1 Magelang maupun umum.',
+            contact: 'Posko Logistik STUPA Adventure • 0812-3456-7890',
+            actionText: 'Sewa Perkap Outdoor',
+            items: [
+                { title: 'Tenda Dome Kapasitas 2–4 Orang', price: 'Rp 35.000 / hari', desc: 'Frame kokoh, double layer tahan hujan & terpal alas.' },
+                { title: 'Tas Carrier 45L – 60L + Rain Cover', price: 'Rp 25.000 / hari', desc: 'Backsystem ergonomis, tali pengikat kuat, siap jalur gunung.' },
+                { title: 'Sleeping Bag & Matras Spons/Foil', price: 'Rp 15.000 / hari', desc: 'Dicuci bersih setiap selesai sewa, hangat untuk suhu malam.' },
+                { title: 'Kompor Portable, Nesting & Headlamp', price: 'Rp 20.000 / hari', desc: 'Paket perlengkapan masak lapangan & penerangan malam.' },
+                { title: 'Trekking Pole & Flysheet 3x4 m', price: 'Rp 15.000 / hari', desc: 'Stabil di jalur terjal & perlindungan tambahan area camp.' }
             ]
         },
         {
-            id: 'proc-2',
-            badge: 'Prosedur Peminjaman Logistik & Izin Ekspedisi',
-            icon: 'fa-toolbox',
-            steps: [
-                { title: 'Pengajuan Rencana Perjalanan (ROP)', desc: 'Menyampaikan proposal rute, daftar personel, serta analisis mitigasi risiko minimal H-7 keberangkatan.' },
-                { title: 'Verifikasi Pembina & Koordinator Logistik', desc: 'Pemeriksaan kelaikan perlengkapan tenda, kompas, P3K, dan persetujuan pembina ekstrakurikuler.' },
-                { title: 'Serah Terima Alat & Check-In Basecamp', desc: 'Pencatatan kondisi alat sebelum berangkat serta pelaporan posisi berkala selama ekspedisi.' },
-                { title: 'Pengembalian Bersih & Laporan Evaluasi', desc: 'Logistik dikembalikan dalam keadaan kering/terawat maksimal H+2 disertai jurnal catatan lapangan.' }
+            id: 'srv-agriculture',
+            badge: 'AGRICULTURE STUPA',
+            subtitle: 'Budidaya & Penjualan Tanaman Hidup',
+            icon: 'fa-seedling',
+            image: '',
+            description: 'Katalog tanaman hias, bibit sayur, toga, hingga bibit pohon buah unggul hasil pembibitan green house siswa STUPA SMKN 1 Magelang.',
+            contact: 'Kebun Eco-Garden STUPA • SMKN 1 Magelang',
+            actionText: 'Pesan Tanaman Sekarang',
+            items: [
+                { title: 'Tanaman Hias Daun & Bunga', price: 'Rp 15.000 – Rp 45.000', desc: 'Monstera, Aglonema, Lidah Mertua, Pakis & Anggrek terawat.' },
+                { title: 'Sukulen & Kaktus Mini Pot', price: 'Rp 10.000 – Rp 25.000', desc: 'Estetik untuk hiasan meja belajar, kelas, dan suvenir.' },
+                { title: 'Bibit Sayur & Paket Hidroponik', price: 'Rp 5.000 – Rp 20.000', desc: 'Selada, pakcoy, kangkung, cabai rawit & tomat ceri sehat.' },
+                { title: 'Tanaman Toga & Herbal Nusantara', price: 'Rp 12.000 – Rp 30.000', desc: 'Jahe merah, mint, serai, kumis kucing & rosemary.' },
+                { title: 'Bibit Pohon Buah & Konservasi', price: 'Rp 15.000 – Rp 50.000', desc: 'Alpukat, mangga, jambu kristal, tabebuya & pucuk merah.' }
+            ]
+        },
+        {
+            id: 'srv-kompos',
+            badge: 'KOMPOS & MEDIA TANAM',
+            subtitle: 'Produksi & Jual Media Tanam Organik',
+            icon: 'fa-recycle',
+            image: '',
+            description: 'Media tanam alami hasil pengolahan limbah daun sekolah dan fermentasi mikroba aktif, gembur, subur, serta bebas gulma.',
+            contact: 'Rumah Kompos STUPA • Eco-Tech Lab',
+            actionText: 'Pesan Media Tanam',
+            items: [
+                { title: 'Kompos Organik Matang (Sak 5 kg)', price: 'Rp 15.000 / sak', desc: 'Fermentasi daun kampus terayak halus, tidak berbau & kaya hara.' },
+                { title: 'Media Tanam Siap Pakai 3-in-1 (5 kg)', price: 'Rp 18.000 / sak', desc: 'Kombinasi pas tanah humus pegunungan, kompos, dan sekam bakar.' },
+                { title: 'Sekam Bakar & Sekam Mentah Steril', price: 'Rp 12.000 / sak', desc: 'Menjaga aerasi & porositas agar akar tumbuh sehat tanpa busuk.' },
+                { title: 'Cocopeat Halus & Pupuk Kascing', price: 'Rp 15.000 / kemasan', desc: 'Penahan kelembapan alami untuk penyemaian bibit & tanaman hias.' },
+                { title: 'Paket Kebun Sekolah (Kompos + Polybag)', price: 'Rp 30.000 / paket', desc: 'Praktis untuk proyek P5, taman kelas, dan pekarangan rumah.' }
             ]
         }
-    ],
-
-    partners: [
-        { label: 'SMKN 1 Magelang', icon: 'fa-school', href: '#top' },
-        { label: 'TNGM Merbabu', icon: 'fa-tree', href: '#layanan-stupa' },
-        { label: 'Basarnas & BPBD Magelang', icon: 'fa-life-ring', href: '#layanan-stupa' },
-        { label: 'Pokja Adiwiyata', icon: 'fa-award', href: '#layanan-stupa' },
-        { label: 'Forum Sispala Jateng', icon: 'fa-compass', href: '#layanan-stupa' },
-        { label: 'Komunitas Peduli Progo', icon: 'fa-water', href: '#layanan-stupa' }
     ],
 
     siteMeta: {
@@ -439,8 +459,8 @@ window.STUPA_DATA = {
         secTitleLayanan: 'Layanan & Kanal Digital STUPA',
         secLeadLayanan: 'Ruang layanan terpadu Siswa Siswi Teknik Satu Pecinta Alam SMKN 1 Magelang—dirancang praktis, transparan, dan mudah diakses bagi siswa, pembina, maupun mitra lingkungan.',
         secTitleBerita: 'BERITA & INFORMASI',
-        secTitlePublikasi: 'PUBLIKASI & MODUL EKSPEDISI',
-        secTitleProsedur: 'PROSEDUR KEGIATAN & LAYANAN STUPA',
+        secTitleProsedur: 'LAYANAN STUPA',
+        secLeadProsedur: 'Unit layanan mandiri STUPA SMKN 1 Magelang: Rental Perkap Outdoor STUPA Adventure, Tanaman Agriculture, serta Kompos & Media Tanam Organik.',
         runningText: 'Menapak Rimba dengan Nalar Ilmu, Menjaga Semesta dengan Keteguhan Hati — STUPA SMKN 1 Magelang: Tangguh di Puncak, Santun di Bumi, Unggul dalam Karya Teknik Berkelanjutan!',
         footerMotto: '“Berakar pada ilmu teknik, tumbuh dalam persaudaraan, berbuah pada kelestarian semesta.”',
         secretariatName: 'Sanggar STUPA — SMKN 1 Magelang',

@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { id: 'layanan-stupa', label: 'Layanan & Kanal Digital STUPA' },
         { id: 'video-showcase', label: 'Video Showcase & Dokumenter' },
         { id: 'berita-informasi', label: 'Berita & Informasi' },
-        { id: 'prosedur-stupa', label: 'Prosedur Kegiatan & Layanan' }
+        { id: 'prosedur-stupa', label: 'Layanan STUPA (Adventure, Agriculture & Kompos)' }
     ];
 
     const loginView = document.getElementById('loginView');
@@ -87,9 +87,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const c = getCustomData().videos;
         return Array.isArray(c) ? c : [...(window.STUPA_DATA?.videos || [])];
     };
-    const getMergedProcedures = () => {
-        const c = getCustomData().procedures;
-        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.procedures || [])];
+    const getMergedCatalog = () => {
+        const c = getCustomData().layananCatalog;
+        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.layananCatalog || [])];
     };
     const getMergedSiteMeta = () => ({ ...(window.STUPA_DATA?.siteMeta || {}), ...(getCustomData().siteMeta || {}) });
 
@@ -312,11 +312,13 @@ document.addEventListener('DOMContentLoaded', function () {
         renderSuperHeroList();
         renderSuperServicesList();
         renderSuperVideosList();
-        renderSuperProceduresList();
+        renderSuperCatalogList();
 
         const meta = getMergedSiteMeta();
         const rtInput = document.getElementById('runningTextInput');
         if (rtInput) rtInput.value = getCustomData().runningText || meta.runningText || '';
+        const leadProcEl = document.getElementById('metaLeadProcInput');
+        if (leadProcEl) leadProcEl.value = meta.secLeadProsedur || '';
         fillSiteMetaForm(meta);
 
         if (isSuperAdmin()) {
@@ -498,17 +500,39 @@ document.addEventListener('DOMContentLoaded', function () {
         `).join('');
     }
 
-    function renderSuperProceduresList() {
-        const el = document.getElementById('superProceduresList');
+    function renderSuperCatalogList() {
+        const el = document.getElementById('superCatalogList');
         if (!el) return;
-        const list = getMergedProcedures();
-        el.innerHTML = list.map((pr, idx) => `
-            <div class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-white border">
-                <div>
-                    <div class="fw-semibold small" style="color:#005950;">${pr.badge}</div>
-                    <div class="text-muted" style="font-size:11px;">${(pr.steps || []).length} langkah alur</div>
+        const list = getMergedCatalog();
+        if (list.length === 0) {
+            el.innerHTML = '<div class="text-muted small py-3 text-center">Belum ada unit layanan. Silakan tambah di formulir sebelah kiri.</div>';
+            return;
+        }
+        el.innerHTML = list.map((unit, idx) => `
+            <div class="p-3 rounded-4 bg-white border shadow-sm">
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge rounded-pill text-bg-success px-2 py-2"><i class="fas ${unit.icon || 'fa-store'}"></i></span>
+                        <div>
+                            <div class="fw-bold" style="color:#005950;">${unit.badge}</div>
+                            <div class="text-muted small">${unit.subtitle || ''}</div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-1 flex-shrink-0">
+                        ${idx > 0 ? `<button type="button" class="btn btn-outline-success btn-sm js-move-cat" data-idx="${idx}" title="Naikkan Urutan"><i class="fas fa-arrow-up"></i></button>` : ''}
+                        <button type="button" class="btn btn-outline-primary btn-sm js-edit-cat" data-idx="${idx}" title="Edit Layanan & Daftar Harga"><i class="fas fa-pen"></i> Edit</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm js-del-cat" data-idx="${idx}" title="Hapus"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
-                <button type="button" class="btn btn-outline-danger btn-sm js-del-proc" data-idx="${idx}"><i class="fas fa-trash"></i></button>
+                <div class="small text-muted mb-2">${unit.description || ''}</div>
+                <div class="d-flex flex-column gap-1">
+                    ${(unit.items || []).map(it => `
+                        <div class="d-flex justify-content-between align-items-center px-2 py-1 rounded-2" style="background:#f6fbfa;font-size:12px;">
+                            <span class="fw-semibold text-dark">${it.title}</span>
+                            ${it.price ? `<span class="badge rounded-pill" style="background:rgba(249,121,16,0.16);color:#c85800;">${it.price}</span>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
             </div>
         `).join('');
     }
@@ -838,23 +862,67 @@ document.addEventListener('DOMContentLoaded', function () {
         renderDashboard();
     });
 
-    document.getElementById('addProcedureForm')?.addEventListener('submit', function (e) {
+    function resetCatForm() {
+        document.getElementById('catalogForm')?.reset();
+        const idxEl = document.getElementById('editCatIdx');
+        if (idxEl) idxEl.value = '';
+        const prev = document.getElementById('catImgPreview');
+        if (prev) { prev.src = 'assets/images/bg-nature-mist.svg'; prev.classList.add('d-none'); }
+        const h = document.getElementById('catFormHeading');
+        if (h) h.innerHTML = '<i class="fas fa-store me-1"></i> Tambah / Edit Layanan STUPA';
+        document.getElementById('cancelCatEditBtn')?.classList.add('d-none');
+    }
+    document.getElementById('cancelCatEditBtn')?.addEventListener('click', resetCatForm);
+
+    document.getElementById('catalogForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
         if (!isManager()) return;
-        const badge = document.getElementById('procBadgeInput').value.trim();
-        const lines = document.getElementById('procStepsInput').value.split('\n').map(l => l.trim()).filter(Boolean);
-        const steps = lines.map((line, i) => {
-            const [t, d] = line.split('|').map(x => x.trim());
-            return { title: t || `Langkah ${i + 1}`, desc: d || t || '' };
+        const badge = document.getElementById('catBadgeInput').value.trim();
+        const icon = document.getElementById('catIconInput').value;
+        const subtitle = document.getElementById('catSubtitleInput').value.trim();
+        const description = document.getElementById('catDescInput').value.trim();
+        const actionText = document.getElementById('catActionInput').value.trim() || 'Lihat Katalog & Pesan';
+        const contact = document.getElementById('catContactInput').value.trim();
+        const image = document.getElementById('catImageUrl').value.trim();
+        const editIdx = document.getElementById('editCatIdx').value;
+
+        const lines = document.getElementById('catItemsInput').value.split('\n').map(l => l.trim()).filter(Boolean);
+        const items = lines.map((line, i) => {
+            const parts = line.split('|').map(x => x.trim());
+            return {
+                title: parts[0] || `Item ${i + 1}`,
+                price: parts[1] || '',
+                desc: parts[2] || ''
+            };
         });
+
         const custom = getCustomData();
-        const list = getMergedProcedures();
-        list.push({ id: 'proc-' + Date.now(), badge, icon: 'fa-list-check', steps });
-        custom.procedures = list;
+        const list = getMergedCatalog();
+        const payload = { badge, subtitle, icon, image, description, contact, actionText, items };
+        if (editIdx !== '') {
+            list[Number(editIdx)] = { ...list[Number(editIdx)], ...payload };
+            addAuditLog(`Mengedit Layanan STUPA: "${badge}"`);
+        } else {
+            list.push({ id: 'srv-' + Date.now(), ...payload });
+            addAuditLog(`Menambahkan Layanan STUPA: "${badge}"`);
+        }
+        custom.layananCatalog = list;
         saveCustomData(custom);
-        addAuditLog(`Menambahkan Prosedur: "${badge}"`);
-        this.reset();
+        resetCatForm();
         renderDashboard();
+    });
+
+    document.getElementById('leadLayananForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!isManager()) return;
+        const custom = getCustomData();
+        custom.siteMeta = {
+            ...getMergedSiteMeta(),
+            secLeadProsedur: document.getElementById('metaLeadProcInput').value.trim()
+        };
+        saveCustomData(custom);
+        addAuditLog('Memperbarui subjudul seksi Layanan STUPA');
+        alert('Subjudul seksi Layanan STUPA berhasil disimpan!');
     });
 
     document.getElementById('runningTextForm')?.addEventListener('submit', function (e) {
@@ -1105,14 +1173,55 @@ document.addEventListener('DOMContentLoaded', function () {
             renderDashboard();
             return;
         }
-        const delProc = e.target.closest('.js-del-proc');
-        if (delProc) {
-            const list = getMergedProcedures();
-            const removed = list.splice(Number(delProc.dataset.idx), 1)[0];
+        const moveCat = e.target.closest('.js-move-cat');
+        if (moveCat) {
+            const idx = Number(moveCat.dataset.idx);
+            const list = getMergedCatalog();
+            if (idx > 0 && idx < list.length) {
+                const temp = list[idx - 1];
+                list[idx - 1] = list[idx];
+                list[idx] = temp;
+                const custom = getCustomData();
+                custom.layananCatalog = list;
+                saveCustomData(custom);
+                addAuditLog(`Menggeser urutan layanan "${list[idx - 1].badge}"`);
+                renderDashboard();
+            }
+            return;
+        }
+        const editCat = e.target.closest('.js-edit-cat');
+        if (editCat) {
+            const idx = Number(editCat.dataset.idx);
+            const u = getMergedCatalog()[idx];
+            if (!u) return;
+            document.getElementById('editCatIdx').value = String(idx);
+            document.getElementById('catBadgeInput').value = u.badge || '';
+            document.getElementById('catIconInput').value = u.icon || 'fa-store';
+            document.getElementById('catSubtitleInput').value = u.subtitle || '';
+            document.getElementById('catDescInput').value = u.description || '';
+            document.getElementById('catActionInput').value = u.actionText || '';
+            document.getElementById('catContactInput').value = u.contact || '';
+            document.getElementById('catImageUrl').value = u.image || '';
+            const prev = document.getElementById('catImgPreview');
+            if (prev) {
+                if (u.image) { prev.src = u.image; prev.classList.remove('d-none'); }
+                else { prev.src = 'assets/images/bg-nature-mist.svg'; prev.classList.add('d-none'); }
+            }
+            document.getElementById('catItemsInput').value = (u.items || []).map(it =>
+                [it.title, it.price, it.desc].filter(x => x !== undefined && x !== '').join(' | ')
+            ).join('\n');
+            document.getElementById('catFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Unit Layanan STUPA';
+            document.getElementById('cancelCatEditBtn')?.classList.remove('d-none');
+            return;
+        }
+        const delCat = e.target.closest('.js-del-cat');
+        if (delCat) {
+            const list = getMergedCatalog();
+            const removed = list.splice(Number(delCat.dataset.idx), 1)[0];
             const custom = getCustomData();
-            custom.procedures = list;
+            custom.layananCatalog = list;
             saveCustomData(custom);
-            addAuditLog(`Menghapus Prosedur: "${removed?.badge || '-'}"`);
+            addAuditLog(`Menghapus Layanan STUPA: "${removed?.badge || '-'}"`);
             renderDashboard();
             return;
         }
@@ -1217,7 +1326,7 @@ document.addEventListener('DOMContentLoaded', function () {
             services: getMergedServices(),
             videos: getMergedVideos(),
             news: getMergedNews(),
-            procedures: getMergedProcedures(),
+            layananCatalog: getMergedCatalog(),
             siteMeta: {
                 ...getMergedSiteMeta(),
                 runningText: getCustomData().runningText || getMergedSiteMeta().runningText

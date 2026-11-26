@@ -286,7 +286,12 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pillLayananVideo" data-bs-toggle="pill" data-bs-target="#tabSuperLayananVideo" type="button">
-                            <i class="fas fa-cubes me-1"></i> Layanan &amp; Video
+                            <i class="fas fa-cubes me-1"></i> Kanal &amp; Video
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pillCatalog" data-bs-toggle="pill" data-bs-target="#tabCatalog" type="button">
+                            <i class="fas fa-store me-1"></i> Layanan (Adventure, Agriculture &amp; Kompos)
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -652,7 +657,82 @@
                         </div>
                     </div>
 
-                    <!-- Tab 5: Identitas, Logo, Teks Berjalan, Judul Seksi & Prosedur -->
+                    <!-- Tab: Layanan Usaha STUPA (Adventure, Agriculture & Kompos) -->
+                    <div class="tab-pane fade" id="tabCatalog">
+                        <div class="row g-4">
+                            <div class="col-lg-5">
+                                <div class="p-3 rounded-4" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="fw-bold mb-0" id="catFormHeading" style="color:#c85800;"><i class="fas fa-store me-1"></i> Tambah / Edit Layanan STUPA</h6>
+                                        <button type="button" id="cancelCatEditBtn" class="btn btn-link btn-sm p-0 text-danger d-none">Batal</button>
+                                    </div>
+                                    <form id="catalogForm">
+                                        <input type="hidden" id="editCatIdx">
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-7">
+                                                <label class="form-label small fw-semibold mb-1">Nama Unit Layanan</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="catBadgeInput" placeholder="Mis. STUPA ADVENTURE" required>
+                                            </div>
+                                            <div class="col-5">
+                                                <label class="form-label small fw-semibold mb-1">Ikon</label>
+                                                <select class="form-select form-select-sm rounded-3" id="catIconInput">
+                                                    <option value="fa-campground">Outdoor / Kemah</option>
+                                                    <option value="fa-seedling">Agriculture / Tanaman</option>
+                                                    <option value="fa-recycle">Kompos / Media Tanam</option>
+                                                    <option value="fa-leaf">Daun / Ekologi</option>
+                                                    <option value="fa-toolbox">Alat / Logistik</option>
+                                                    <option value="fa-basket-shopping">Penjualan / Toko</option>
+                                                    <option value="fa-mountain-sun">Ekspedisi</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label small fw-semibold mb-1">Subjudul Layanan</label>
+                                            <input type="text" class="form-control form-control-sm rounded-3" id="catSubtitleInput" placeholder="Mis. Rental Perlengkapan Outdoor &amp; Pendakian" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label small fw-semibold mb-1">Deskripsi Singkat (Tampil di Modal Detail)</label>
+                                            <textarea class="form-control form-control-sm rounded-3" id="catDescInput" rows="2" placeholder="Jelaskan ringkas tentang layanan ini..." required></textarea>
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Teks Tombol</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="catActionInput" placeholder="Sewa / Pesan Sekarang">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Info Kontak / Posko</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="catContactInput" placeholder="Posko STUPA • 0812...">
+                                            </div>
+                                        </div>
+                                        <div class="row g-2 mb-2 align-items-end">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Foto Header Kartu (Opsional)</label>
+                                                <input type="file" accept="image/*" class="form-control form-control-sm rounded-3 js-img-upload" data-target="catImageUrl" data-preview="catImgPreview">
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="text" class="form-control form-control-sm rounded-3 js-img-url" id="catImageUrl" data-preview="catImgPreview" placeholder="Atau tempel URL gambar...">
+                                            </div>
+                                        </div>
+                                        <img id="catImgPreview" src="assets/images/bg-nature-mist.svg" alt="Pratinjau Layanan" class="img-preview-thumb mb-2 d-none" style="height:76px;">
+                                        <div class="mb-2">
+                                            <label class="form-label small fw-semibold mb-1">Daftar Barang / Tanaman / Media Tanam (1 baris = 1 item)</label>
+                                            <textarea class="form-control form-control-sm rounded-3" id="catItemsInput" rows="5" placeholder="Format per baris: Nama Item | Harga / Tarif | Keterangan&#10;Contoh:&#10;Tenda Dome 2-4 Org | Rp 35.000 / hari | Frame fiber, double layer&#10;Kompos Matang 5kg | Rp 15.000 / sak | Fermentasi organik halus" required></textarea>
+                                        </div>
+                                        <button type="submit" id="catSubmitBtn" class="btn btn-stupa btn-sm w-100">Simpan Layanan</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-lg-7">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold small text-uppercase text-muted mb-0">Daftar Unit Layanan Aktif (Adventure, Agriculture, Kompos)</h6>
+                                    <span class="badge rounded-pill text-bg-light border">Admin &amp; Super Admin</span>
+                                </div>
+                                <div id="superCatalogList" class="d-flex flex-column gap-3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 5: Identitas, Logo, Teks Berjalan & Judul Seksi -->
                     <div class="tab-pane fade" id="tabSuperWeb">
                         <div class="row g-4">
                             <div class="col-lg-6">
@@ -665,15 +745,12 @@
                                     </form>
                                 </div>
 
-                                <!-- Prosedur -->
                                 <div class="p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.18);">
-                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-list-check me-1"></i> Tambah / Hapus Kartu Prosedur</h6>
-                                    <form id="addProcedureForm">
-                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2" id="procBadgeInput" placeholder="Judul Kartu Prosedur" required>
-                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="procStepsInput" rows="3" placeholder="Format per baris: Judul Langkah | Penjelasan singkat" required></textarea>
-                                        <button type="submit" class="btn btn-teal btn-sm w-100">Tambah Kartu Prosedur</button>
+                                    <h6 class="fw-bold mb-2" style="color:#005950;"><i class="fas fa-store me-1"></i> Subjudul Seksi Layanan STUPA</h6>
+                                    <form id="leadLayananForm">
+                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="metaLeadProcInput" rows="3" placeholder="Deskripsi singkat di bawah judul LAYANAN STUPA..."></textarea>
+                                        <button type="submit" class="btn btn-teal btn-sm">Simpan Subjudul Layanan</button>
                                     </form>
-                                    <div id="superProceduresList" class="d-flex flex-column gap-2 mt-3"></div>
                                 </div>
                             </div>
 
@@ -714,7 +791,7 @@
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleBeritaInput">
                                             </div>
                                             <div class="col-4">
-                                                <label class="form-label small fw-semibold mb-1">Judul Seksi Prosedur</label>
+                                                <label class="form-label small fw-semibold mb-1">Judul Seksi Layanan STUPA</label>
                                                 <input type="text" class="form-control form-control-sm rounded-3" id="metaTitleProcInput">
                                             </div>
                                         </div>
