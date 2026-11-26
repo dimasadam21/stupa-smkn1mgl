@@ -17,7 +17,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const data = {
         ...baseData,
         heroSlides: (savedCustom && Array.isArray(savedCustom.heroSlides)) ? savedCustom.heroSlides : baseData.heroSlides,
+        services: (savedCustom && Array.isArray(savedCustom.services)) ? savedCustom.services : baseData.services,
+        videos: (savedCustom && Array.isArray(savedCustom.videos)) ? savedCustom.videos : baseData.videos,
         publications: (savedCustom && Array.isArray(savedCustom.publications)) ? savedCustom.publications : baseData.publications,
+        procedures: (savedCustom && Array.isArray(savedCustom.procedures)) ? savedCustom.procedures : (baseData.procedures || []),
+        partners: (savedCustom && Array.isArray(savedCustom.partners)) ? savedCustom.partners : (baseData.partners || []),
+        siteMeta: {
+            ...(baseData.siteMeta || {}),
+            ...(savedCustom && savedCustom.siteMeta ? savedCustom.siteMeta : {})
+        },
         news: {
             ...baseData.news,
             ...(savedCustom && savedCustom.news ? savedCustom.news : {})
@@ -31,12 +39,29 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (savedCustom && savedCustom.runningText) {
+    const activeRunningText = (savedCustom && savedCustom.runningText) || data.siteMeta?.runningText;
+    if (activeRunningText) {
         document.querySelectorAll('.running-text-track p').forEach((p, idx) => {
             const iconClass = idx === 0 ? 'fa-mountain' : 'fa-leaf';
-            p.innerHTML = `<i class="fas ${iconClass} me-2"></i> ${savedCustom.runningText}`;
+            p.innerHTML = `<i class="fas ${iconClass} me-2"></i> ${activeRunningText}`;
         });
     }
+
+    // Apply Dynamic Site Meta (Footer & Social Links)
+    const meta = data.siteMeta || {};
+    const setTxt = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+    setTxt('footerMotto', meta.footerMotto);
+    setTxt('footerSecretariatName', meta.secretariatName);
+    setTxt('footerAddress1', meta.addressLine1);
+    setTxt('footerAddress2', meta.addressLine2);
+    setTxt('footerPhone', meta.phone);
+    setTxt('footerCopyright', meta.copyright);
+    const emailEl = document.getElementById('footerEmail');
+    if (emailEl && meta.email) { emailEl.textContent = meta.email; emailEl.href = `mailto:${meta.email}`; }
+    const setHref = (id, url) => { const el = document.getElementById(id); if (el && url) { el.href = url; if (url.startsWith('http')) el.target = '_blank'; } };
+    setHref('socialIgLink', meta.instagramUrl);
+    setHref('socialYtLink', meta.youtubeUrl);
+    setHref('socialTtLink', meta.tiktokUrl);
 
     // 1. Navbar scroll state & Back-to-top visibility
     const mainNav = document.getElementById('mainNavbar');
@@ -209,6 +234,34 @@ document.addEventListener('DOMContentLoaded', function () {
         showAllPublikasi = !showAllPublikasi;
         renderPublikasi();
     });
+
+    // 6b. Render Procedures & Partners Dynamically
+    const proceduresContainer = document.getElementById('proceduresContainer');
+    if (proceduresContainer && Array.isArray(data.procedures)) {
+        proceduresContainer.innerHTML = data.procedures.map(proc => `
+            <div class="prosedur-step-card" role="button" tabindex="0" title="Klik untuk memperbesar alur">
+                <span class="step-badge"><i class="fas ${proc.icon || 'fa-list-check'} me-1"></i> ${proc.badge}</span>
+                <div class="prosedur-diagram-box">
+                    ${(proc.steps || []).map((st, idx) => `
+                        <div class="flow-step">
+                            <span class="flow-num">${idx + 1}</span>
+                            <div class="flow-text">
+                                <h6>${st.title}</h6>
+                                <p>${st.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    const partnersContainer = document.getElementById('partnersContainer');
+    if (partnersContainer && Array.isArray(data.partners)) {
+        partnersContainer.innerHTML = data.partners.map(pt => `
+            <li><a href="${pt.href || '#top'}" class="partner-badge"><i class="fas ${pt.icon || 'fa-handshake'}"></i> ${pt.label}</a></li>
+        `).join('');
+    }
 
     // 7. Interactive Reader / Detail Modal
     const detailModalEl = document.getElementById('stupaDetailModal');

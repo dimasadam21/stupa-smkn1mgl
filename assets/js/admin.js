@@ -32,55 +32,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const togglePwdBtn = document.getElementById('togglePwdBtn');
     const pwdInput = document.getElementById('adminPassword');
 
-    function getAccounts() {
+    const getAccounts = () => {
         try {
             const raw = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || 'null');
             if (Array.isArray(raw) && raw.length > 0) return raw;
-        } catch {
-            // fallback
-        }
+        } catch { /* fallback */ }
         return DEFAULT_ACCOUNTS.map(a => ({ ...a }));
-    }
-
-    function saveAccounts(list) {
-        localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(list));
-    }
-
-    function getSession() {
-        try {
-            return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
-        } catch {
-            return null;
-        }
-    }
-
-    function getCustomData() {
-        try {
-            return JSON.parse(localStorage.getItem(CUSTOM_KEY) || 'null') || {};
-        } catch {
-            return {};
-        }
-    }
-
-    function saveCustomData(obj) {
-        localStorage.setItem(CUSTOM_KEY, JSON.stringify(obj));
-    }
-
-    function getSubmissions() {
-        try {
-            return JSON.parse(localStorage.getItem(SUB_KEY) || '[]');
-        } catch {
-            return [];
-        }
-    }
-
-    function getAuditLogs() {
-        try {
-            return JSON.parse(localStorage.getItem(LOGS_KEY) || '[]');
-        } catch {
-            return [];
-        }
-    }
+    };
+    const saveAccounts = list => localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(list));
+    const getSession = () => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; } };
+    const getCustomData = () => { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || 'null') || {}; } catch { return {}; } };
+    const saveCustomData = obj => localStorage.setItem(CUSTOM_KEY, JSON.stringify(obj));
+    const getSubmissions = () => { try { return JSON.parse(localStorage.getItem(SUB_KEY) || '[]'); } catch { return []; } };
+    const getAuditLogs = () => { try { return JSON.parse(localStorage.getItem(LOGS_KEY) || '[]'); } catch { return []; } };
 
     function addAuditLog(action) {
         const sess = getSession();
@@ -93,23 +57,34 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem(LOGS_KEY, JSON.stringify(logs.slice(0, 120)));
     }
 
-    function getMergedNews() {
-        const base = window.STUPA_DATA?.news || {};
-        const custom = getCustomData().news || {};
-        return { ...base, ...custom };
-    }
+    const getMergedNews = () => ({ ...(window.STUPA_DATA?.news || {}), ...(getCustomData().news || {}) });
+    const getMergedHero = () => {
+        const c = getCustomData().heroSlides;
+        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.heroSlides || [])];
+    };
+    const getMergedPubs = () => {
+        const c = getCustomData().publications;
+        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.publications || [])];
+    };
+    const getMergedServices = () => {
+        const c = getCustomData().services;
+        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.services || [])];
+    };
+    const getMergedVideos = () => {
+        const c = getCustomData().videos;
+        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.videos || [])];
+    };
+    const getMergedPartners = () => {
+        const c = getCustomData().partners;
+        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.partners || [])];
+    };
+    const getMergedProcedures = () => {
+        const c = getCustomData().procedures;
+        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.procedures || [])];
+    };
+    const getMergedSiteMeta = () => ({ ...(window.STUPA_DATA?.siteMeta || {}), ...(getCustomData().siteMeta || {}) });
 
-    function getMergedHero() {
-        const custom = getCustomData().heroSlides;
-        return Array.isArray(custom) ? custom : [...(window.STUPA_DATA?.heroSlides || [])];
-    }
-
-    function getMergedPubs() {
-        const custom = getCustomData().publications;
-        return Array.isArray(custom) ? custom : [...(window.STUPA_DATA?.publications || [])];
-    }
-
-    // Quick fill buttons on login card
+    // Login Helpers
     document.querySelectorAll('.js-fill-login').forEach(btn => {
         btn.addEventListener('click', function () {
             document.getElementById('adminUsername').value = this.dataset.u;
@@ -126,12 +101,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function applyRoleUI(session) {
         const isSuper = session.role === 'superadmin';
-        document.querySelectorAll('.super-only').forEach(el => {
-            el.classList.toggle('d-none', !isSuper);
-        });
-        const nonSuperNotice = document.getElementById('nonSuperNotice');
-        if (nonSuperNotice) nonSuperNotice.classList.toggle('d-none', isSuper);
-
+        document.querySelectorAll('.super-only').forEach(el => el.classList.toggle('d-none', !isSuper));
+        document.getElementById('nonSuperNotice')?.classList.toggle('d-none', isSuper);
         if (activeRoleBadge) {
             activeRoleBadge.className = `role-pill ${isSuper ? 'superadmin' : 'admin'}`;
             activeRoleBadge.innerHTML = `<i class="fas ${isSuper ? 'fa-crown' : 'fa-user-shield'}"></i> ${isSuper ? 'SUPER ADMIN' : 'ADMIN'} • ${session.username}`;
@@ -155,39 +126,31 @@ document.addEventListener('DOMContentLoaded', function () {
         loginView?.classList.remove('d-none');
     }
 
-    if (getSession()) {
-        showDashboard();
-    }
+    if (getSession()) showDashboard();
 
     loginForm?.addEventListener('submit', function (e) {
         e.preventDefault();
         const user = document.getElementById('adminUsername')?.value.trim();
         const pass = pwdInput?.value || '';
-        const accounts = getAccounts();
-        const found = accounts.find(a => a.username === user && a.password === pass);
+        const found = getAccounts().find(a => a.username === user && a.password === pass);
 
         if (!found) {
-            if (loginAlert) {
-                loginAlert.textContent = 'Username atau kata sandi tidak sesuai.';
-                loginAlert.classList.remove('d-none');
-            }
+            loginAlert.textContent = 'Username atau kata sandi tidak sesuai.';
+            loginAlert.classList.remove('d-none');
             return;
         }
         if (found.active === false) {
-            if (loginAlert) {
-                loginAlert.textContent = 'Akun ini sedang dinonaktifkan oleh Super Admin.';
-                loginAlert.classList.remove('d-none');
-            }
+            loginAlert.textContent = 'Akun ini sedang dinonaktifkan oleh Super Admin.';
+            loginAlert.classList.remove('d-none');
             return;
         }
-
         sessionStorage.setItem(SESSION_KEY, JSON.stringify({
             username: found.username,
             role: found.role,
             displayName: found.displayName
         }));
         loginAlert?.classList.add('d-none');
-        addAuditLog(`Login berhasil ke Portal (${found.role})`);
+        addAuditLog(`Login berhasil (${found.role})`);
         showDashboard();
     });
 
@@ -201,25 +164,29 @@ document.addEventListener('DOMContentLoaded', function () {
         const newsObj = getMergedNews();
         const totalNews = Object.values(newsObj).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0);
         const submissions = getSubmissions();
-        const pubs = getMergedPubs();
+        const servicesAndPubs = getMergedServices().length + getMergedPubs().length;
         const visits = Number(localStorage.getItem('stupa_total_visits') || '12840');
 
         document.getElementById('statNewsCount').textContent = String(totalNews);
         document.getElementById('statSubCount').textContent = String(submissions.length);
-        document.getElementById('statPubCount').textContent = String(pubs.length);
+        document.getElementById('statPubCount').textContent = String(servicesAndPubs);
         document.getElementById('statVisitCount').textContent = visits.toLocaleString('id-ID');
 
         renderSubmissions();
         renderNewsList();
 
+        const meta = getMergedSiteMeta();
         const rtInput = document.getElementById('runningTextInput');
-        if (rtInput) {
-            rtInput.value = getCustomData().runningText || 'Menapak Rimba dengan Nalar Ilmu, Menjaga Semesta dengan Keteguhan Hati — STUPA SMKN 1 Magelang: Tangguh di Puncak, Santun di Bumi, Unggul dalam Karya Teknik Berkelanjutan!';
-        }
+        if (rtInput) rtInput.value = getCustomData().runningText || meta.runningText || '';
 
         if (getSession()?.role === 'superadmin') {
             renderSuperHeroList();
             renderSuperPubList();
+            renderSuperServicesList();
+            renderSuperVideosList();
+            renderSuperPartnersList();
+            renderSuperProceduresList();
+            fillSiteMetaForm(meta);
             renderSuperUsersTable();
             renderSectionToggles();
             renderAuditLogs();
@@ -235,9 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         tbody.innerHTML = list.map((item, idx) => {
-            const details = Object.entries(item.fields || {})
-                .map(([k, v]) => `<div><strong>${k}:</strong> ${v}</div>`)
-                .join('');
+            const details = Object.entries(item.fields || {}).map(([k, v]) => `<div><strong>${k}:</strong> ${v}</div>`).join('');
             return `
                 <tr>
                     <td class="small text-muted">${item.createdAt || '-'}</td>
@@ -252,9 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </select>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-outline-danger btn-sm js-del-sub" data-idx="${idx}" aria-label="Hapus">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm js-del-sub" data-idx="${idx}"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `;
@@ -266,28 +229,25 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!listEl) return;
         const merged = getMergedNews();
         const items = [];
-        Object.entries(merged).forEach(([cat, arr]) => {
-            (arr || []).forEach((item, idx) => items.push({ cat, idx, ...item }));
-        });
-
+        Object.entries(merged).forEach(([cat, arr]) => (arr || []).forEach((item, idx) => items.push({ cat, idx, ...item })));
         listEl.innerHTML = items.map(it => `
-            <div class="d-flex justify-content-between align-items-center gap-3 p-2 rounded-3 border bg-white">
-                <div class="d-flex align-items-center gap-3 overflow-hidden">
-                    <img src="${it.image}" alt="" class="rounded-2 flex-shrink-0" style="width:56px;height:42px;object-fit:cover;">
+            <div class="d-flex justify-content-between align-items-center gap-2 p-2 rounded-3 border bg-white">
+                <div class="d-flex align-items-center gap-2 overflow-hidden">
+                    <img src="${it.image}" alt="" class="rounded-2 flex-shrink-0" style="width:52px;height:38px;object-fit:cover;">
                     <div class="overflow-hidden">
                         <span class="badge text-bg-success text-uppercase" style="font-size:10px;">${it.cat}</span>
-                        <div class="fw-semibold text-truncate" style="font-size:13px;color:#005950;">${it.title}</div>
+                        <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${it.title}</div>
                         <div class="text-muted" style="font-size:11px;">${it.date}</div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-outline-danger btn-sm flex-shrink-0 js-del-news" data-cat="${it.cat}" data-idx="${it.idx}" title="Hapus">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <div class="d-flex gap-1 flex-shrink-0">
+                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-news" data-cat="${it.cat}" data-idx="${it.idx}" title="Edit"><i class="fas fa-pen"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-sm js-del-news" data-cat="${it.cat}" data-idx="${it.idx}" title="Hapus"><i class="fas fa-trash"></i></button>
+                </div>
             </div>
         `).join('');
     }
 
-    // SUPER ADMIN RENDERERS
     function renderSuperHeroList() {
         const el = document.getElementById('superHeroList');
         if (!el) return;
@@ -295,15 +255,16 @@ document.addEventListener('DOMContentLoaded', function () {
         el.innerHTML = slides.map((s, idx) => `
             <div class="d-flex justify-content-between align-items-center gap-2 p-2 rounded-3 border bg-white">
                 <div class="d-flex align-items-center gap-2 overflow-hidden">
-                    <img src="${s.image}" alt="" class="rounded-2 flex-shrink-0" style="width:52px;height:36px;object-fit:cover;">
+                    <img src="${s.image}" alt="" class="rounded-2 flex-shrink-0" style="width:50px;height:36px;object-fit:cover;">
                     <div class="overflow-hidden">
                         <span class="badge text-bg-warning" style="font-size:10px;">${s.tag}</span>
                         <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${s.title}</div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-outline-danger btn-sm js-del-hero" data-idx="${idx}" ${slides.length <= 1 ? 'disabled title="Minimal 1 slide"' : ''}>
-                    <i class="fas fa-trash"></i>
-                </button>
+                <div class="d-flex gap-1 flex-shrink-0">
+                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-hero" data-idx="${idx}"><i class="fas fa-pen"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-sm js-del-hero" data-idx="${idx}" ${slides.length <= 1 ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                </div>
             </div>
         `).join('');
     }
@@ -319,11 +280,96 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${p.title}</div>
                     <div class="text-muted" style="font-size:11px;">${p.year} • ${p.pages}</div>
                 </div>
-                <button type="button" class="btn btn-outline-danger btn-sm flex-shrink-0 js-del-pub" data-idx="${idx}">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <div class="d-flex gap-1 flex-shrink-0">
+                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-pub" data-idx="${idx}"><i class="fas fa-pen"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-sm js-del-pub" data-idx="${idx}"><i class="fas fa-trash"></i></button>
+                </div>
             </div>
         `).join('');
+    }
+
+    function renderSuperServicesList() {
+        const el = document.getElementById('superServicesList');
+        if (!el) return;
+        const list = getMergedServices();
+        el.innerHTML = list.map((s, idx) => `
+            <div class="d-flex justify-content-between align-items-center gap-2 p-2 rounded-3 border bg-white">
+                <div class="d-flex align-items-center gap-2 overflow-hidden">
+                    <span class="badge text-bg-light border text-success"><i class="fas ${s.icon}"></i></span>
+                    <div class="overflow-hidden">
+                        <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${s.title}</div>
+                        <div class="text-muted text-truncate" style="font-size:11px;">${s.subtitle}</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-1 flex-shrink-0">
+                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-srv" data-idx="${idx}"><i class="fas fa-pen"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-sm js-del-srv" data-idx="${idx}" ${list.length <= 1 ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderSuperVideosList() {
+        const el = document.getElementById('superVideosList');
+        if (!el) return;
+        const list = getMergedVideos();
+        el.innerHTML = list.map((v, idx) => `
+            <div class="d-flex justify-content-between align-items-center gap-2 p-2 rounded-3 border bg-white">
+                <div class="d-flex align-items-center gap-2 overflow-hidden">
+                    <img src="${v.thumb}" alt="" class="rounded-2 flex-shrink-0" style="width:48px;height:34px;object-fit:cover;">
+                    <div class="overflow-hidden">
+                        ${idx === 0 ? '<span class="badge text-bg-warning" style="font-size:9px;">Utama</span>' : ''}
+                        <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${v.title}</div>
+                        <div class="text-muted" style="font-size:11px;">${v.date}</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-1 flex-shrink-0">
+                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-vid" data-idx="${idx}"><i class="fas fa-pen"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-sm js-del-vid" data-idx="${idx}" ${list.length <= 1 ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderSuperPartnersList() {
+        const el = document.getElementById('superPartnersList');
+        if (!el) return;
+        const list = getMergedPartners();
+        el.innerHTML = list.map((p, idx) => `
+            <span class="badge rounded-pill text-bg-light border px-3 py-2 d-inline-flex align-items-center gap-2" style="color:#005950;">
+                <i class="fas ${p.icon}"></i> ${p.label}
+                <button type="button" class="btn-close ms-1 js-del-partner" data-idx="${idx}" style="font-size:9px;" aria-label="Hapus"></button>
+            </span>
+        `).join('');
+    }
+
+    function renderSuperProceduresList() {
+        const el = document.getElementById('superProceduresList');
+        if (!el) return;
+        const list = getMergedProcedures();
+        el.innerHTML = list.map((pr, idx) => `
+            <div class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-white border">
+                <div>
+                    <div class="fw-semibold small" style="color:#005950;">${pr.badge}</div>
+                    <div class="text-muted" style="font-size:11px;">${(pr.steps || []).length} langkah alur</div>
+                </div>
+                <button type="button" class="btn btn-outline-danger btn-sm js-del-proc" data-idx="${idx}"><i class="fas fa-trash"></i></button>
+            </div>
+        `).join('');
+    }
+
+    function fillSiteMetaForm(meta) {
+        const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+        setV('metaMottoInput', meta.footerMotto);
+        setV('metaSecInput', meta.secretariatName);
+        setV('metaAddr1Input', meta.addressLine1);
+        setV('metaAddr2Input', meta.addressLine2);
+        setV('metaPhoneInput', meta.phone);
+        setV('metaEmailInput', meta.email);
+        setV('metaIgInput', meta.instagramUrl);
+        setV('metaYtInput', meta.youtubeUrl);
+        setV('metaTtInput', meta.tiktokUrl);
+        setV('metaCopyInput', meta.copyright);
     }
 
     function renderSuperUsersTable() {
@@ -338,18 +384,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td class="fw-semibold"><code>${acc.username}</code></td>
                     <td class="small">${acc.displayName}</td>
                     <td><span class="badge rounded-pill ${acc.role === 'superadmin' ? 'text-bg-warning' : 'text-bg-success'}">${acc.role}</span></td>
-                    <td>
-                        <span class="badge ${acc.active !== false ? 'text-bg-light text-success border' : 'text-bg-secondary'}">
-                            ${acc.active !== false ? 'Aktif' : 'Nonaktif'}
-                        </span>
-                    </td>
+                    <td><span class="badge ${acc.active !== false ? 'text-bg-light text-success border' : 'text-bg-secondary'}">${acc.active !== false ? 'Aktif' : 'Nonaktif'}</span></td>
                     <td class="text-nowrap">
-                        <button type="button" class="btn btn-outline-primary btn-sm js-toggle-user" data-idx="${idx}" ${isSelf ? 'disabled' : ''} title="Aktif/Nonaktifkan">
-                            <i class="fas fa-power-off"></i>
-                        </button>
-                        <button type="button" class="btn btn-outline-danger btn-sm js-del-user" data-idx="${idx}" ${isSelf ? 'disabled' : ''} title="Hapus Akun">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm js-toggle-user" data-idx="${idx}" ${isSelf ? 'disabled' : ''} title="Aktif/Nonaktifkan"><i class="fas fa-power-off"></i></button>
+                        <button type="button" class="btn btn-outline-danger btn-sm js-del-user" data-idx="${idx}" ${isSelf ? 'disabled' : ''} title="Hapus Akun"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `;
@@ -360,36 +398,71 @@ document.addEventListener('DOMContentLoaded', function () {
         const wrap = document.getElementById('sectionVisibilityToggles');
         if (!wrap) return;
         const vis = getCustomData().sectionVisibility || {};
-        wrap.innerHTML = SECTIONS_META.map(sec => {
-            const checked = vis[sec.id] !== false;
-            return `
-                <label class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-white border" style="cursor:pointer;">
-                    <span class="small fw-semibold" style="color:#005950;">${sec.label}</span>
-                    <input type="checkbox" class="form-check-input js-sec-toggle" data-sec="${sec.id}" ${checked ? 'checked' : ''}>
-                </label>
-            `;
-        }).join('');
+        wrap.innerHTML = SECTIONS_META.map(sec => `
+            <label class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-white border" style="cursor:pointer;">
+                <span class="small fw-semibold" style="color:#005950;">${sec.label}</span>
+                <input type="checkbox" class="form-check-input js-sec-toggle" data-sec="${sec.id}" ${vis[sec.id] !== false ? 'checked' : ''}>
+            </label>
+        `).join('');
     }
 
     function renderAuditLogs() {
         const el = document.getElementById('auditLogsList');
         if (!el) return;
         const logs = getAuditLogs();
-        if (logs.length === 0) {
-            el.innerHTML = `<div class="text-center text-muted small py-4">Belum ada catatan aktivitas.</div>`;
-            return;
-        }
-        el.innerHTML = logs.map(l => `
-            <div class="p-2 rounded-3 border bg-white small d-flex justify-content-between align-items-start gap-2">
-                <div>
-                    <span class="fw-semibold" style="color:#005950;">${l.actor}</span> — ${l.action}
+        el.innerHTML = logs.length === 0
+            ? `<div class="text-center text-muted small py-4">Belum ada catatan aktivitas.</div>`
+            : logs.map(l => `
+                <div class="p-2 rounded-3 border bg-white small d-flex justify-content-between align-items-start gap-2">
+                    <div><span class="fw-semibold" style="color:#005950;">${l.actor}</span> — ${l.action}</div>
+                    <span class="text-muted text-nowrap" style="font-size:11px;">${l.time}</span>
                 </div>
-                <span class="text-muted text-nowrap" style="font-size:11px;">${l.time}</span>
-            </div>
-        `).join('');
+            `).join('');
     }
 
-    // Add News Form
+    // Reset form helpers
+    function resetNewsForm() {
+        document.getElementById('addNewsForm')?.reset();
+        document.getElementById('editNewsCat').value = '';
+        document.getElementById('editNewsIdx').value = '';
+        document.getElementById('newsFormHeading').innerHTML = '<i class="fas fa-plus-circle me-1"></i> Terbitkan Kabar Baru';
+        document.getElementById('cancelNewsEditBtn')?.classList.add('d-none');
+    }
+    document.getElementById('cancelNewsEditBtn')?.addEventListener('click', resetNewsForm);
+
+    function resetHeroForm() {
+        document.getElementById('addHeroForm')?.reset();
+        document.getElementById('editHeroIdx').value = '';
+        document.getElementById('heroFormHeading').innerHTML = '<i class="fas fa-images me-1"></i> Tambah Slide Hero';
+        document.getElementById('cancelHeroEditBtn')?.classList.add('d-none');
+    }
+    document.getElementById('cancelHeroEditBtn')?.addEventListener('click', resetHeroForm);
+
+    function resetPubForm() {
+        document.getElementById('addPubForm')?.reset();
+        document.getElementById('editPubIdx').value = '';
+        document.getElementById('pubFormHeading').innerHTML = '<i class="fas fa-book-medical me-1"></i> Tambah Publikasi &amp; Modul';
+        document.getElementById('cancelPubEditBtn')?.classList.add('d-none');
+    }
+    document.getElementById('cancelPubEditBtn')?.addEventListener('click', resetPubForm);
+
+    function resetSrvForm() {
+        document.getElementById('addServiceForm')?.reset();
+        document.getElementById('editSrvIdx').value = '';
+        document.getElementById('srvFormHeading').innerHTML = '<i class="fas fa-concierge-bell me-1"></i> Tambah / Edit Layanan STUPA';
+        document.getElementById('cancelSrvEditBtn')?.classList.add('d-none');
+    }
+    document.getElementById('cancelSrvEditBtn')?.addEventListener('click', resetSrvForm);
+
+    function resetVidForm() {
+        document.getElementById('addVideoForm')?.reset();
+        document.getElementById('editVidIdx').value = '';
+        document.getElementById('vidFormHeading').innerHTML = '<i class="fas fa-film me-1"></i> Tambah / Edit Video Dokumenter';
+        document.getElementById('cancelVidEditBtn')?.classList.add('d-none');
+    }
+    document.getElementById('cancelVidEditBtn')?.addEventListener('click', resetVidForm);
+
+    // Form Submissions (Create + Update)
     document.getElementById('addNewsForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
         const cat = document.getElementById('newsCatInput').value;
@@ -397,22 +470,35 @@ document.addEventListener('DOMContentLoaded', function () {
         const image = document.getElementById('newsImageInput').value;
         const excerpt = document.getElementById('newsExcerptInput').value.trim();
         const content = document.getElementById('newsContentInput').value.trim();
-        if (!title) return;
+        const editCat = document.getElementById('editNewsCat').value;
+        const editIdx = document.getElementById('editNewsIdx').value;
 
         const custom = getCustomData();
         const merged = getMergedNews();
         const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-        const updatedCatList = [{ title, date: today, image, excerpt, content }, ...(merged[cat] || [])];
 
-        custom.news = { ...(custom.news || {}), [cat]: updatedCatList };
+        if (editIdx !== '' && editCat) {
+            const oldArr = [...(merged[editCat] || [])];
+            const existing = oldArr.splice(Number(editIdx), 1)[0] || {};
+            merged[editCat] = oldArr;
+            merged[cat] = [{ ...existing, title, image, excerpt, content }, ...(merged[cat] || [])];
+            if (editCat === cat) {
+                // Keep order if same category
+                const reordered = [...oldArr];
+                reordered.splice(Number(editIdx), 0, { ...existing, title, image, excerpt, content });
+                merged[cat] = reordered;
+            }
+            addAuditLog(`Mengedit ${cat}: "${title}"`);
+        } else {
+            merged[cat] = [{ title, date: today, image, excerpt, content }, ...(merged[cat] || [])];
+            addAuditLog(`Menambahkan ${cat}: "${title}"`);
+        }
+        custom.news = merged;
         saveCustomData(custom);
-        addAuditLog(`Menambahkan ${cat}: "${title}"`);
-        this.reset();
+        resetNewsForm();
         renderDashboard();
-        alert('Konten berhasil disimpan dan langsung aktif di halaman beranda!');
     });
 
-    // Super Admin: Add Hero Slide
     document.getElementById('addHeroForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
         if (getSession()?.role !== 'superadmin') return;
@@ -420,27 +506,30 @@ document.addEventListener('DOMContentLoaded', function () {
         const image = document.getElementById('heroImageInput').value;
         const title = document.getElementById('heroTitleInput').value.trim();
         const description = document.getElementById('heroDescInput').value.trim();
+        const editIdx = document.getElementById('editHeroIdx').value;
 
         const custom = getCustomData();
         const slides = getMergedHero();
-        slides.unshift({
+        const entry = {
             id: 'hero-' + Date.now(),
-            tag,
-            title,
-            description,
-            image,
+            tag, title, description, image,
             date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }),
             author: 'Super Admin STUPA SMKN 1 Magelang',
             content: `<p class="lead fw-semibold text-teal">${description}</p><p>Dipublikasikan melalui kendali Super Admin STUPA SMKN 1 Magelang.</p>`
-        });
+        };
+        if (editIdx !== '') {
+            slides[Number(editIdx)] = { ...slides[Number(editIdx)], tag, title, description, image };
+            addAuditLog(`Mengedit Hero Slide: "${title}"`);
+        } else {
+            slides.unshift(entry);
+            addAuditLog(`Menambahkan Hero Slide: "${title}"`);
+        }
         custom.heroSlides = slides;
         saveCustomData(custom);
-        addAuditLog(`Menambahkan Hero Slide: "${title}"`);
-        this.reset();
+        resetHeroForm();
         renderDashboard();
     });
 
-    // Super Admin: Add Publication
     document.getElementById('addPubForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
         if (getSession()?.role !== 'superadmin') return;
@@ -449,26 +538,143 @@ document.addEventListener('DOMContentLoaded', function () {
         const pages = document.getElementById('pubPagesInput').value.trim();
         const title = document.getElementById('pubTitleInput').value.trim();
         const summary = document.getElementById('pubSummaryInput').value.trim();
+        const editIdx = document.getElementById('editPubIdx').value;
 
         const custom = getCustomData();
         const pubs = getMergedPubs();
-        pubs.unshift({
-            id: 'pub-' + Date.now(),
-            badge,
-            title,
-            year,
-            pages,
-            gradient: 'linear-gradient(145deg, #005950 0%, #00a896 100%)',
-            summary
-        });
+        if (editIdx !== '') {
+            pubs[Number(editIdx)] = { ...pubs[Number(editIdx)], badge, year, pages, title, summary };
+            addAuditLog(`Mengedit Publikasi: "${title}"`);
+        } else {
+            pubs.unshift({
+                id: 'pub-' + Date.now(),
+                badge, title, year, pages,
+                gradient: 'linear-gradient(145deg, #005950 0%, #00a896 100%)',
+                summary
+            });
+            addAuditLog(`Menambahkan Publikasi: "${title}"`);
+        }
         custom.publications = pubs;
         saveCustomData(custom);
-        addAuditLog(`Menambahkan Publikasi: "${title}"`);
+        resetPubForm();
+        renderDashboard();
+    });
+
+    document.getElementById('addServiceForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (getSession()?.role !== 'superadmin') return;
+        const title = document.getElementById('srvTitleInput').value.trim();
+        const badge = document.getElementById('srvBadgeInput').value.trim();
+        const subtitle = document.getElementById('srvSubtitleInput').value.trim();
+        const icon = document.getElementById('srvIconInput').value;
+        const description = document.getElementById('srvDescInput').value.trim();
+        const editIdx = document.getElementById('editSrvIdx').value;
+
+        const custom = getCustomData();
+        const list = getMergedServices();
+        if (editIdx !== '') {
+            list[Number(editIdx)] = { ...list[Number(editIdx)], title, badge, subtitle, icon, description };
+            addAuditLog(`Mengedit Layanan: "${title}"`);
+        } else {
+            list.push({
+                id: 'srv-' + Date.now(),
+                icon, title, subtitle, badge, description,
+                actionType: 'info',
+                infoList: [{ title: 'Informasi Layanan', meta: description }]
+            });
+            addAuditLog(`Menambahkan Layanan: "${title}"`);
+        }
+        custom.services = list;
+        saveCustomData(custom);
+        resetSrvForm();
+        renderDashboard();
+    });
+
+    document.getElementById('addVideoForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (getSession()?.role !== 'superadmin') return;
+        const title = document.getElementById('vidTitleInput').value.trim();
+        const date = document.getElementById('vidDateInput').value.trim();
+        const thumb = document.getElementById('vidThumbInput').value;
+        const summary = document.getElementById('vidSummaryInput').value.trim();
+        const editIdx = document.getElementById('editVidIdx').value;
+
+        const custom = getCustomData();
+        const list = getMergedVideos();
+        if (editIdx !== '') {
+            list[Number(editIdx)] = { ...list[Number(editIdx)], title, date, thumb, summary };
+            addAuditLog(`Mengedit Video: "${title}"`);
+        } else {
+            list.push({
+                id: 'vid-' + Date.now(),
+                title, date, thumb, summary,
+                highlights: ['Dokumentasi STUPA SMKN 1 Magelang']
+            });
+            addAuditLog(`Menambahkan Video: "${title}"`);
+        }
+        custom.videos = list;
+        saveCustomData(custom);
+        resetVidForm();
+        renderDashboard();
+    });
+
+    document.getElementById('addPartnerForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (getSession()?.role !== 'superadmin') return;
+        const label = document.getElementById('partnerLabelInput').value.trim();
+        const icon = document.getElementById('partnerIconInput').value;
+        const custom = getCustomData();
+        const list = getMergedPartners();
+        list.push({ label, icon, href: '#layanan-stupa' });
+        custom.partners = list;
+        saveCustomData(custom);
+        addAuditLog(`Menambahkan Mitra: "${label}"`);
         this.reset();
         renderDashboard();
     });
 
-    // Super Admin: Add Account
+    document.getElementById('addProcedureForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (getSession()?.role !== 'superadmin') return;
+        const badge = document.getElementById('procBadgeInput').value.trim();
+        const lines = document.getElementById('procStepsInput').value.split('\n').map(l => l.trim()).filter(Boolean);
+        const steps = lines.map((line, i) => {
+            const [t, d] = line.split('|').map(x => x.trim());
+            return { title: t || `Langkah ${i + 1}`, desc: d || t || '' };
+        });
+        const custom = getCustomData();
+        const list = getMergedProcedures();
+        list.push({ id: 'proc-' + Date.now(), badge, icon: 'fa-list-check', steps });
+        custom.procedures = list;
+        saveCustomData(custom);
+        addAuditLog(`Menambahkan Prosedur: "${badge}"`);
+        this.reset();
+        renderDashboard();
+    });
+
+    document.getElementById('siteMetaForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (getSession()?.role !== 'superadmin') return;
+        const custom = getCustomData();
+        custom.siteMeta = {
+            ...getMergedSiteMeta(),
+            footerMotto: document.getElementById('metaMottoInput').value.trim(),
+            secretariatName: document.getElementById('metaSecInput').value.trim(),
+            addressLine1: document.getElementById('metaAddr1Input').value.trim(),
+            addressLine2: document.getElementById('metaAddr2Input').value.trim(),
+            phone: document.getElementById('metaPhoneInput').value.trim(),
+            email: document.getElementById('metaEmailInput').value.trim(),
+            instagramUrl: document.getElementById('metaIgInput').value.trim() || '#kontak-footer',
+            youtubeUrl: document.getElementById('metaYtInput').value.trim() || '#kontak-footer',
+            tiktokUrl: document.getElementById('metaTtInput').value.trim() || '#kontak-footer',
+            copyright: document.getElementById('metaCopyInput').value.trim()
+        };
+        saveCustomData(custom);
+        addAuditLog('Memperbarui Identitas, Kontak & Sosmed Web');
+        renderAuditLogs();
+        alert('Identitas & kontak web berhasil diperbarui!');
+    });
+
     document.getElementById('addUserForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
         if (getSession()?.role !== 'superadmin') return;
@@ -490,8 +696,25 @@ document.addEventListener('DOMContentLoaded', function () {
         renderAuditLogs();
     });
 
-    // Delegated Click Actions
+    // Delegated Click Actions (Edit + Delete)
     document.addEventListener('click', function (e) {
+        const editNews = e.target.closest('.js-edit-news');
+        if (editNews) {
+            const cat = editNews.dataset.cat;
+            const idx = Number(editNews.dataset.idx);
+            const item = getMergedNews()[cat]?.[idx];
+            if (!item) return;
+            document.getElementById('editNewsCat').value = cat;
+            document.getElementById('editNewsIdx').value = String(idx);
+            document.getElementById('newsCatInput').value = cat;
+            document.getElementById('newsTitleInput').value = item.title;
+            document.getElementById('newsImageInput').value = item.image;
+            document.getElementById('newsExcerptInput').value = item.excerpt;
+            document.getElementById('newsContentInput').value = item.content;
+            document.getElementById('newsFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Konten Berita';
+            document.getElementById('cancelNewsEditBtn')?.classList.remove('d-none');
+            return;
+        }
         const delNews = e.target.closest('.js-del-news');
         if (delNews) {
             const cat = delNews.dataset.cat;
@@ -500,7 +723,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const merged = getMergedNews();
             const list = [...(merged[cat] || [])];
             const removed = list.splice(idx, 1)[0];
-            custom.news = { ...(custom.news || {}), [cat]: list };
+            custom.news = { ...merged, [cat]: list };
             saveCustomData(custom);
             addAuditLog(`Menghapus ${cat}: "${removed?.title || idx}"`);
             renderDashboard();
@@ -515,8 +738,24 @@ document.addEventListener('DOMContentLoaded', function () {
             renderDashboard();
             return;
         }
+        if (getSession()?.role !== 'superadmin') return;
+
+        const editHero = e.target.closest('.js-edit-hero');
+        if (editHero) {
+            const idx = Number(editHero.dataset.idx);
+            const s = getMergedHero()[idx];
+            if (!s) return;
+            document.getElementById('editHeroIdx').value = String(idx);
+            document.getElementById('heroTagInput').value = s.tag;
+            document.getElementById('heroImageInput').value = s.image;
+            document.getElementById('heroTitleInput').value = s.title;
+            document.getElementById('heroDescInput').value = s.description;
+            document.getElementById('heroFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Slide Hero';
+            document.getElementById('cancelHeroEditBtn')?.classList.remove('d-none');
+            return;
+        }
         const delHero = e.target.closest('.js-del-hero');
-        if (delHero && getSession()?.role === 'superadmin') {
+        if (delHero) {
             const slides = getMergedHero();
             if (slides.length <= 1) return;
             const removed = slides.splice(Number(delHero.dataset.idx), 1)[0];
@@ -527,8 +766,23 @@ document.addEventListener('DOMContentLoaded', function () {
             renderDashboard();
             return;
         }
+        const editPub = e.target.closest('.js-edit-pub');
+        if (editPub) {
+            const idx = Number(editPub.dataset.idx);
+            const p = getMergedPubs()[idx];
+            if (!p) return;
+            document.getElementById('editPubIdx').value = String(idx);
+            document.getElementById('pubBadgeInput').value = p.badge;
+            document.getElementById('pubYearInput').value = p.year;
+            document.getElementById('pubPagesInput').value = p.pages;
+            document.getElementById('pubTitleInput').value = p.title;
+            document.getElementById('pubSummaryInput').value = p.summary;
+            document.getElementById('pubFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Publikasi';
+            document.getElementById('cancelPubEditBtn')?.classList.remove('d-none');
+            return;
+        }
         const delPub = e.target.closest('.js-del-pub');
-        if (delPub && getSession()?.role === 'superadmin') {
+        if (delPub) {
             const pubs = getMergedPubs();
             const removed = pubs.splice(Number(delPub.dataset.idx), 1)[0];
             const custom = getCustomData();
@@ -538,8 +792,83 @@ document.addEventListener('DOMContentLoaded', function () {
             renderDashboard();
             return;
         }
+        const editSrv = e.target.closest('.js-edit-srv');
+        if (editSrv) {
+            const idx = Number(editSrv.dataset.idx);
+            const s = getMergedServices()[idx];
+            if (!s) return;
+            document.getElementById('editSrvIdx').value = String(idx);
+            document.getElementById('srvTitleInput').value = s.title;
+            document.getElementById('srvBadgeInput').value = s.badge;
+            document.getElementById('srvSubtitleInput').value = s.subtitle;
+            document.getElementById('srvIconInput').value = s.icon;
+            document.getElementById('srvDescInput').value = s.description;
+            document.getElementById('srvFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Layanan';
+            document.getElementById('cancelSrvEditBtn')?.classList.remove('d-none');
+            return;
+        }
+        const delSrv = e.target.closest('.js-del-srv');
+        if (delSrv) {
+            const list = getMergedServices();
+            if (list.length <= 1) return;
+            const removed = list.splice(Number(delSrv.dataset.idx), 1)[0];
+            const custom = getCustomData();
+            custom.services = list;
+            saveCustomData(custom);
+            addAuditLog(`Menghapus Layanan: "${removed?.title || '-'}"`);
+            renderDashboard();
+            return;
+        }
+        const editVid = e.target.closest('.js-edit-vid');
+        if (editVid) {
+            const idx = Number(editVid.dataset.idx);
+            const v = getMergedVideos()[idx];
+            if (!v) return;
+            document.getElementById('editVidIdx').value = String(idx);
+            document.getElementById('vidTitleInput').value = v.title;
+            document.getElementById('vidDateInput').value = v.date;
+            document.getElementById('vidThumbInput').value = v.thumb;
+            document.getElementById('vidSummaryInput').value = v.summary;
+            document.getElementById('vidFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Video';
+            document.getElementById('cancelVidEditBtn')?.classList.remove('d-none');
+            return;
+        }
+        const delVid = e.target.closest('.js-del-vid');
+        if (delVid) {
+            const list = getMergedVideos();
+            if (list.length <= 1) return;
+            const removed = list.splice(Number(delVid.dataset.idx), 1)[0];
+            const custom = getCustomData();
+            custom.videos = list;
+            saveCustomData(custom);
+            addAuditLog(`Menghapus Video: "${removed?.title || '-'}"`);
+            renderDashboard();
+            return;
+        }
+        const delPartner = e.target.closest('.js-del-partner');
+        if (delPartner) {
+            const list = getMergedPartners();
+            const removed = list.splice(Number(delPartner.dataset.idx), 1)[0];
+            const custom = getCustomData();
+            custom.partners = list;
+            saveCustomData(custom);
+            addAuditLog(`Menghapus Mitra: "${removed?.label || '-'}"`);
+            renderDashboard();
+            return;
+        }
+        const delProc = e.target.closest('.js-del-proc');
+        if (delProc) {
+            const list = getMergedProcedures();
+            const removed = list.splice(Number(delProc.dataset.idx), 1)[0];
+            const custom = getCustomData();
+            custom.procedures = list;
+            saveCustomData(custom);
+            addAuditLog(`Menghapus Prosedur: "${removed?.badge || '-'}"`);
+            renderDashboard();
+            return;
+        }
         const toggleUser = e.target.closest('.js-toggle-user');
-        if (toggleUser && getSession()?.role === 'superadmin') {
+        if (toggleUser) {
             const accounts = getAccounts();
             const acc = accounts[Number(toggleUser.dataset.idx)];
             if (acc) {
@@ -552,7 +881,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         const delUser = e.target.closest('.js-del-user');
-        if (delUser && getSession()?.role === 'superadmin') {
+        if (delUser) {
             const accounts = getAccounts();
             const removed = accounts.splice(Number(delUser.dataset.idx), 1)[0];
             saveAccounts(accounts);
@@ -632,6 +961,34 @@ document.addEventListener('DOMContentLoaded', function () {
         renderAuditLogs();
     });
 
+    // Super Admin: Export Permanent data.js
+    document.getElementById('exportDataJsBtn')?.addEventListener('click', function () {
+        if (getSession()?.role !== 'superadmin') return;
+        const mergedData = {
+            heroSlides: getMergedHero(),
+            services: getMergedServices(),
+            videos: getMergedVideos(),
+            news: getMergedNews(),
+            publications: getMergedPubs(),
+            procedures: getMergedProcedures(),
+            partners: getMergedPartners(),
+            siteMeta: {
+                ...getMergedSiteMeta(),
+                runningText: getCustomData().runningText || getMergedSiteMeta().runningText
+            }
+        };
+        const content = `/* Generated by Super Admin STUPA SMKN 1 Magelang (${new Date().toLocaleString('id-ID')}) */\nwindow.STUPA_DATA = ${JSON.stringify(mergedData, null, 4)};\n`;
+        const blob = new Blob([content], { type: 'application/javascript;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.js';
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog('Mengekspor data.js permanen untuk publikasi');
+        renderAuditLogs();
+    });
+
     // Super Admin: Full Backup & Restore
     document.getElementById('fullBackupBtn')?.addEventListener('click', function () {
         if (getSession()?.role !== 'superadmin') return;
@@ -677,7 +1034,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Super Admin: Reset Default Data
     document.getElementById('resetDefaultBtn')?.addEventListener('click', function () {
         if (getSession()?.role !== 'superadmin') return;
-        if (confirm('Kembalikan konten hero, berita, publikasi & visibilitas seksi ke pengaturan bawaan?')) {
+        if (confirm('Kembalikan seluruh konten web ke pengaturan bawaan?')) {
             localStorage.removeItem(CUSTOM_KEY);
             addAuditLog('Mereset seluruh konten web ke bawaan pabrik');
             renderDashboard();

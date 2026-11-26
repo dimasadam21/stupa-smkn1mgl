@@ -389,5 +389,53 @@ window.STUPA_DATA = {
             gradient: 'linear-gradient(145deg, #2d6a4f 0%, #52b788 100%)',
             summary: 'Rekam jejak kegiatan penanaman pohon, aksi bersih gunung, edukasi sekolah dasar, serta partisipasi tanggap bencana selama satu tahun kepengurusan.'
         }
-    ]
+    ],
+
+    procedures: [
+        {
+            id: 'proc-1',
+            badge: 'Alur Seleksi & Diklatsar Anggota',
+            icon: 'fa-user-check',
+            steps: [
+                { title: 'Registrasi Daring & Izin Orang Tua', desc: 'Mengisi formulir portal layanan dan menyerahkan surat persetujuan wali murid serta keterangan sehat.' },
+                { title: 'Kelas Akademik & Pembinaan Fisik', desc: 'Mengikuti 3 pekan materi navigasi darat, etika rimba, PPGD, dan pembinaan ketahanan jasmani.' },
+                { title: 'Pengembaraan Lapangan (Diklatsar)', desc: 'Praktik lapangan terpadu bersama pembina dan tim medis di lereng pegunungan Jawa Tengah.' },
+                { title: 'Pengukuhan & Nomor Registrasi Anggota', desc: 'Penyerahan slayer kebanggaan STUPA dan penetapan penugasan di divisi pilihan.' }
+            ]
+        },
+        {
+            id: 'proc-2',
+            badge: 'Prosedur Peminjaman Logistik & Izin Ekspedisi',
+            icon: 'fa-toolbox',
+            steps: [
+                { title: 'Pengajuan Rencana Perjalanan (ROP)', desc: 'Menyampaikan proposal rute, daftar personel, serta analisis mitigasi risiko minimal H-7 keberangkatan.' },
+                { title: 'Verifikasi Pembina & Koordinator Logistik', desc: 'Pemeriksaan kelaikan perlengkapan tenda, kompas, P3K, dan persetujuan pembina ekstrakurikuler.' },
+                { title: 'Serah Terima Alat & Check-In Basecamp', desc: 'Pencatatan kondisi alat sebelum berangkat serta pelaporan posisi berkala selama ekspedisi.' },
+                { title: 'Pengembalian Bersih & Laporan Evaluasi', desc: 'Logistik dikembalikan dalam keadaan kering/terawat maksimal H+2 disertai jurnal catatan lapangan.' }
+            ]
+        }
+    ],
+
+    partners: [
+        { label: 'SMKN 1 Magelang', icon: 'fa-school', href: '#top' },
+        { label: 'TNGM Merbabu', icon: 'fa-tree', href: '#layanan-stupa' },
+        { label: 'Basarnas & BPBD Magelang', icon: 'fa-life-ring', href: '#layanan-stupa' },
+        { label: 'Pokja Adiwiyata', icon: 'fa-award', href: '#layanan-stupa' },
+        { label: 'Forum Sispala Jateng', icon: 'fa-compass', href: '#layanan-stupa' },
+        { label: 'Komunitas Peduli Progo', icon: 'fa-water', href: '#layanan-stupa' }
+    ],
+
+    siteMeta: {
+        runningText: 'Menapak Rimba dengan Nalar Ilmu, Menjaga Semesta dengan Keteguhan Hati — STUPA SMKN 1 Magelang: Tangguh di Puncak, Santun di Bumi, Unggul dalam Karya Teknik Berkelanjutan!',
+        footerMotto: '“Berakar pada ilmu teknik, tumbuh dalam persaudaraan, berbuah pada kelestarian semesta.”',
+        secretariatName: 'Sanggar STUPA — SMKN 1 Magelang',
+        addressLine1: 'Jl. Cawang No. 2, Jurangombo Utara',
+        addressLine2: 'Kec. Magelang Selatan, Kota Magelang 56123',
+        phone: '(0293) 362172 • Posko: +62 812-3456-7890',
+        email: 'stupa@smkn1magelang.sch.id',
+        copyright: '© 2026 Hak Cipta STUPA (Siswa Siswi Teknik Satu Pecinta Alam) — SMK Negeri 1 Magelang',
+        instagramUrl: '#kontak-footer',
+        youtubeUrl: '#kontak-footer',
+        tiktokUrl: '#kontak-footer'
+    }
 };

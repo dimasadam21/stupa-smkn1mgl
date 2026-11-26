@@ -270,89 +270,14 @@
                     <div class="title-underline"></div>
                 </div>
 
-                <div class="prosedur-steps">
-                    <div class="prosedur-step-card" role="button" tabindex="0" title="Klik untuk memperbesar alur">
-                        <span class="step-badge"><i class="fas fa-user-check me-1"></i> Alur Seleksi &amp; Diklatsar Anggota</span>
-                        <div class="prosedur-diagram-box">
-                            <div class="flow-step">
-                                <span class="flow-num">1</span>
-                                <div class="flow-text">
-                                    <h6>Registrasi Daring &amp; Izin Orang Tua</h6>
-                                    <p>Mengisi formulir portal layanan dan menyerahkan surat persetujuan wali murid serta keterangan sehat.</p>
-                                </div>
-                            </div>
-                            <div class="flow-step">
-                                <span class="flow-num">2</span>
-                                <div class="flow-text">
-                                    <h6>Kelas Akademik &amp; Pembinaan Fisik</h6>
-                                    <p>Mengikuti 3 pekan materi navigasi darat, etika rimba, PPGD, dan pembinaan ketahanan jasmani.</p>
-                                </div>
-                            </div>
-                            <div class="flow-step">
-                                <span class="flow-num">3</span>
-                                <div class="flow-text">
-                                    <h6>Pengembaraan Lapangan (Diklatsar)</h6>
-                                    <p>Praktik lapangan terpadu bersama pembina dan tim medis di lereng pegunungan Jawa Tengah.</p>
-                                </div>
-                            </div>
-                            <div class="flow-step">
-                                <span class="flow-num">4</span>
-                                <div class="flow-text">
-                                    <h6>Pengukuhan &amp; Nomor Registrasi Anggota</h6>
-                                    <p>Penyerahan slayer kebanggaan STUPA dan penetapan penugasan di divisi pilihan.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="prosedur-step-card" role="button" tabindex="0" title="Klik untuk memperbesar alur">
-                        <span class="step-badge"><i class="fas fa-toolbox me-1"></i> Prosedur Peminjaman Logistik &amp; Izin Ekspedisi</span>
-                        <div class="prosedur-diagram-box">
-                            <div class="flow-step">
-                                <span class="flow-num">1</span>
-                                <div class="flow-text">
-                                    <h6>Pengajuan Rencana Perjalanan (ROP)</h6>
-                                    <p>Menyampaikan proposal rute, daftar personel, serta analisis mitigasi risiko minimal H-7 keberangkatan.</p>
-                                </div>
-                            </div>
-                            <div class="flow-step">
-                                <span class="flow-num">2</span>
-                                <div class="flow-text">
-                                    <h6>Verifikasi Pembina &amp; Koordinator Logistik</h6>
-                                    <p>Pemeriksaan kelaikan perlengkapan tenda, kompas, P3K, dan persetujuan pembina ekstrakurikuler.</p>
-                                </div>
-                            </div>
-                            <div class="flow-step">
-                                <span class="flow-num">3</span>
-                                <div class="flow-text">
-                                    <h6>Serah Terima Alat &amp; Check-In Basecamp</h6>
-                                    <p>Pencatatan kondisi alat sebelum berangkat serta pelaporan posisi berkala selama ekspedisi.</p>
-                                </div>
-                            </div>
-                            <div class="flow-step">
-                                <span class="flow-num">4</span>
-                                <div class="flow-text">
-                                    <h6>Pengembalian Bersih &amp; Laporan Evaluasi</h6>
-                                    <p>Logistik dikembalikan dalam keadaan kering/terawat maksimal H+2 disertai jurnal catatan lapangan.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="prosedur-steps" id="proceduresContainer"></div>
             </div>
         </section>
 
         <!-- Section 6: Mitra & Jejaring Konservasi -->
         <section class="public-services partner-section" id="mitra-stupa">
             <div class="container">
-                <ul class="partner-strip">
-                    <li><a href="#top" class="partner-badge"><i class="fas fa-school"></i> SMKN 1 Magelang</a></li>
-                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-tree"></i> TNGM Merbabu</a></li>
-                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-life-ring"></i> Basarnas &amp; BPBD Magelang</a></li>
-                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-award"></i> Pokja Adiwiyata</a></li>
-                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-compass"></i> Forum Sispala Jateng</a></li>
-                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-water"></i> Komunitas Peduli Progo</a></li>
-                </ul>
+                <ul class="partner-strip" id="partnersContainer"></ul>
             </div>
         </section>
     </main>
@@ -375,7 +300,7 @@
                             Satu Pecinta Alam<br>
                             SMK Negeri 1 Magelang
                         </h3>
-                        <p class="footer-motto">
+                        <p class="footer-motto" id="footerMotto">
                             “Berakar pada ilmu teknik, tumbuh dalam persaudaraan, berbuah pada kelestarian semesta.”
                         </p>
                     </div>
@@ -388,21 +313,21 @@
                         <div class="contact-item">
                             <i class="fas fa-map-marker-alt contact-icon"></i>
                             <div class="contact-text">
-                                <p class="fw-semibold">Sanggar STUPA — SMKN 1 Magelang</p>
-                                <p>Jl. Cawang No. 2, Jurangombo Utara</p>
-                                <p>Kec. Magelang Selatan, Kota Magelang 56123</p>
+                                <p class="fw-semibold" id="footerSecretariatName">Sanggar STUPA — SMKN 1 Magelang</p>
+                                <p id="footerAddress1">Jl. Cawang No. 2, Jurangombo Utara</p>
+                                <p id="footerAddress2">Kec. Magelang Selatan, Kota Magelang 56123</p>
                             </div>
                         </div>
                         <div class="contact-item">
                             <i class="fas fa-phone contact-icon"></i>
                             <div class="contact-text">
-                                <p>(0293) 362172 • Posko: +62 812-3456-7890</p>
+                                <p id="footerPhone">(0293) 362172 • Posko: +62 812-3456-7890</p>
                             </div>
                         </div>
                         <div class="contact-item">
                             <i class="fas fa-envelope contact-icon"></i>
                             <div class="contact-text">
-                                <a href="mailto:stupa@smkn1magelang.sch.id" class="website-link">stupa@smkn1magelang.sch.id</a>
+                                <a href="mailto:stupa@smkn1magelang.sch.id" class="website-link" id="footerEmail">stupa@smkn1magelang.sch.id</a>
                             </div>
                         </div>
                     </div>
@@ -412,13 +337,13 @@
                 <div class="footer-section footer-social">
                     <h4 class="footer-section-title">Ikuti Kami</h4>
                     <div class="social-icons">
-                        <a href="#kontak-footer" class="social-link" aria-label="Instagram STUPA" title="Instagram @stupa_smkn1mgl">
+                        <a href="#kontak-footer" id="socialIgLink" class="social-link" aria-label="Instagram STUPA" title="Instagram @stupa_smkn1mgl">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#kontak-footer" class="social-link" aria-label="YouTube STUPA" title="YouTube STUPA Channel">
+                        <a href="#kontak-footer" id="socialYtLink" class="social-link" aria-label="YouTube STUPA" title="YouTube STUPA Channel">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a href="#kontak-footer" class="social-link" aria-label="TikTok STUPA" title="TikTok @stupa.mgl">
+                        <a href="#kontak-footer" id="socialTtLink" class="social-link" aria-label="TikTok STUPA" title="TikTok @stupa.mgl">
                             <i class="fab fa-tiktok"></i>
                         </a>
                         <a href="#layanan-stupa" data-open-service="5" class="social-link" aria-label="WhatsApp Posko" title="Posko Informasi STUPA">
@@ -446,7 +371,7 @@
 
             <!-- Copyright Shimmer Bar -->
             <div class="footer-copyright">
-                <p>&copy; 2026 Hak Cipta STUPA (Siswa Siswi Teknik Satu Pecinta Alam) — SMK Negeri 1 Magelang</p>
+                <p id="footerCopyright">&copy; 2026 Hak Cipta STUPA (Siswa Siswi Teknik Satu Pecinta Alam) — SMK Negeri 1 Magelang</p>
             </div>
         </div>
     </footer>
