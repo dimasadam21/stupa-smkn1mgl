@@ -217,7 +217,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         </select>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-outline-danger btn-sm js-del-sub" data-idx="${idx}"><i class="fas fa-trash"></i></button>
+                        ${getSession()?.role === 'superadmin'
+                            ? `<button type="button" class="btn btn-outline-danger btn-sm js-del-sub" data-idx="${idx}" title="Hapus"><i class="fas fa-trash"></i></button>`
+                            : `<span class="text-muted small">-</span>`}
                     </td>
                 </tr>
             `;
@@ -731,6 +733,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const delSub = e.target.closest('.js-del-sub');
         if (delSub) {
+            if (getSession()?.role !== 'superadmin') return;
             const list = getSubmissions();
             const removed = list.splice(Number(delSub.dataset.idx), 1)[0];
             localStorage.setItem(SUB_KEY, JSON.stringify(list));
@@ -935,22 +938,21 @@ document.addEventListener('DOMContentLoaded', function () {
         alert('Running text berhasil diperbarui!');
     });
 
-    // Change Own Password
+    // Change Own Password (Super Admin only)
     document.getElementById('changePwdForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
         const val = document.getElementById('newAdminPwd').value;
         const sess = getSession();
-        if (val.length >= 6 && sess) {
-            const accounts = getAccounts();
-            const target = accounts.find(a => a.username === sess.username);
-            if (target) {
-                target.password = val;
-                saveAccounts(accounts);
-                addAuditLog(`Memperbarui kata sandi akun "${sess.username}"`);
-                this.reset();
-                if (sess.role === 'superadmin') renderAuditLogs();
-                alert('Kata sandi berhasil diperbarui.');
-            }
+        if (!sess || sess.role !== 'superadmin' || val.length < 6) return;
+        const accounts = getAccounts();
+        const target = accounts.find(a => a.username === sess.username);
+        if (target) {
+            target.password = val;
+            saveAccounts(accounts);
+            addAuditLog(`Memperbarui kata sandi akun "${sess.username}"`);
+            this.reset();
+            renderAuditLogs();
+            alert('Kata sandi berhasil diperbarui.');
         }
     });
 
