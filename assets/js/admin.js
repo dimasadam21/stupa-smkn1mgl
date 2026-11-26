@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const targetEl = document.getElementById(e.target.dataset.target);
                 const prevEl = document.getElementById(e.target.dataset.preview);
                 if (targetEl) targetEl.value = dataUrl;
-                if (prevEl) prevEl.src = dataUrl;
+                if (prevEl) { prevEl.src = dataUrl; prevEl.classList.remove('d-none'); }
                 if (e.target.dataset.target === 'heroImageUrl') updateHeroLivePreview();
             } catch {
                 alert('Gagal memproses file gambar.');
@@ -209,7 +209,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('input', function (e) {
         if (e.target.classList.contains('js-img-url')) {
             const prevEl = document.getElementById(e.target.dataset.preview);
-            if (prevEl && e.target.value.trim()) prevEl.src = e.target.value.trim();
+            if (prevEl && e.target.value.trim()) {
+                prevEl.src = e.target.value.trim();
+                prevEl.classList.remove('d-none');
+            }
         }
         if (e.target.classList.contains('js-hero-live')) {
             updateHeroLivePreview();
@@ -433,13 +436,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="d-flex align-items-center gap-2 overflow-hidden">
                     <span class="badge text-bg-light border text-success"><i class="fas ${s.icon}"></i></span>
                     <div class="overflow-hidden">
-                        <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${s.title}</div>
+                        <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${s.title} <span class="badge text-bg-light border" style="font-size:9px;">${s.actionType === 'form' ? 'Form' : 'Info/Kegiatan'}</span></div>
                         <div class="text-muted text-truncate" style="font-size:11px;">${s.subtitle}</div>
                     </div>
                 </div>
                 <div class="d-flex gap-1 flex-shrink-0">
-                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-srv" data-idx="${idx}"><i class="fas fa-pen"></i></button>
-                    <button type="button" class="btn btn-outline-danger btn-sm js-del-srv" data-idx="${idx}" ${list.length <= 1 ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                    ${idx > 0 ? `<button type="button" class="btn btn-outline-success btn-sm js-move-srv" data-idx="${idx}" title="Naikkan Urutan"><i class="fas fa-arrow-up"></i></button>` : ''}
+                    <button type="button" class="btn btn-outline-primary btn-sm js-edit-srv" data-idx="${idx}" title="Edit Layanan &amp; Isi Kegiatan"><i class="fas fa-pen"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-sm js-del-srv" data-idx="${idx}" ${list.length <= 1 ? 'disabled' : ''} title="Hapus"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         `).join('');
@@ -602,7 +606,9 @@ document.addEventListener('DOMContentLoaded', function () {
     function resetSrvForm() {
         document.getElementById('addServiceForm')?.reset();
         document.getElementById('editSrvIdx').value = '';
-        document.getElementById('srvFormHeading').innerHTML = '<i class="fas fa-concierge-bell me-1"></i> Tambah / Edit Layanan STUPA';
+        const prev = document.getElementById('srvImgPreview');
+        if (prev) { prev.src = 'assets/images/bg-nature-mist.svg'; prev.classList.add('d-none'); }
+        document.getElementById('srvFormHeading').innerHTML = '<i class="fas fa-concierge-bell me-1"></i> Tambah / Edit Layanan &amp; Isi Kegiatan';
         document.getElementById('cancelSrvEditBtn')?.classList.add('d-none');
     }
     document.getElementById('cancelSrvEditBtn')?.addEventListener('click', resetSrvForm);
@@ -742,22 +748,46 @@ document.addEventListener('DOMContentLoaded', function () {
         const badge = document.getElementById('srvBadgeInput').value.trim();
         const subtitle = document.getElementById('srvSubtitleInput').value.trim();
         const icon = document.getElementById('srvIconInput').value;
+        const actionType = document.getElementById('srvTypeInput').value || 'info';
+        const coverImage = document.getElementById('srvImageUrl').value.trim();
         const description = document.getElementById('srvDescInput').value.trim();
+        const rawItems = document.getElementById('srvItemsInput').value.split('\n').map(l => l.trim()).filter(Boolean);
+        const infoList = rawItems.map((line, i) => {
+            const [t, m] = line.split('|').map(x => x.trim());
+            return { title: t || `Kegiatan ${i + 1}`, meta: m || '' };
+        });
+        const linkUrl = document.getElementById('srvLinkUrlInput').value.trim();
+        const linkText = document.getElementById('srvLinkTextInput').value.trim();
         const editIdx = document.getElementById('editSrvIdx').value;
 
         const custom = getCustomData();
         const list = getMergedServices();
+        const defaultFields = [
+            { name: 'nama', label: 'Nama Lengkap / Kelas', type: 'text', placeholder: 'Masukkan nama lengkap...' },
+            { name: 'kontak', label: 'Nomor WhatsApp', type: 'tel', placeholder: '08xxxxxxxxxx' },
+            { name: 'catatan', label: 'Keterangan / Keperluan', type: 'textarea', placeholder: 'Tulis rincian permohonan...' }
+        ];
+
         if (editIdx !== '') {
-            list[Number(editIdx)] = { ...list[Number(editIdx)], title, badge, subtitle, icon, description };
-            addAuditLog(`Mengedit Layanan: "${title}"`);
+            const old = list[Number(editIdx)] || {};
+            list[Number(editIdx)] = {
+                ...old,
+                title, badge, subtitle, icon, actionType, coverImage, description, linkUrl, linkText,
+                infoList: infoList.length > 0 ? infoList : (actionType === 'info' ? [{ title: 'Rincian Kegiatan', meta: description }] : old.infoList),
+                fields: actionType === 'form' ? (old.fields || defaultFields) : old.fields,
+                submitLabel: actionType === 'form' ? (old.submitLabel || `Kirim ${title}`) : old.submitLabel
+            };
+            addAuditLog(`Mengedit Layanan/Kegiatan: "${title}"`);
         } else {
             list.push({
                 id: 'srv-' + Date.now(),
-                icon, title, subtitle, badge, description,
-                actionType: 'info',
-                infoList: [{ title: 'Informasi Layanan', meta: description }]
+                icon, title, subtitle, badge, description, coverImage, linkUrl, linkText,
+                actionType,
+                infoList: infoList.length > 0 ? infoList : [{ title: 'Agenda & Informasi Kegiatan', meta: description }],
+                fields: actionType === 'form' ? defaultFields : undefined,
+                submitLabel: actionType === 'form' ? `Kirim ${title}` : undefined
             });
-            addAuditLog(`Menambahkan Layanan: "${title}"`);
+            addAuditLog(`Menambahkan Layanan/Kegiatan: "${title}"`);
         }
         custom.services = list;
         saveCustomData(custom);
@@ -983,18 +1013,44 @@ document.addEventListener('DOMContentLoaded', function () {
             renderDashboard();
             return;
         }
+        const moveSrv = e.target.closest('.js-move-srv');
+        if (moveSrv) {
+            const idx = Number(moveSrv.dataset.idx);
+            const list = getMergedServices();
+            if (idx > 0 && idx < list.length) {
+                const temp = list[idx - 1];
+                list[idx - 1] = list[idx];
+                list[idx] = temp;
+                const custom = getCustomData();
+                custom.services = list;
+                saveCustomData(custom);
+                addAuditLog(`Menggeser urutan layanan "${list[idx - 1].title}"`);
+                renderDashboard();
+            }
+            return;
+        }
         const editSrv = e.target.closest('.js-edit-srv');
         if (editSrv) {
             const idx = Number(editSrv.dataset.idx);
             const s = getMergedServices()[idx];
             if (!s) return;
             document.getElementById('editSrvIdx').value = String(idx);
-            document.getElementById('srvTitleInput').value = s.title;
-            document.getElementById('srvBadgeInput').value = s.badge;
-            document.getElementById('srvSubtitleInput').value = s.subtitle;
-            document.getElementById('srvIconInput').value = s.icon;
-            document.getElementById('srvDescInput').value = s.description;
-            document.getElementById('srvFormHeading').innerHTML = '<i class="fas fa-pen me-1"></i> Edit Layanan';
+            document.getElementById('srvTitleInput').value = s.title || '';
+            document.getElementById('srvBadgeInput').value = s.badge || '';
+            document.getElementById('srvSubtitleInput').value = s.subtitle || '';
+            document.getElementById('srvIconInput').value = s.icon || 'fa-compass';
+            document.getElementById('srvTypeInput').value = s.actionType || 'info';
+            document.getElementById('srvImageUrl').value = s.coverImage || '';
+            const prev = document.getElementById('srvImgPreview');
+            if (prev) {
+                if (s.coverImage) { prev.src = s.coverImage; prev.classList.remove('d-none'); }
+                else { prev.classList.add('d-none'); }
+            }
+            document.getElementById('srvDescInput').value = s.description || '';
+            document.getElementById('srvItemsInput').value = (s.infoList || []).map(it => `${it.title} | ${it.meta}`).join('\n');
+            document.getElementById('srvLinkUrlInput').value = s.linkUrl || '';
+            document.getElementById('srvLinkTextInput').value = s.linkText || '';
+            document.getElementById('srvFormHeading').innerHTML = `<i class="fas fa-pen me-1"></i> Edit Layanan &amp; Isi Kegiatan (#${idx + 1})`;
             document.getElementById('cancelSrvEditBtn')?.classList.remove('d-none');
             return;
         }

@@ -548,17 +548,17 @@
                             <div class="col-lg-6">
                                 <div class="p-3 rounded-4 mb-3" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0" id="srvFormHeading" style="color:#c85800;"><i class="fas fa-concierge-bell me-1"></i> Tambah / Edit Layanan STUPA</h6>
+                                        <h6 class="fw-bold mb-0" id="srvFormHeading" style="color:#c85800;"><i class="fas fa-concierge-bell me-1"></i> Tambah / Edit Layanan &amp; Isi Kegiatan</h6>
                                         <button type="button" id="cancelSrvEditBtn" class="btn btn-link btn-sm p-0 text-danger d-none">Batal</button>
                                     </div>
                                     <form id="addServiceForm">
                                         <input type="hidden" id="editSrvIdx">
                                         <div class="row g-2 mb-2">
                                             <div class="col-6">
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="srvTitleInput" placeholder="Judul Layanan" required>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="srvTitleInput" placeholder="Judul Layanan / Kegiatan" required>
                                             </div>
                                             <div class="col-6">
-                                                <input type="text" class="form-control form-control-sm rounded-3" id="srvBadgeInput" placeholder="Badge (mis. Keanggotaan)" required>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="srvBadgeInput" placeholder="Badge (mis. Agenda / Ekspedisi)" required>
                                             </div>
                                         </div>
                                         <div class="row g-2 mb-2">
@@ -573,13 +573,42 @@
                                                     <option value="fa-map-location-dot">Ikon Peta</option>
                                                     <option value="fa-seedling">Ikon Tunas</option>
                                                     <option value="fa-mountain-sun">Ikon Gunung</option>
+                                                    <option value="fa-person-hiking">Ikon Pendakian</option>
+                                                    <option value="fa-calendar-days">Ikon Kalender Kegiatan</option>
                                                     <option value="fa-hands-helping">Ikon Relawan</option>
                                                     <option value="fa-microscope">Ikon Riset</option>
+                                                    <option value="fa-tree">Ikon Hutan</option>
+                                                    <option value="fa-water">Ikon Sungai</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="srvDescInput" rows="2" placeholder="Deskripsi lengkap layanan saat diklik..." required></textarea>
-                                        <button type="submit" id="srvSubmitBtn" class="btn btn-stupa btn-sm w-100">Simpan Layanan</button>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Tipe Saat Diklik</label>
+                                                <select class="form-select form-select-sm rounded-3" id="srvTypeInput">
+                                                    <option value="info">Isi Kegiatan &amp; Informasi</option>
+                                                    <option value="form">Formulir Pendaftaran / Ajuan</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Upload Foto Kegiatan (Opsional)</label>
+                                                <input type="file" accept="image/*" class="form-control form-control-sm rounded-3 js-img-upload" data-target="srvImageUrl" data-preview="srvImgPreview">
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm rounded-3 mb-2 js-img-url" id="srvImageUrl" data-preview="srvImgPreview" placeholder="Atau URL foto kegiatan (opsional)">
+                                        <img id="srvImgPreview" src="assets/images/bg-nature-mist.svg" alt="Pratinjau Kegiatan" class="img-preview-thumb mb-2 d-none" style="height:76px;">
+                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="srvDescInput" rows="2" placeholder="Deskripsi pembuka layanan / kegiatan..." required></textarea>
+                                        <label class="form-label small fw-semibold mb-1">Daftar Isi Kegiatan / Poin Rincian (1 baris = 1 poin)</label>
+                                        <textarea class="form-control form-control-sm rounded-3 mb-2" id="srvItemsInput" rows="3" placeholder="Format: Judul Kegiatan | Jadwal / Lokasi / Rincian&#10;Contoh: Penanaman Pohon Merbabu | Sabtu, 07.00 WIB • Pos Wekas"></textarea>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="srvLinkUrlInput" placeholder="Link Tautan (opsional)">
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="srvLinkTextInput" placeholder="Teks Tombol Link (opsional)">
+                                            </div>
+                                        </div>
+                                        <button type="submit" id="srvSubmitBtn" class="btn btn-stupa btn-sm w-100">Simpan Layanan &amp; Isi Kegiatan</button>
                                     </form>
                                 </div>
                                 <h6 class="fw-bold small text-uppercase text-muted">Kartu Layanan Aktif</h6>

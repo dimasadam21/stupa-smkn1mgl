@@ -446,6 +446,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         detailBody.innerHTML = `
+            ${srv.coverImage ? `<img src="${srv.coverImage}" alt="${srv.title}" class="img-fluid rounded-4 mb-3 w-100" style="max-height:240px;object-fit:cover;">` : ''}
             <div class="d-flex align-items-center gap-3 mb-3">
                 <div class="service-icon-box mb-0" style="width:56px;height:56px;font-size:22px;">
                     <i class="fas ${srv.icon}"></i>
@@ -457,6 +458,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
             <p class="lh-lg mb-2">${srv.description}</p>
             ${extraHtml}
+            ${srv.linkUrl ? `<div class="mt-3"><a href="${srv.linkUrl}" ${srv.linkUrl.startsWith('http') ? 'target="_blank"' : ''} class="btn custom-btn"><i class="fas fa-external-link-alt"></i> ${srv.linkText || 'Buka Tautan Kegiatan'}</a></div>` : ''}
         `;
         detailModal.show();
     }
