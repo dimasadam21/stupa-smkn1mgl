@@ -337,34 +337,38 @@
                         </div>
                     </div>
 
-                    <!-- Tab 2: Kelola Berita & Agenda (Tambah / Edit / Hapus + Upload Gambar) -->
+                    <!-- Tab 2: Kelola Berita, Informasi & Tab Kategori (Admin & Super Admin) -->
                     <div class="tab-pane fade" id="tabNews">
                         <div class="row g-4">
                             <div class="col-lg-5">
                                 <div class="p-3 rounded-4" style="background:#f5faf9;border:1px solid rgba(0,89,82,0.12);">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="fw-bold mb-0" id="newsFormHeading" style="color:#005950;"><i class="fas fa-plus-circle me-1"></i> Terbitkan Kabar Baru</h6>
+                                        <h6 class="fw-bold mb-0" id="newsFormHeading" style="color:#005950;"><i class="fas fa-plus-circle me-1"></i> Terbitkan / Edit Berita &amp; Informasi</h6>
                                         <button type="button" id="cancelNewsEditBtn" class="btn btn-link btn-sm p-0 text-danger d-none">Batal Edit</button>
                                     </div>
                                     <form id="addNewsForm">
                                         <input type="hidden" id="editNewsCat">
                                         <input type="hidden" id="editNewsIdx">
-                                        <div class="mb-2">
-                                            <label class="form-label small fw-semibold">Kategori</label>
-                                            <select class="form-select form-select-sm rounded-3" id="newsCatInput">
-                                                <option value="berita">Berita</option>
-                                                <option value="ekspedisi">Ekspedisi</option>
-                                                <option value="pengumuman">Pengumuman</option>
-                                                <option value="agenda">Agenda</option>
-                                                <option value="artikel">Artikel</option>
-                                            </select>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Kategori Tab</label>
+                                                <select class="form-select form-select-sm rounded-3" id="newsCatInput"></select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold mb-1">Tanggal Publikasi</label>
+                                                <input type="text" class="form-control form-control-sm rounded-3" id="newsDateInput" placeholder="Otomatis hari ini">
+                                            </div>
                                         </div>
                                         <div class="mb-2">
-                                            <label class="form-label small fw-semibold">Judul</label>
-                                            <input type="text" class="form-control form-control-sm rounded-3" id="newsTitleInput" placeholder="Judul berita atau agenda..." required>
+                                            <label class="form-label small fw-semibold mb-1">Penulis / Divisi</label>
+                                            <input type="text" class="form-control form-control-sm rounded-3" id="newsAuthorInput" placeholder="Redaksi STUPA SMKN 1 Magelang">
                                         </div>
                                         <div class="mb-2">
-                                            <label class="form-label small fw-semibold">Gambar (Preset / Upload / URL)</label>
+                                            <label class="form-label small fw-semibold mb-1">Judul</label>
+                                            <input type="text" class="form-control form-control-sm rounded-3" id="newsTitleInput" placeholder="Judul berita atau informasi..." required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label small fw-semibold mb-1">Gambar (Preset / Upload / URL)</label>
                                             <select class="form-select form-select-sm rounded-3 mb-2 js-img-preset" data-target="newsImageUrl" data-preview="newsImgPreview">
                                                 <option value="assets/images/hero-merbabu.jpg">Preset: Pendakian Lereng Merbabu</option>
                                                 <option value="assets/images/hero-konservasi.jpg">Preset: Konservasi &amp; Tanam Pohon</option>
@@ -378,11 +382,11 @@
                                             <img id="newsImgPreview" src="assets/images/hero-merbabu.jpg" alt="Pratinjau gambar" class="img-preview-thumb">
                                         </div>
                                         <div class="mb-2">
-                                            <label class="form-label small fw-semibold">Ringkasan Singkat</label>
+                                            <label class="form-label small fw-semibold mb-1">Ringkasan Singkat</label>
                                             <textarea class="form-control form-control-sm rounded-3" id="newsExcerptInput" rows="2" placeholder="Ringkasan 1-2 kalimat..." required></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label small fw-semibold">Isi Lengkap</label>
+                                            <label class="form-label small fw-semibold mb-1">Isi Lengkap</label>
                                             <textarea class="form-control form-control-sm rounded-3" id="newsContentInput" rows="4" placeholder="Tulis narasi lengkap..." required></textarea>
                                         </div>
                                         <button type="submit" id="newsSubmitBtn" class="btn btn-teal w-100">
@@ -392,8 +396,34 @@
                                 </div>
                             </div>
                             <div class="col-lg-7">
-                                <h6 class="fw-bold mb-3" style="color:#005950;">Daftar Konten Aktif (Edit / Hapus)</h6>
-                                <div id="adminNewsList" class="d-flex flex-column gap-2" style="max-height:560px;overflow-y:auto;"></div>
+                                <!-- Kelola Tab Kategori Berita & Informasi -->
+                                <div class="p-3 rounded-4 mb-3" style="background:#fffaf4;border:1px solid rgba(249,121,16,0.28);">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="fw-bold mb-0" style="color:#c85800;"><i class="fas fa-tags me-1"></i> Kelola Tab Kategori (Tambah / Edit / Kurangi Tab)</h6>
+                                        <button type="button" id="cancelNewsCatEditBtn" class="btn btn-link btn-sm p-0 text-danger d-none">Batal</button>
+                                    </div>
+                                    <form id="addNewsCatForm" class="row g-2 mb-2">
+                                        <input type="hidden" id="editNewsCatIdx">
+                                        <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm rounded-3" id="newsCatManageLabelInput" placeholder="Nama Tab Baru (mis. Prestasi, Galeri, Opini)" required>
+                                        </div>
+                                        <div class="col-4">
+                                            <button type="submit" id="newsCatSubmitBtn" class="btn btn-stupa btn-sm w-100">Tambah Tab</button>
+                                        </div>
+                                    </form>
+                                    <div id="adminNewsCatsList" class="d-flex flex-wrap gap-2"></div>
+                                </div>
+
+                                <!-- Filter & Daftar Konten -->
+                                <div class="row g-2 align-items-center mb-2">
+                                    <div class="col-md-5">
+                                        <select class="form-select form-select-sm rounded-3" id="adminNewsFilterCat"></select>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <input type="search" class="form-control form-control-sm rounded-3" id="adminNewsFilterSearch" placeholder="Cari judul berita...">
+                                    </div>
+                                </div>
+                                <div id="adminNewsList" class="d-flex flex-column gap-2" style="max-height:470px;overflow-y:auto;"></div>
                             </div>
                         </div>
                     </div>

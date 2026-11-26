@@ -66,6 +66,16 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem(LOGS_KEY, JSON.stringify(logs.slice(0, 120)));
     }
 
+    const getMergedNewsCategories = () => {
+        const c = getCustomData().newsCategories;
+        return (Array.isArray(c) && c.length > 0) ? c : [...(window.STUPA_DATA?.newsCategories || [
+            { key: 'berita', label: 'Berita' },
+            { key: 'ekspedisi', label: 'Ekspedisi' },
+            { key: 'pengumuman', label: 'Pengumuman' },
+            { key: 'agenda', label: 'Agenda' },
+            { key: 'artikel', label: 'Artikel' }
+        ])];
+    };
     const getMergedNews = () => ({ ...(window.STUPA_DATA?.news || {}), ...(getCustomData().news || {}) });
     const getMergedHero = () => {
         const c = getCustomData().heroSlides;
@@ -307,6 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('statVisitCount').textContent = visits.toLocaleString('id-ID');
 
         renderSubmissions();
+        renderNewsCategoriesManager();
         renderNewsList();
         renderSuperHeroList();
         renderSuperPubList();
@@ -360,29 +371,76 @@ document.addEventListener('DOMContentLoaded', function () {
         }).join('');
     }
 
+    function renderNewsCategoriesManager() {
+        const cats = getMergedNewsCategories();
+        const selectEl = document.getElementById('newsCatInput');
+        const filterEl = document.getElementById('adminNewsFilterCat');
+        const pillsEl = document.getElementById('adminNewsCatsList');
+
+        if (selectEl) {
+            const prevVal = selectEl.value;
+            selectEl.innerHTML = cats.map(c => `<option value="${c.key}">${c.label}</option>`).join('');
+            if (cats.some(c => c.key === prevVal)) selectEl.value = prevVal;
+        }
+        if (filterEl) {
+            const prevFilter = filterEl.value || 'all';
+            filterEl.innerHTML = `<option value="all">Semua Kategori</option>` + cats.map(c => `<option value="${c.key}">${c.label}</option>`).join('');
+            filterEl.value = (prevFilter === 'all' || cats.some(c => c.key === prevFilter)) ? prevFilter : 'all';
+        }
+        if (pillsEl) {
+            pillsEl.innerHTML = cats.map((c, idx) => `
+                <span class="badge rounded-pill text-bg-light border px-3 py-2 d-inline-flex align-items-center gap-2" style="color:#005950;">
+                    <span>${c.label}</span>
+                    <button type="button" class="btn btn-link p-0 text-primary js-edit-news-cat" data-idx="${idx}" title="Ganti Nama Tab" style="font-size:11px;"><i class="fas fa-pen"></i></button>
+                    ${cats.length > 1 ? `<button type="button" class="btn-close js-del-news-cat" data-idx="${idx}" title="Hapus Tab" style="font-size:8px;"></button>` : ''}
+                </span>
+            `).join('');
+        }
+    }
+
     function renderNewsList() {
         const listEl = document.getElementById('adminNewsList');
         if (!listEl) return;
+        const cats = getMergedNewsCategories();
         const merged = getMergedNews();
+        const filterCat = document.getElementById('adminNewsFilterCat')?.value || 'all';
+        const searchQ = (document.getElementById('adminNewsFilterSearch')?.value || '').trim().toLowerCase();
+
         const items = [];
-        Object.entries(merged).forEach(([cat, arr]) => (arr || []).forEach((item, idx) => items.push({ cat, idx, ...item })));
+        cats.forEach(c => {
+            if (filterCat !== 'all' && filterCat !== c.key) return;
+            (merged[c.key] || []).forEach((item, idx) => {
+                if (searchQ && !item.title.toLowerCase().includes(searchQ)) return;
+                items.push({ cat: c.key, catLabel: c.label, idx, ...item });
+            });
+        });
+
+        if (items.length === 0) {
+            listEl.innerHTML = `<div class="text-center text-muted small py-4 border rounded-3 bg-white">Tidak ada konten pada filter ini.</div>`;
+            return;
+        }
+
         listEl.innerHTML = items.map(it => `
             <div class="d-flex justify-content-between align-items-center gap-2 p-2 rounded-3 border bg-white">
                 <div class="d-flex align-items-center gap-2 overflow-hidden">
                     <img src="${it.image}" alt="" class="rounded-2 flex-shrink-0" style="width:52px;height:38px;object-fit:cover;">
                     <div class="overflow-hidden">
-                        <span class="badge text-bg-success text-uppercase" style="font-size:10px;">${it.cat}</span>
+                        <span class="badge text-bg-success text-uppercase" style="font-size:10px;">${it.catLabel}</span>
                         <div class="fw-semibold text-truncate" style="font-size:12.5px;color:#005950;">${it.title}</div>
-                        <div class="text-muted" style="font-size:11px;">${it.date}</div>
+                        <div class="text-muted" style="font-size:11px;">${it.date}${it.author ? ` • ${it.author}` : ''}</div>
                     </div>
                 </div>
                 <div class="d-flex gap-1 flex-shrink-0">
+                    ${it.idx > 0 ? `<button type="button" class="btn btn-outline-success btn-sm js-pin-news" data-cat="${it.cat}" data-idx="${it.idx}" title="Naikkan ke Paling Atas"><i class="fas fa-arrow-up"></i></button>` : ''}
                     <button type="button" class="btn btn-outline-primary btn-sm js-edit-news" data-cat="${it.cat}" data-idx="${it.idx}" title="Edit"><i class="fas fa-pen"></i></button>
                     <button type="button" class="btn btn-outline-danger btn-sm js-del-news" data-cat="${it.cat}" data-idx="${it.idx}" title="Hapus"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         `).join('');
     }
+
+    document.getElementById('adminNewsFilterCat')?.addEventListener('change', renderNewsList);
+    document.getElementById('adminNewsFilterSearch')?.addEventListener('input', renderNewsList);
 
     function renderSuperHeroList() {
         const el = document.getElementById('superHeroList');
@@ -575,10 +633,18 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editNewsIdx').value = '';
         document.getElementById('newsImageUrl').value = 'assets/images/hero-merbabu.jpg';
         document.getElementById('newsImgPreview').src = 'assets/images/hero-merbabu.jpg';
-        document.getElementById('newsFormHeading').innerHTML = '<i class="fas fa-plus-circle me-1"></i> Terbitkan Kabar Baru';
+        document.getElementById('newsFormHeading').innerHTML = '<i class="fas fa-plus-circle me-1"></i> Terbitkan / Edit Berita &amp; Informasi';
         document.getElementById('cancelNewsEditBtn')?.classList.add('d-none');
     }
     document.getElementById('cancelNewsEditBtn')?.addEventListener('click', resetNewsForm);
+
+    function resetNewsCatForm() {
+        document.getElementById('addNewsCatForm')?.reset();
+        document.getElementById('editNewsCatIdx').value = '';
+        document.getElementById('newsCatSubmitBtn').textContent = 'Tambah Tab';
+        document.getElementById('cancelNewsCatEditBtn')?.classList.add('d-none');
+    }
+    document.getElementById('cancelNewsCatEditBtn')?.addEventListener('click', resetNewsCatForm);
 
     function resetHeroForm() {
         document.getElementById('addHeroForm')?.reset();
@@ -623,11 +689,41 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     document.getElementById('cancelVidEditBtn')?.addEventListener('click', resetVidForm);
 
+    // Kelola Tab Kategori Berita & Informasi (Admin & Super Admin)
+    document.getElementById('addNewsCatForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!isManager()) return;
+        const label = document.getElementById('newsCatManageLabelInput').value.trim();
+        const editIdx = document.getElementById('editNewsCatIdx').value;
+        if (!label) return;
+
+        const custom = getCustomData();
+        const cats = getMergedNewsCategories();
+        if (editIdx !== '') {
+            const idx = Number(editIdx);
+            if (cats[idx]) {
+                cats[idx] = { ...cats[idx], label };
+                addAuditLog(`Mengubah nama tab berita menjadi "${label}"`);
+            }
+        } else {
+            let key = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || ('tab-' + Date.now());
+            if (cats.some(c => c.key === key)) key = `${key}-${Date.now().toString().slice(-3)}`;
+            cats.push({ key, label });
+            addAuditLog(`Menambahkan tab kategori berita baru: "${label}"`);
+        }
+        custom.newsCategories = cats;
+        saveCustomData(custom);
+        resetNewsCatForm();
+        renderDashboard();
+    });
+
     // Web Content Submissions (Available to BOTH Admin & Super Admin)
     document.getElementById('addNewsForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
         if (!isManager()) return;
         const cat = document.getElementById('newsCatInput').value;
+        const dateVal = document.getElementById('newsDateInput').value.trim();
+        const authorVal = document.getElementById('newsAuthorInput').value.trim();
         const title = document.getElementById('newsTitleInput').value.trim();
         const image = document.getElementById('newsImageUrl').value.trim();
         const excerpt = document.getElementById('newsExcerptInput').value.trim();
@@ -638,21 +734,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const custom = getCustomData();
         const merged = getMergedNews();
         const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+        const finalDate = dateVal || today;
+        const finalAuthor = authorVal || 'Redaksi STUPA SMKN 1 Magelang';
 
         if (editIdx !== '' && editCat) {
             const oldArr = [...(merged[editCat] || [])];
             const existing = oldArr.splice(Number(editIdx), 1)[0] || {};
             merged[editCat] = oldArr;
+            const updatedObj = { ...existing, title, date: finalDate, author: finalAuthor, image, excerpt, content };
             if (editCat === cat) {
                 const reordered = [...oldArr];
-                reordered.splice(Number(editIdx), 0, { ...existing, title, image, excerpt, content });
+                reordered.splice(Number(editIdx), 0, updatedObj);
                 merged[cat] = reordered;
             } else {
-                merged[cat] = [{ ...existing, title, image, excerpt, content }, ...(merged[cat] || [])];
+                merged[cat] = [updatedObj, ...(merged[cat] || [])];
             }
             addAuditLog(`Mengedit ${cat}: "${title}"`);
         } else {
-            merged[cat] = [{ title, date: today, image, excerpt, content }, ...(merged[cat] || [])];
+            merged[cat] = [{ title, date: finalDate, author: finalAuthor, image, excerpt, content }, ...(merged[cat] || [])];
             addAuditLog(`Menambahkan ${cat}: "${title}"`);
         }
         custom.news = merged;
@@ -904,6 +1003,46 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (e) {
         if (!isManager()) return;
 
+        const editNewsCat = e.target.closest('.js-edit-news-cat');
+        if (editNewsCat) {
+            const idx = Number(editNewsCat.dataset.idx);
+            const c = getMergedNewsCategories()[idx];
+            if (!c) return;
+            document.getElementById('editNewsCatIdx').value = String(idx);
+            document.getElementById('newsCatManageLabelInput').value = c.label;
+            document.getElementById('newsCatSubmitBtn').textContent = 'Simpan Tab';
+            document.getElementById('cancelNewsCatEditBtn')?.classList.remove('d-none');
+            return;
+        }
+        const delNewsCat = e.target.closest('.js-del-news-cat');
+        if (delNewsCat) {
+            const cats = getMergedNewsCategories();
+            if (cats.length <= 1) return;
+            const removed = cats.splice(Number(delNewsCat.dataset.idx), 1)[0];
+            const custom = getCustomData();
+            custom.newsCategories = cats;
+            saveCustomData(custom);
+            addAuditLog(`Menghapus tab kategori berita: "${removed?.label || '-'}"`);
+            renderDashboard();
+            return;
+        }
+        const pinNews = e.target.closest('.js-pin-news');
+        if (pinNews) {
+            const cat = pinNews.dataset.cat;
+            const idx = Number(pinNews.dataset.idx);
+            const custom = getCustomData();
+            const merged = getMergedNews();
+            const list = [...(merged[cat] || [])];
+            if (idx > 0 && idx < list.length) {
+                const [picked] = list.splice(idx, 1);
+                list.unshift(picked);
+                custom.news = { ...merged, [cat]: list };
+                saveCustomData(custom);
+                addAuditLog(`Menaikkan "${picked.title}" ke urutan teratas ${cat}`);
+                renderDashboard();
+            }
+            return;
+        }
         const editNews = e.target.closest('.js-edit-news');
         if (editNews) {
             const cat = editNews.dataset.cat;
@@ -913,6 +1052,8 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('editNewsCat').value = cat;
             document.getElementById('editNewsIdx').value = String(idx);
             document.getElementById('newsCatInput').value = cat;
+            document.getElementById('newsDateInput').value = item.date || '';
+            document.getElementById('newsAuthorInput').value = item.author || '';
             document.getElementById('newsTitleInput').value = item.title;
             document.getElementById('newsImageUrl').value = item.image;
             document.getElementById('newsImgPreview').src = item.image;
@@ -1212,6 +1353,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('exportDataJsBtn')?.addEventListener('click', function () {
         if (!isSuperAdmin()) return;
         const mergedData = {
+            newsCategories: getMergedNewsCategories(),
             heroSlides: getMergedHero(),
             services: getMergedServices(),
             videos: getMergedVideos(),

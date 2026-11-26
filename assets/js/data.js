@@ -3,6 +3,14 @@
    ========================================================================== */
 
 window.STUPA_DATA = {
+    newsCategories: [
+        { key: 'berita', label: 'Berita' },
+        { key: 'ekspedisi', label: 'Ekspedisi' },
+        { key: 'pengumuman', label: 'Pengumuman' },
+        { key: 'agenda', label: 'Agenda' },
+        { key: 'artikel', label: 'Artikel' }
+    ],
+
     heroSlides: [
         {
             id: 'hero-1',

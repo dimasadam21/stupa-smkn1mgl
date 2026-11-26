@@ -26,6 +26,15 @@ document.addEventListener('DOMContentLoaded', function () {
             ...(baseData.siteMeta || {}),
             ...(savedCustom && savedCustom.siteMeta ? savedCustom.siteMeta : {})
         },
+        newsCategories: (savedCustom && Array.isArray(savedCustom.newsCategories) && savedCustom.newsCategories.length > 0)
+            ? savedCustom.newsCategories
+            : (baseData.newsCategories || [
+                { key: 'berita', label: 'Berita' },
+                { key: 'ekspedisi', label: 'Ekspedisi' },
+                { key: 'pengumuman', label: 'Pengumuman' },
+                { key: 'agenda', label: 'Agenda' },
+                { key: 'artikel', label: 'Artikel' }
+            ]),
         news: {
             ...baseData.news,
             ...(savedCustom && savedCustom.news ? savedCustom.news : {})
@@ -184,23 +193,60 @@ document.addEventListener('DOMContentLoaded', function () {
         `).join('');
     }
 
-    // 5. Render Berita & Informasi Tabs
-    const tabMap = [
-        { key: 'berita', label: 'Berita', containerId: 'berita-container' },
-        { key: 'ekspedisi', label: 'Ekspedisi', containerId: 'ekspedisi-container' },
-        { key: 'pengumuman', label: 'Pengumuman', containerId: 'pengumuman-container' },
-        { key: 'agenda', label: 'Agenda', containerId: 'agenda-container' },
-        { key: 'artikel', label: 'Artikel', containerId: 'artikel-container' }
-    ];
+    // 5. Render Dynamic Berita & Informasi Tabs + Navbar Dropdown
+    const tabMap = data.newsCategories.map(c => ({
+        key: c.key,
+        label: c.label,
+        containerId: `${c.key}-container`
+    }));
+
+    const newsTabsEl = document.getElementById('newsTypeTabs');
+    const newsContentEl = document.getElementById('newsTypeContent');
+    const navNewsDropEl = document.getElementById('navNewsDropdown');
+
+    if (newsTabsEl && newsContentEl) {
+        newsTabsEl.innerHTML = tabMap.map((tab, i) => `
+            <li class="nav-item" role="presentation">
+                <button class="nav-link ${i === 0 ? 'active' : ''}" id="${tab.key}-tab" data-bs-toggle="tab"
+                    data-bs-target="#pane-${tab.key}" type="button" role="tab" aria-selected="${i === 0 ? 'true' : 'false'}">
+                    ${tab.label}
+                </button>
+            </li>
+        `).join('');
+
+        newsContentEl.innerHTML = tabMap.map((tab, i) => `
+            <div class="tab-pane fade ${i === 0 ? 'show active' : ''}" id="pane-${tab.key}" role="tabpanel" aria-labelledby="${tab.key}-tab">
+                <div class="berita-grid" id="${tab.containerId}"></div>
+                ${i === 0 ? `
+                    <div class="text-center">
+                        <button type="button" class="berita-more-btn js-toggle-berita">
+                            <span>Lihat selengkapnya</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    }
+
+    if (navNewsDropEl) {
+        navNewsDropEl.innerHTML = tabMap.map(tab => `
+            <li><a class="dropdown-item" href="#berita-informasi" data-switch-tab="${tab.key}-tab">${tab.label}</a></li>
+        `).join('');
+    }
 
     let showAllBerita = false;
 
     function renderBeritaGrid() {
-        tabMap.forEach(tab => {
+        tabMap.forEach((tab, tabIdx) => {
             const container = document.getElementById(tab.containerId);
             if (!container) return;
             const list = data.news[tab.key] || [];
-            const visibleItems = (tab.key === 'berita' && !showAllBerita) ? list.slice(0, 6) : list;
+            const visibleItems = (tabIdx === 0 && !showAllBerita) ? list.slice(0, 6) : list;
+            if (visibleItems.length === 0) {
+                container.innerHTML = `<div class="col-12 text-center text-muted py-4">Belum ada konten pada kategori ${tab.label}.</div>`;
+                return;
+            }
             container.innerHTML = visibleItems.map((item, idx) => `
                 <article class="berita-card js-open-article" role="button" tabindex="0" data-source="${tab.key}" data-index="${idx}">
                     <div class="berita-card-img-wrap">
@@ -221,12 +267,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     renderBeritaGrid();
 
-    document.querySelectorAll('.js-toggle-berita').forEach(btn => {
-        btn.addEventListener('click', function () {
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.js-toggle-berita')) {
             showAllBerita = !showAllBerita;
             renderBeritaGrid();
             showToast(showAllBerita ? 'Menampilkan seluruh arsip kabar terbaru STUPA.' : 'Menampilkan ringkasan kabar terbaru.');
-        });
+        }
     });
 
     // 6. Render Publikasi & Modul Grid (4 visible initially, toggleable to all 8)
@@ -554,8 +600,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchableItems = [
         ...data.services.map((s, idx) => ({ type: 'Layanan', title: s.title, action: () => openServiceModal(idx) })),
         ...data.publications.map((p, idx) => ({ type: 'Publikasi', title: p.title, action: () => openPublicationModal(idx) })),
-        ...Object.entries(data.news).flatMap(([cat, arr]) =>
-            arr.map((n, idx) => ({ type: cat.toUpperCase(), title: n.title, action: () => openArticleModal(cat, idx) }))
+        ...data.newsCategories.flatMap(c =>
+            (data.news[c.key] || []).map((n, idx) => ({ type: c.label.toUpperCase(), title: n.title, action: () => openArticleModal(c.key, idx) }))
         )
     ];
 
