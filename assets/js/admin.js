@@ -18,8 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { id: 'layanan-stupa', label: 'Layanan & Kanal Digital STUPA' },
         { id: 'video-showcase', label: 'Video Showcase & Dokumenter' },
         { id: 'berita-informasi', label: 'Berita & Informasi' },
-        { id: 'prosedur-stupa', label: 'Prosedur Kegiatan & Layanan' },
-        { id: 'mitra-stupa', label: 'Mitra & Jejaring Konservasi' }
+        { id: 'prosedur-stupa', label: 'Prosedur Kegiatan & Layanan' }
     ];
 
     const loginView = document.getElementById('loginView');
@@ -87,10 +86,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const getMergedVideos = () => {
         const c = getCustomData().videos;
         return Array.isArray(c) ? c : [...(window.STUPA_DATA?.videos || [])];
-    };
-    const getMergedPartners = () => {
-        const c = getCustomData().partners;
-        return Array.isArray(c) ? c : [...(window.STUPA_DATA?.partners || [])];
     };
     const getMergedProcedures = () => {
         const c = getCustomData().procedures;
@@ -317,7 +312,6 @@ document.addEventListener('DOMContentLoaded', function () {
         renderSuperHeroList();
         renderSuperServicesList();
         renderSuperVideosList();
-        renderSuperPartnersList();
         renderSuperProceduresList();
 
         const meta = getMergedSiteMeta();
@@ -501,18 +495,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button type="button" class="btn btn-outline-danger btn-sm js-del-vid" data-idx="${idx}" ${list.length <= 1 ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
                 </div>
             </div>
-        `).join('');
-    }
-
-    function renderSuperPartnersList() {
-        const el = document.getElementById('superPartnersList');
-        if (!el) return;
-        const list = getMergedPartners();
-        el.innerHTML = list.map((p, idx) => `
-            <span class="badge rounded-pill text-bg-light border px-3 py-2 d-inline-flex align-items-center gap-2" style="color:#005950;">
-                <i class="fas ${p.icon}"></i> ${p.label}
-                <button type="button" class="btn-close ms-1 js-del-partner" data-idx="${idx}" style="font-size:9px;" aria-label="Hapus"></button>
-            </span>
         `).join('');
     }
 
@@ -856,21 +838,6 @@ document.addEventListener('DOMContentLoaded', function () {
         renderDashboard();
     });
 
-    document.getElementById('addPartnerForm')?.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (!isManager()) return;
-        const label = document.getElementById('partnerLabelInput').value.trim();
-        const icon = document.getElementById('partnerIconInput').value;
-        const custom = getCustomData();
-        const list = getMergedPartners();
-        list.push({ label, icon, href: '#layanan-stupa' });
-        custom.partners = list;
-        saveCustomData(custom);
-        addAuditLog(`Menambahkan Mitra: "${label}"`);
-        this.reset();
-        renderDashboard();
-    });
-
     document.getElementById('addProcedureForm')?.addEventListener('submit', function (e) {
         e.preventDefault();
         if (!isManager()) return;
@@ -1138,17 +1105,6 @@ document.addEventListener('DOMContentLoaded', function () {
             renderDashboard();
             return;
         }
-        const delPartner = e.target.closest('.js-del-partner');
-        if (delPartner) {
-            const list = getMergedPartners();
-            const removed = list.splice(Number(delPartner.dataset.idx), 1)[0];
-            const custom = getCustomData();
-            custom.partners = list;
-            saveCustomData(custom);
-            addAuditLog(`Menghapus Mitra: "${removed?.label || '-'}"`);
-            renderDashboard();
-            return;
-        }
         const delProc = e.target.closest('.js-del-proc');
         if (delProc) {
             const list = getMergedProcedures();
@@ -1262,7 +1218,6 @@ document.addEventListener('DOMContentLoaded', function () {
             videos: getMergedVideos(),
             news: getMergedNews(),
             procedures: getMergedProcedures(),
-            partners: getMergedPartners(),
             siteMeta: {
                 ...getMergedSiteMeta(),
                 runningText: getCustomData().runningText || getMergedSiteMeta().runningText

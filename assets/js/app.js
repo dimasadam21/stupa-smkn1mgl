@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
         services: (savedCustom && Array.isArray(savedCustom.services)) ? savedCustom.services : baseData.services,
         videos: (savedCustom && Array.isArray(savedCustom.videos)) ? savedCustom.videos : baseData.videos,
         procedures: (savedCustom && Array.isArray(savedCustom.procedures)) ? savedCustom.procedures : (baseData.procedures || []),
-        partners: (savedCustom && Array.isArray(savedCustom.partners)) ? savedCustom.partners : (baseData.partners || []),
         siteMeta: {
             ...(baseData.siteMeta || {}),
             ...(savedCustom && savedCustom.siteMeta ? savedCustom.siteMeta : {})
@@ -273,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 6. Render Procedures & Partners Dynamically
+    // 6. Render Procedures Dynamically
     const proceduresContainer = document.getElementById('proceduresContainer');
     if (proceduresContainer && Array.isArray(data.procedures)) {
         proceduresContainer.innerHTML = data.procedures.map(proc => `
@@ -291,13 +290,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     `).join('')}
                 </div>
             </div>
-        `).join('');
-    }
-
-    const partnersContainer = document.getElementById('partnersContainer');
-    if (partnersContainer && Array.isArray(data.partners)) {
-        partnersContainer.innerHTML = data.partners.map(pt => `
-            <li><a href="${pt.href || '#top'}" class="partner-badge"><i class="fas ${pt.icon || 'fa-handshake'}"></i> ${pt.label}</a></li>
         `).join('');
     }
 
