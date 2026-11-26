@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUPA — Siswa Siswi Teknik Satu Pecinta Alam | SMKN 1 Magelang</title>
+    <meta name="description" content="Portal resmi STUPA (Siswa Siswi Teknik Satu Pecinta Alam) SMKN 1 Magelang. Informasi ekspedisi konservasi alam, pendidikan dasar (Diklatsar), layanan logistik, riset ekologi pelajar, dan publikasi ilmiah lapangan.">
+    <meta name="keywords" content="STUPA, SMKN 1 Magelang, Siswa Siswi Teknik Satu Pecinta Alam, Sispala Magelang, Konservasi Alam, Diklatsar, Ekspedisi Merbabu">
+    <meta name="author" content="STUPA SMKN 1 Magelang">
+    <link rel="icon" href="assets/images/logo-stupa.png" type="image/png">
+
+    <!-- Fonts & Libraries (Matched to kemenlh.go.id) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+
+    <!-- STUPA Stylesheets -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/carousel.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+</head>
+<body id="top">
+
+    <!-- Header / Floating Pill Navbar (Matched to kemenlh.go.id) -->
+    <div id="header-placeholder">
+        <nav class="navbar navbar-expand-lg" id="mainNavbar">
+            <div class="container-fluid p-0">
+                <!-- Left White Brand Pill -->
+                <div class="logo-container">
+                    <a class="navbar-brand" href="#top">
+                        <div class="brand-logos">
+                            <img src="assets/images/logo-smkn1.png" alt="Logo SMKN 1 Magelang" class="logo logo-smkn1">
+                            <img src="assets/images/logo-stupa.png" alt="Logo STUPA SMKN 1 Magelang" class="logo logo-stupa">
+                        </div>
+                        <div class="text">
+                            STUPA — Siswa Siswi Teknik<br>
+                            Satu Pecinta Alam
+                            <span class="brand-sub">SMKN 1 Magelang • Lestari &amp; Berilmu</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Mobile Hamburger -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Buka navigasi">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Right Teal Pill Menu -->
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav d-flex align-items-lg-center menu-container">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#top">Beranda</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Profil</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#layanan-stupa">Jati Diri &amp; Nilai STUPA</a></li>
+                                <li><a class="dropdown-item" href="#prosedur-stupa">Tata Kelola Organisasi</a></li>
+                                <li><a class="dropdown-item" href="#mitra-stupa">Mitra &amp; Jejaring Sispala</a></li>
+                                <li><a class="dropdown-item" href="#kontak-footer">Sekretariat &amp; Pembina</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Divisi &amp; Program</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#layanan-stupa" data-open-service="0">Diklatsar &amp; Kaderisasi</a></li>
+                                <li><a class="dropdown-item" href="#layanan-stupa" data-open-service="3">Mountaineering &amp; Navigasi</a></li>
+                                <li><a class="dropdown-item" href="#layanan-stupa" data-open-service="4">Konservasi &amp; Eco-Tech</a></li>
+                                <li><a class="dropdown-item" href="#video-showcase">Vertical Rescue &amp; SAR</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Layanan</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#layanan-stupa" data-open-service="0">Pendaftaran Anggota Baru</a></li>
+                                <li><a class="dropdown-item" href="#layanan-stupa" data-open-service="1">Peminjaman Logistik Alam</a></li>
+                                <li><a class="dropdown-item" href="#layanan-stupa" data-open-service="2">Lapor Konservasi Lingkungan</a></li>
+                                <li><a class="dropdown-item" href="#layanan-stupa" data-open-service="3">Direktori Peta Jalur Magelang</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Berita</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#berita-informasi" data-switch-tab="berita-tab">Berita Terkini</a></li>
+                                <li><a class="dropdown-item" href="#berita-informasi" data-switch-tab="ekspedisi-tab">Laporan Ekspedisi</a></li>
+                                <li><a class="dropdown-item" href="#berita-informasi" data-switch-tab="pengumuman-tab">Pengumuman Resmi</a></li>
+                                <li><a class="dropdown-item" href="#berita-informasi" data-switch-tab="agenda-tab">Agenda Kegiatan</a></li>
+                                <li><a class="dropdown-item" href="#berita-informasi" data-switch-tab="artikel-tab">Esai &amp; Artikel Alam</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#publikasi-stupa">Publikasi</a>
+                        </li>
+
+                        <!-- Live Search Form -->
+                        <li class="nav-item">
+                            <form class="search-form" id="navSearchForm" role="search" autocomplete="off">
+                                <input class="form-control search-input" id="navSearchInput" type="search" placeholder="Cari info STUPA..." aria-label="Cari informasi">
+                                <button type="submit" class="search-submit-btn" aria-label="Cari">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <div class="nav-search-results" id="navSearchResults"></div>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Hero Carousel -->
+    <main>
+        <div class="carousel-wrapper">
+            <div id="carouselBackground" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5500">
+                <div class="carousel-indicators" id="heroIndicators"></div>
+                <div class="carousel-inner" id="carouselItemsContainer"></div>
+
+                <button class="carousel-control-prev custom-prev" type="button" data-bs-target="#carouselBackground" data-bs-slide="prev" aria-label="Slide sebelumnya">
+                    <span class="hero-arrow-circle"><i class="fas fa-chevron-left"></i></span>
+                </button>
+                <button class="carousel-control-next custom-next" type="button" data-bs-target="#carouselBackground" data-bs-slide="next" aria-label="Slide berikutnya">
+                    <span class="hero-arrow-circle"><i class="fas fa-chevron-right"></i></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Running Text Ticker Bar -->
+        <div class="running-text-wrapper">
+            <div class="running-text">
+                <div class="running-text-track">
+                    <p>
+                        <i class="fas fa-mountain me-2"></i>
+                        Menapak Rimba dengan Nalar Ilmu, Menjaga Semesta dengan Keteguhan Hati — STUPA SMKN 1 Magelang: Tangguh di Puncak, Santun di Bumi, Unggul dalam Karya Teknik Berkelanjutan!
+                    </p>
+                    <p aria-hidden="true">
+                        <i class="fas fa-leaf me-2"></i>
+                        Menapak Rimba dengan Nalar Ilmu, Menjaga Semesta dengan Keteguhan Hati — STUPA SMKN 1 Magelang: Tangguh di Puncak, Santun di Bumi, Unggul dalam Karya Teknik Berkelanjutan!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Layanan & Portal Digital STUPA -->
+        <section class="public-services" id="layanan-stupa">
+            <div class="container">
+                <div class="text-content">
+                    <h2 class="slide-title">Layanan &amp; Kanal Digital STUPA</h2>
+                    <p class="section-lead">
+                        Ruang layanan terpadu Siswa Siswi Teknik Satu Pecinta Alam SMKN 1 Magelang—dirancang praktis, transparan, dan mudah diakses bagi siswa, pembina, maupun mitra lingkungan.
+                    </p>
+                </div>
+                <div class="services-grid" id="servicesGridContainer"></div>
+            </div>
+        </section>
+
+        <!-- Section 2: Video Showcase & Dokumentasi Ekspedisi -->
+        <section class="video-section" id="video-showcase">
+            <div class="gradient-overlay"></div>
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <div class="video-featured-header">
+                            <h2 class="slide-title" id="mainVideoTitle"></h2>
+                            <div class="title-accent-bar"></div>
+                            <p class="slide-description" id="mainVideoDesc"></p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="center-play-wrap">
+                            <button type="button" class="play-button-hero js-open-video" id="mainVideoPlayBtn" data-index="0" aria-label="Putar pratinjau dokumenter">
+                                <i class="fas fa-play ms-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mt-2" id="videoCardsRow"></div>
+            </div>
+        </section>
+
+        <!-- Section 3: Berita & Informasi (With Watermark Emblem) -->
+        <section class="logo-background-section berita-informasi-section" id="berita-informasi">
+            <div class="watermark-wrap">
+                <img src="assets/images/logo-stupa-watermark.svg" alt="" class="img-fluid">
+            </div>
+            <div class="container">
+                <div class="section-title-wrap">
+                    <h2 class="section-title">BERITA &amp; INFORMASI</h2>
+                    <div class="title-underline"></div>
+                </div>
+
+                <ul class="nav nav-tabs berita-tabs" id="newsTypeTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="berita-tab" data-bs-toggle="tab" data-bs-target="#berita" type="button" role="tab" aria-selected="true">Berita</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="ekspedisi-tab" data-bs-toggle="tab" data-bs-target="#ekspedisi" type="button" role="tab" aria-selected="false">Ekspedisi</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pengumuman-tab" data-bs-toggle="tab" data-bs-target="#pengumuman" type="button" role="tab" aria-selected="false">Pengumuman</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="agenda-tab" data-bs-toggle="tab" data-bs-target="#agenda" type="button" role="tab" aria-selected="false">Agenda</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="artikel-tab" data-bs-toggle="tab" data-bs-target="#artikel" type="button" role="tab" aria-selected="false">Artikel</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="newsTypeContent">
+                    <div class="tab-pane fade show active" id="berita" role="tabpanel" aria-labelledby="berita-tab">
+                        <div class="berita-grid" id="berita-container"></div>
+                        <div class="text-center">
+                            <button type="button" class="berita-more-btn js-toggle-berita">
+                                <span>Lihat selengkapnya</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="ekspedisi" role="tabpanel" aria-labelledby="ekspedisi-tab">
+                        <div class="berita-grid" id="ekspedisi-container"></div>
+                    </div>
+                    <div class="tab-pane fade" id="pengumuman" role="tabpanel" aria-labelledby="pengumuman-tab">
+                        <div class="berita-grid" id="pengumuman-container"></div>
+                    </div>
+                    <div class="tab-pane fade" id="agenda" role="tabpanel" aria-labelledby="agenda-tab">
+                        <div class="berita-grid" id="agenda-container"></div>
+                    </div>
+                    <div class="tab-pane fade" id="artikel" role="tabpanel" aria-labelledby="artikel-tab">
+                        <div class="berita-grid" id="artikel-container"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Publikasi & Arsip Riset -->
+        <section class="public-services publikasi-section" id="publikasi-stupa">
+            <div class="container">
+                <div class="section-title-wrap">
+                    <h2 class="section-title">PUBLIKASI &amp; MODUL EKSPEDISI</h2>
+                    <div class="title-underline"></div>
+                </div>
+
+                <div class="publikasi-grid" id="publikasi-list"></div>
+
+                <div class="text-center mt-5">
+                    <button type="button" class="berita-more-btn" id="publikasi-load-more">
+                        <span class="btn-text">Tampilkan lebih banyak</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Prosedur Keanggotaan & Peminjaman Alat -->
+        <section class="section-prosedur-informasi" id="prosedur-stupa">
+            <div class="container">
+                <div class="section-title-wrap">
+                    <h2 class="section-title">PROSEDUR KEGIATAN &amp; LAYANAN STUPA</h2>
+                    <div class="title-underline"></div>
+                </div>
+
+                <div class="prosedur-steps">
+                    <div class="prosedur-step-card" role="button" tabindex="0" title="Klik untuk memperbesar alur">
+                        <span class="step-badge"><i class="fas fa-user-check me-1"></i> Alur Seleksi &amp; Diklatsar Anggota</span>
+                        <div class="prosedur-diagram-box">
+                            <div class="flow-step">
+                                <span class="flow-num">1</span>
+                                <div class="flow-text">
+                                    <h6>Registrasi Daring &amp; Izin Orang Tua</h6>
+                                    <p>Mengisi formulir portal layanan dan menyerahkan surat persetujuan wali murid serta keterangan sehat.</p>
+                                </div>
+                            </div>
+                            <div class="flow-step">
+                                <span class="flow-num">2</span>
+                                <div class="flow-text">
+                                    <h6>Kelas Akademik &amp; Pembinaan Fisik</h6>
+                                    <p>Mengikuti 3 pekan materi navigasi darat, etika rimba, PPGD, dan pembinaan ketahanan jasmani.</p>
+                                </div>
+                            </div>
+                            <div class="flow-step">
+                                <span class="flow-num">3</span>
+                                <div class="flow-text">
+                                    <h6>Pengembaraan Lapangan (Diklatsar)</h6>
+                                    <p>Praktik lapangan terpadu bersama pembina dan tim medis di lereng pegunungan Jawa Tengah.</p>
+                                </div>
+                            </div>
+                            <div class="flow-step">
+                                <span class="flow-num">4</span>
+                                <div class="flow-text">
+                                    <h6>Pengukuhan &amp; Nomor Registrasi Anggota</h6>
+                                    <p>Penyerahan slayer kebanggaan STUPA dan penetapan penugasan di divisi pilihan.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prosedur-step-card" role="button" tabindex="0" title="Klik untuk memperbesar alur">
+                        <span class="step-badge"><i class="fas fa-toolbox me-1"></i> Prosedur Peminjaman Logistik &amp; Izin Ekspedisi</span>
+                        <div class="prosedur-diagram-box">
+                            <div class="flow-step">
+                                <span class="flow-num">1</span>
+                                <div class="flow-text">
+                                    <h6>Pengajuan Rencana Perjalanan (ROP)</h6>
+                                    <p>Menyampaikan proposal rute, daftar personel, serta analisis mitigasi risiko minimal H-7 keberangkatan.</p>
+                                </div>
+                            </div>
+                            <div class="flow-step">
+                                <span class="flow-num">2</span>
+                                <div class="flow-text">
+                                    <h6>Verifikasi Pembina &amp; Koordinator Logistik</h6>
+                                    <p>Pemeriksaan kelaikan perlengkapan tenda, kompas, P3K, dan persetujuan pembina ekstrakurikuler.</p>
+                                </div>
+                            </div>
+                            <div class="flow-step">
+                                <span class="flow-num">3</span>
+                                <div class="flow-text">
+                                    <h6>Serah Terima Alat &amp; Check-In Basecamp</h6>
+                                    <p>Pencatatan kondisi alat sebelum berangkat serta pelaporan posisi berkala selama ekspedisi.</p>
+                                </div>
+                            </div>
+                            <div class="flow-step">
+                                <span class="flow-num">4</span>
+                                <div class="flow-text">
+                                    <h6>Pengembalian Bersih &amp; Laporan Evaluasi</h6>
+                                    <p>Logistik dikembalikan dalam keadaan kering/terawat maksimal H+2 disertai jurnal catatan lapangan.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Mitra & Jejaring Konservasi -->
+        <section class="public-services partner-section" id="mitra-stupa">
+            <div class="container">
+                <ul class="partner-strip">
+                    <li><a href="#top" class="partner-badge"><i class="fas fa-school"></i> SMKN 1 Magelang</a></li>
+                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-tree"></i> TNGM Merbabu</a></li>
+                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-life-ring"></i> Basarnas &amp; BPBD Magelang</a></li>
+                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-award"></i> Pokja Adiwiyata</a></li>
+                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-compass"></i> Forum Sispala Jateng</a></li>
+                    <li><a href="#layanan-stupa" class="partner-badge"><i class="fas fa-water"></i> Komunitas Peduli Progo</a></li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer (Matched to kemenlh.go.id) -->
+    <footer class="footer" id="kontak-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <!-- Left: Logo & Organization Identity -->
+                <div class="footer-section footer-about">
+                    <div class="footer-logo-wrapper">
+                        <a class="footer-logo-link" href="#top">
+                            <img src="assets/images/logo-smkn1.png" alt="Logo SMKN 1 Magelang" class="footer-logo">
+                            <img src="assets/images/logo-stupa.png" alt="Logo STUPA SMKN 1 Magelang" class="footer-logo">
+                        </a>
+                    </div>
+                    <div class="footer-org-info">
+                        <h3 class="footer-org-name">
+                            STUPA — Siswa Siswi Teknik<br>
+                            Satu Pecinta Alam<br>
+                            SMK Negeri 1 Magelang
+                        </h3>
+                        <p class="footer-motto">
+                            “Berakar pada ilmu teknik, tumbuh dalam persaudaraan, berbuah pada kelestarian semesta.”
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Center: Contact Information -->
+                <div class="footer-section footer-contact">
+                    <h4 class="footer-section-title">Kontak &amp; Sekretariat</h4>
+                    <div class="footer-contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt contact-icon"></i>
+                            <div class="contact-text">
+                                <p class="fw-semibold">Sanggar STUPA — SMKN 1 Magelang</p>
+                                <p>Jl. Cawang No. 2, Jurangombo Utara</p>
+                                <p>Kec. Magelang Selatan, Kota Magelang 56123</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone contact-icon"></i>
+                            <div class="contact-text">
+                                <p>(0293) 362172 • Posko: +62 812-3456-7890</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope contact-icon"></i>
+                            <div class="contact-text">
+                                <a href="mailto:stupa@smkn1magelang.sch.id" class="website-link">stupa@smkn1magelang.sch.id</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Social Media & Visitor Stats -->
+                <div class="footer-section footer-social">
+                    <h4 class="footer-section-title">Ikuti Kami</h4>
+                    <div class="social-icons">
+                        <a href="#kontak-footer" class="social-link" aria-label="Instagram STUPA" title="Instagram @stupa_smkn1mgl">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#kontak-footer" class="social-link" aria-label="YouTube STUPA" title="YouTube STUPA Channel">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#kontak-footer" class="social-link" aria-label="TikTok STUPA" title="TikTok @stupa.mgl">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        <a href="#layanan-stupa" data-open-service="5" class="social-link" aria-label="WhatsApp Posko" title="Posko Informasi STUPA">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+
+                    <div class="visitor-stats">
+                        <h4 class="footer-section-title">Statistik Pengunjung</h4>
+                        <div class="footer-visitor-row">
+                            <span class="footer-visitor-label">Saat ini</span>
+                            <span class="footer-visitor-value">12 Online</span>
+                        </div>
+                        <div class="footer-visitor-row">
+                            <span class="footer-visitor-label">Hari ini</span>
+                            <span class="footer-visitor-value" id="visitorToday">148</span>
+                        </div>
+                        <div class="footer-visitor-row">
+                            <span class="footer-visitor-label">Total Kunjungan</span>
+                            <span class="footer-visitor-value" id="visitorTotal">12.841</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright Shimmer Bar -->
+            <div class="footer-copyright">
+                <p>&copy; 2026 Hak Cipta STUPA (Siswa Siswi Teknik Satu Pecinta Alam) — SMK Negeri 1 Magelang</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Floating Button -->
+    <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Universal Interactive Reader / Form Modal -->
+    <div class="modal fade" id="stupaDetailModal" tabindex="-1" aria-labelledby="stupaDetailTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header stupa-modal-header">
+                    <h5 class="modal-title fw-bold" id="stupaDetailTitle">Informasi STUPA</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body p-4" id="stupaDetailBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="stupaToast" class="toast-stupa" role="status" aria-live="polite">
+        <i class="fas fa-circle-check text-warning"></i>
+        <span id="stupaToastText">Berhasil!</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

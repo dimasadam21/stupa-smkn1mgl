@@ -1,0 +1,942 @@
+/* ==========================================================================
+   STUPA SMKN 1 Magelang - Master Stylesheet (kemenlh.go.id Design System)
+   ========================================================================== */
+
+:root {
+    --stupa-teal-deep: #005950;
+    --stupa-teal-dark: #005952;
+    --stupa-teal-mid: #3a716e;
+    --stupa-teal-nav: rgb(77, 145, 143);
+    --stupa-emerald: #00a896;
+    --stupa-amber: #F97910;
+    --stupa-amber-hover: #e87e0d;
+    --stupa-bg: #F5F5F5;
+    --stupa-mint-soft: #eef8f6;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    background-color: var(--stupa-bg);
+    font-family: 'Poppins', sans-serif;
+    color: #243331;
+}
+
+/* Primary Orange Pill CTA Button (matched to kemenlh.go.id .custom-btn) */
+.custom-btn {
+    background-color: var(--stupa-amber);
+    border: none;
+    color: #ffffff;
+    border-radius: 30px;
+    padding: 10px 24px;
+    box-shadow: 0 4px 12px rgba(249, 121, 16, 0.35);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.custom-btn:hover,
+.custom-btn:focus {
+    background-color: var(--stupa-amber-hover);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(249, 121, 16, 0.45);
+    transform: translateY(-2px);
+}
+
+/* Running Text Ticker Bar */
+.running-text-wrapper {
+    width: 100%;
+}
+
+.running-text {
+    background: linear-gradient(90deg, #e86f09 0%, #F97910 50%, #e86f09 100%);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 4px 14px rgba(249, 121, 16, 0.25);
+}
+
+.running-text-track {
+    display: flex;
+    white-space: nowrap;
+    width: max-content;
+    animation: scrollText 38s linear infinite;
+}
+
+.running-text:hover .running-text-track {
+    animation-play-state: paused;
+}
+
+.running-text p {
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 15.5px;
+    margin: 0;
+    padding: 8px 40px;
+    white-space: nowrap;
+}
+
+@keyframes scrollText {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
+/* ==========================================================================
+   Public Services / Layanan STUPA Section
+   ========================================================================== */
+.public-services {
+    position: relative;
+    padding: 96px 0;
+    overflow: hidden;
+    background-color: #f4faf8;
+    background-image: url('../images/bg-nature-mist.svg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    isolation: isolate;
+}
+
+.public-services::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(245, 250, 249, 0.88) 50%,
+        rgba(255, 255, 255, 0.92) 100%
+    );
+    z-index: 0;
+}
+
+.public-services .container {
+    position: relative;
+    z-index: 1;
+}
+
+.public-services .text-content {
+    margin-bottom: 64px;
+    text-align: center;
+    position: relative;
+    padding: 0 20px;
+}
+
+.public-services .text-content::after {
+    content: '';
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 5px;
+    background: linear-gradient(90deg, transparent 0%, #005952 20%, #00a896 50%, #005952 80%, transparent 100%);
+    border-radius: 3px;
+}
+
+.public-services .slide-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 4.2vw, 42px);
+    margin-bottom: 10px;
+    letter-spacing: -0.6px;
+    line-height: 1.25;
+    background: linear-gradient(135deg, #005952 0%, #00a896 55%, #005952 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-lead {
+    font-size: 14.5px;
+    color: #4b6865;
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.65;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+}
+
+.custom-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2.5px solid rgba(0, 89, 82, 0.15);
+    border-radius: 24px;
+    padding: 32px 18px;
+    text-align: center;
+    box-shadow:
+        0 10px 36px rgba(0, 89, 82, 0.09),
+        0 4px 14px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.99) 0%, rgba(246, 252, 250, 0.96) 100%);
+    backdrop-filter: blur(14px);
+    min-height: 235px;
+    height: 100%;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.custom-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #005952 0%, #00a896 50%, #005952 100%);
+    transform: scaleX(0);
+    transition: transform 0.35s ease;
+    border-radius: 0 0 24px 24px;
+}
+
+.custom-card:hover {
+    transform: translateY(-12px) scale(1.03);
+    box-shadow:
+        0 22px 60px rgba(0, 89, 82, 0.2),
+        0 8px 24px rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 89, 82, 0.48);
+    background: linear-gradient(145deg, #ffffff 0%, #eefaf7 100%);
+}
+
+.custom-card:hover::before {
+    transform: scaleX(1);
+}
+
+.service-icon-box {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(0, 89, 82, 0.08) 0%, rgba(0, 168, 150, 0.14) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    color: #005952;
+    font-size: 30px;
+    transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.custom-card:hover .service-icon-box {
+    transform: scale(1.16) rotate(6deg);
+    background: linear-gradient(135deg, #005952 0%, #00a896 100%);
+    color: #ffffff;
+    box-shadow: 0 10px 24px rgba(0, 89, 82, 0.28);
+}
+
+.custom-card h5 {
+    margin: 0 0 6px 0;
+    font-weight: 700;
+    font-size: 15px;
+    color: #005952;
+    line-height: 1.35;
+}
+
+.custom-card p {
+    margin: 0;
+    font-size: 12px;
+    color: #5c7572;
+    line-height: 1.45;
+}
+
+@media (max-width: 1199.98px) {
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .public-services {
+        padding: 64px 0;
+        background-attachment: scroll;
+    }
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+    .custom-card {
+        min-height: 185px;
+        padding: 22px 12px;
+        border-radius: 18px;
+    }
+}
+
+/* ==========================================================================
+   Video Showcase Section (Matched to kemenlh.go.id .video-section)
+   ========================================================================== */
+.video-section {
+    position: relative;
+    min-height: 92vh;
+    background-size: cover;
+    background-position: center center;
+    display: flex;
+    align-items: center;
+    padding: 84px 0 64px;
+    overflow: hidden;
+}
+
+.video-section .gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 22, 19, 0.96) 0%,
+        rgba(0, 38, 34, 0.68) 55%,
+        rgba(0, 26, 23, 0.52) 100%
+    );
+    z-index: 0;
+}
+
+.video-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.video-featured-header {
+    text-align: left;
+    max-width: 780px;
+}
+
+.video-featured-header .slide-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: clamp(22px, 3vw, 34px);
+    line-height: 1.3;
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.45);
+    margin-bottom: 12px;
+}
+
+.title-accent-bar {
+    width: 180px;
+    height: 6px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #F97910 0%, #00a896 100%);
+    margin-bottom: 14px;
+}
+
+.video-featured-header .slide-description {
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 15.5px;
+    line-height: 1.65;
+    margin: 0;
+}
+
+.center-play-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 46px 0;
+}
+
+.play-button-hero {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.85);
+    background: rgba(249, 121, 16, 0.9);
+    color: #ffffff;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0 0 14px rgba(249, 121, 16, 0.24), 0 14px 36px rgba(0, 0, 0, 0.4);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.play-button-hero:hover {
+    transform: scale(1.12);
+    background: #F97910;
+    box-shadow: 0 0 0 22px rgba(249, 121, 16, 0.32), 0 18px 44px rgba(0, 0, 0, 0.5);
+}
+
+.video-card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #0d2623;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 220px;
+}
+
+.video-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+}
+
+.video-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+}
+
+.video-card:hover img {
+    transform: scale(1.06);
+}
+
+.video-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 20, 18, 0.94) 0%, rgba(0, 20, 18, 0.25) 65%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 18px;
+}
+
+.video-card-play {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(249, 121, 16, 0.9);
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: transform 0.25s ease;
+}
+
+.video-card:hover .video-card-play {
+    transform: translate(-50%, -50%) scale(1.12);
+}
+
+.video-card-title {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14.5px;
+    line-height: 1.4;
+    margin: 0 0 4px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.video-card-date {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 12px;
+    margin: 0;
+}
+
+/* ==========================================================================
+   Berita & Informasi Section (Matched to kemenlh.go.id .berita-informasi-section)
+   ========================================================================== */
+.logo-background-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-background-section .watermark-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 440px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.berita-informasi-section {
+    padding: 4.5rem 0;
+    background: linear-gradient(160deg, #f8fcfb 0%, #eef8f6 45%, #f0faf8 100%);
+}
+
+.berita-informasi-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.section-title-wrap {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+
+.section-title {
+    font-size: clamp(1.35rem, 3vw, 1.85rem);
+    font-weight: 700;
+    color: #005950;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+    margin: 0 0 0.75rem 0;
+}
+
+.title-underline {
+    width: 84px;
+    height: 4px;
+    background: linear-gradient(90deg, #005950, #00a896);
+    border-radius: 2px;
+    margin: 0 auto;
+}
+
+/* Pill Tabs */
+.berita-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem;
+    margin-bottom: 2.25rem;
+    border: none;
+}
+
+.berita-tabs .nav-link {
+    padding: 0.55rem 1.35rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #005950;
+    background: #ffffff;
+    border: 2px solid rgba(0, 89, 82, 0.2);
+    border-radius: 9999px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.berita-tabs .nav-link:hover {
+    background: rgba(0, 89, 82, 0.06);
+    border-color: rgba(0, 89, 82, 0.45);
+}
+
+.berita-tabs .nav-link.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #005952 0%, #00a896 100%);
+    border-color: transparent;
+    box-shadow: 0 4px 16px rgba(0, 89, 82, 0.25);
+}
+
+.berita-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.25rem;
+}
+
+.berita-card {
+    height: 100%;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 89, 82, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 89, 82, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.berita-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 32px rgba(0, 89, 82, 0.14), 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.berita-card-img-wrap {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #e6f0ee;
+    position: relative;
+}
+
+.berita-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.berita-card:hover .berita-card-img {
+    transform: scale(1.06);
+}
+
+.berita-cat-pill {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: rgba(0, 89, 80, 0.88);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+}
+
+.berita-card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.berita-card-title {
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: #005950;
+    margin: 0 0 0.55rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.berita-card-excerpt {
+    font-size: 13px;
+    color: #546967;
+    line-height: 1.55;
+    margin-bottom: 0.9rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.berita-card-meta {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #6b7d7b;
+    border-top: 1px solid #eef4f3;
+    padding-top: 0.75rem;
+}
+
+.berita-more-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.7rem 1.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #005952;
+    background: #ffffff;
+    border: 2px solid rgba(0, 89, 82, 0.35);
+    border-radius: 9999px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 12px rgba(0, 89, 82, 0.08);
+}
+
+.berita-more-btn:hover {
+    color: #ffffff;
+    background: linear-gradient(135deg, #005952 0%, #00a896 100%);
+    border-color: #005952;
+    box-shadow: 0 6px 24px rgba(0, 89, 82, 0.25);
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Publikasi Section (Matched to kemenlh.go.id .publikasi-section)
+   ========================================================================== */
+.publikasi-section {
+    padding: 84px 0;
+}
+
+.publikasi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 28px;
+}
+
+.publikasi-card {
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 89, 82, 0.12);
+    box-shadow: 0 6px 22px rgba(0, 89, 82, 0.08);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.publikasi-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 32px rgba(0, 89, 82, 0.18);
+}
+
+.publikasi-cover {
+    aspect-ratio: 3 / 4;
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+.publikasi-cover::after {
+    content: '';
+    position: absolute;
+    right: -32px;
+    bottom: -32px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.publikasi-cover-badge {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.publikasi-cover-title {
+    font-size: 16.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 12px 0;
+    position: relative;
+    z-index: 1;
+}
+
+.publikasi-cover-foot {
+    font-size: 11px;
+    opacity: 0.9;
+    border-top: 1px solid rgba(255, 255, 255, 0.28);
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 991.98px) {
+    .publikasi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .publikasi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   Prosedur Section (Matched to kemenlh.go.id .section-prosedur-informasi)
+   ========================================================================== */
+.section-prosedur-informasi {
+    padding: 4.5rem 0;
+    background: #f5faf9;
+}
+
+.prosedur-steps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.75rem;
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.prosedur-step-card {
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 89, 82, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 89, 82, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.prosedur-step-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 89, 82, 0.14);
+}
+
+.prosedur-step-card .step-badge {
+    display: inline-block;
+    padding: 0.4rem 0.95rem;
+    background: linear-gradient(135deg, #005950, #007a6e);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 20px;
+    margin: 1.15rem 1.15rem 0.75rem;
+}
+
+.prosedur-diagram-box {
+    padding: 0.75rem 1.25rem 1.5rem;
+}
+
+.flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f6fbfa;
+    border: 1px solid rgba(0, 89, 82, 0.08);
+    margin-bottom: 10px;
+}
+
+.flow-step:last-child {
+    margin-bottom: 0;
+}
+
+.flow-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #005950, #00a896);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.flow-text h6 {
+    margin: 0 0 2px 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #005950;
+}
+
+.flow-text p {
+    margin: 0;
+    font-size: 12px;
+    color: #546a68;
+    line-height: 1.45;
+}
+
+@media (max-width: 991.98px) {
+    .prosedur-steps {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   Partner / Mitra & Jejaring Section
+   ========================================================================== */
+.partner-section {
+    padding: 56px 0;
+}
+
+.partner-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.partner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border: 1.5px solid rgba(0, 89, 82, 0.14);
+    border-radius: 16px;
+    padding: 14px 20px;
+    color: #005952;
+    font-weight: 700;
+    font-size: 13px;
+    box-shadow: 0 4px 14px rgba(0, 89, 82, 0.07);
+    transition: all 0.25s ease;
+    text-decoration: none;
+}
+
+.partner-badge i {
+    font-size: 18px;
+    color: #00a896;
+}
+
+.partner-badge:hover {
+    transform: translateY(-4px);
+    border-color: #005952;
+    background: #eef8f6;
+    color: #005950;
+}
+
+/* ==========================================================================
+   Modals & Interactive UX Helpers
+   ========================================================================== */
+.modal-content {
+    border-radius: 20px;
+    border: none;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0, 40, 36, 0.25);
+}
+
+.modal-header.stupa-modal-header {
+    background: linear-gradient(135deg, #005952 0%, #00a896 100%);
+    color: #ffffff;
+    border-bottom: none;
+    padding: 18px 24px;
+}
+
+.stupa-modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.toast-stupa {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 1090;
+    background: #005950;
+    color: #ffffff;
+    padding: 14px 20px;
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0, 89, 80, 0.35);
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+.toast-stupa.show {
+    display: flex;
+    animation: fadeInFromBottom 0.3s ease;
+}

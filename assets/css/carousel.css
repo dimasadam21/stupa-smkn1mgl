@@ -1,0 +1,225 @@
+/* ==========================================================================
+   STUPA SMKN 1 Magelang - Hero Carousel Styles (Matched to kemenlh.go.id)
+   ========================================================================== */
+
+.carousel-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.carousel {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+}
+
+.carousel-inner {
+    height: 95vh;
+    min-height: 540px;
+}
+
+.carousel-item {
+    height: 95vh;
+    min-height: 540px;
+    position: relative;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.02);
+    transition: transform 6s ease;
+}
+
+.carousel-item.active img {
+    transform: scale(1);
+}
+
+/* Bottom-to-top dark gradient overlay */
+.carousel-item::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 62%;
+    background: linear-gradient(
+        to top,
+        rgba(0, 26, 23, 0.92) 0%,
+        rgba(0, 35, 31, 0.55) 48%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    z-index: 1;
+}
+
+/* Top subtle readability scrim for navbar */
+.carousel-item::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 22%;
+    background: linear-gradient(to bottom, rgba(0, 20, 18, 0.35), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.carousel-caption.custom-caption {
+    position: absolute;
+    bottom: 10%;
+    left: 5%;
+    right: 5%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    color: #ffffff;
+    opacity: 0;
+    z-index: 2;
+    max-width: 880px;
+}
+
+.carousel-item.active .carousel-caption.custom-caption {
+    animation: fadeInFromBottom 0.9s ease-out forwards;
+    opacity: 1;
+}
+
+@keyframes fadeInFromBottom {
+    0% {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    background: rgba(0, 168, 150, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    backdrop-filter: blur(8px);
+    color: #e8fff9;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.carousel-caption .slide-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: clamp(22px, 3.1vw, 38px);
+    line-height: 1.25;
+    color: #ffffff;
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+    margin-bottom: 12px;
+}
+
+.carousel-caption .slide-description {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: clamp(14px, 1.45vw, 18px);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 720px;
+    margin-bottom: 20px;
+}
+
+/* Custom Prev / Next Arrow Buttons */
+button.carousel-control-prev.custom-prev,
+button.carousel-control-next.custom-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 64px;
+    height: 64px;
+    opacity: 0.85;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+button.carousel-control-prev.custom-prev {
+    left: 14px;
+}
+
+button.carousel-control-next.custom-next {
+    right: 14px;
+}
+
+button.carousel-control-prev.custom-prev:hover,
+button.carousel-control-next.custom-next:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.08);
+}
+
+.hero-arrow-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(0, 89, 80, 0.55);
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 18px;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+button.carousel-control-prev.custom-prev:hover .hero-arrow-circle,
+button.carousel-control-next.custom-next:hover .hero-arrow-circle {
+    background: #F97910;
+    border-color: #F97910;
+}
+
+.carousel-indicators {
+    bottom: 20px;
+    z-index: 5;
+}
+
+.carousel-indicators [data-bs-target] {
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+}
+
+.carousel-indicators .active {
+    width: 28px;
+    background-color: #F97910;
+}
+
+@media (max-width: 768px) {
+    .carousel-inner,
+    .carousel-item {
+        height: 62vh;
+        min-height: 410px;
+    }
+    .carousel-caption.custom-caption {
+        bottom: 12%;
+        left: 6%;
+        right: 6%;
+    }
+    .hero-arrow-circle {
+        width: 38px;
+        height: 38px;
+        font-size: 14px;
+    }
+    .carousel-caption .slide-description {
+        font-size: 13px;
+        margin-bottom: 14px;
+    }
+}

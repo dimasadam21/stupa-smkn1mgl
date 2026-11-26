@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Logo STUPA SMKN 1 Magelang">
+  <defs>
+    <linearGradient id="stupaTealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#005952"/>
+      <stop offset="55%" stop-color="#007a6e"/>
+      <stop offset="100%" stop-color="#00a896"/>
+    </linearGradient>
+    <linearGradient id="stupaAmberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97910"/>
+      <stop offset="100%" stop-color="#ff9b3d"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer Compass Ring -->
+  <circle cx="100" cy="100" r="92" fill="#ffffff" stroke="url(#stupaTealGrad)" stroke-width="6"/>
+  <circle cx="100" cy="100" r="82" fill="none" stroke="#00a896" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <!-- Technical Gear Teeth Accent (Top Arc) -->
+  <path d="M46 58 A70 70 0 0 1 154 58" fill="none" stroke="#F97910" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 6"/>
+  <!-- Sunrise / Spirit Disc -->
+  <circle cx="100" cy="76" r="22" fill="url(#stupaAmberGrad)" opacity="0.92"/>
+  <!-- Twin Mountain Peaks (Merbabu - Sumbing) -->
+  <path d="M30 132 L76 68 L104 106 L130 62 L170 132 Z" fill="url(#stupaTealGrad)"/>
+  <path d="M76 68 L90 88 L82 94 L72 86 L62 96 Z" fill="#ffffff" opacity="0.3"/>
+  <path d="M130 62 L143 85 L134 90 L125 82 L117 91 Z" fill="#ffffff" opacity="0.3"/>
+  <!-- Foreground Stupa / Ridge & Leaf -->
+  <path d="M36 132 Q100 110 164 132 L152 146 Q100 132 48 146 Z" fill="#00443e"/>
+  <!-- Stylized Leaf & Compass Needle Center -->
+  <path d="M100 50 C106 66 106 88 100 112 C94 88 94 66 100 50 Z" fill="#ffffff" opacity="0.85"/>
+  <!-- Banner Text Curved / Bottom -->
+  <rect x="44" y="138" width="112" height="24" rx="12" fill="#005950"/>
+  <text x="100" y="154" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-weight="800" font-size="13" letter-spacing="2" fill="#ffffff">STUPA</text>
+  <text x="100" y="176" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-weight="700" font-size="8.5" letter-spacing="1.2" fill="#005952">SMKN 1 MAGELANG</text>
+</svg>
